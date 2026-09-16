@@ -23,6 +23,9 @@ export const INTENT_LABELS: Record<string, string> = {
   ONGOING_MENTOR: "Looking for an ongoing mentor",
   GENERAL_NETWORKING: "General networking",
   BUSINESS_INTRO: "Business introduction",
+  SEEKING_GIG_WORK: "Looking for gig/freelance work",
+  HIRING_GIG_WORK: "Hiring for a gig/project",
+  JOB_OPENING: "Posting a job opening",
 };
 
 export const REQUEST_STATUS_LABELS: Record<string, string> = {

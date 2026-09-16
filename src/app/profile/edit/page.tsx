@@ -29,12 +29,16 @@ export default async function ProfileEditPage({
           industry: member.industry ?? "",
           location: member.location ?? "",
           bio: member.bio ?? "",
+          linkedinUrl: member.linkedinUrl ?? "",
+          openToRoles: member.openToRoles,
+          openToGigWork: member.openToGigWork,
         }}
         offerings={member.offerings.map((o) => ({
           category: o.category as HelpCategory,
           compensation: o.compensation as CompensationType,
           notes: o.notes ?? "",
         }))}
+        relationships={member.relationships.map((r) => ({ label: r.label, notes: r.notes ?? "" }))}
       />
     </div>
   );

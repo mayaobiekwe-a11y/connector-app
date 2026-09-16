@@ -27,8 +27,12 @@ async function main() {
     industry: string;
     location: string;
     bio: string;
+    linkedinUrl?: string;
     isAdmin?: boolean;
+    openToRoles?: boolean;
+    openToGigWork?: boolean;
     offerings: { category: HelpCategory; compensation: CompensationType; notes?: string }[];
+    relationships?: { label: string; notes?: string }[];
   };
 
   const members: SeedMember[] = [
@@ -40,10 +44,12 @@ async function main() {
       industry: "Healthcare",
       location: "Washington, DC",
       bio: "10 years in healthcare data strategy at startups and hospital systems in the DC area. Happy to make intros or talk shop.",
+      linkedinUrl: "https://linkedin.com/in/jordanellis",
       offerings: [
         { category: "INTRO_REFERRAL", compensation: "FREE", notes: "Can connect you to folks at DC-area health startups." },
         { category: "COFFEE_CHAT", compensation: "FREE" },
       ],
+      relationships: [{ label: "Google Health", notes: "Former manager, still close." }],
     },
     {
       name: "Priya Nair",
@@ -53,10 +59,13 @@ async function main() {
       industry: "Public Policy",
       location: "Washington, DC",
       bio: "Worked in public policy for 8 years, focused on health and social policy. Enjoys mentoring people transitioning into policy work.",
+      linkedinUrl: "https://linkedin.com/in/priyanair",
+      openToRoles: true,
       offerings: [
         { category: "RESUME_REVIEW", compensation: "FREE" },
         { category: "MENTORSHIP", compensation: "FREE" },
       ],
+      relationships: [{ label: "White House Domestic Policy Council", notes: "Former colleague." }],
     },
     {
       name: "Marcus Chen",
@@ -66,10 +75,12 @@ async function main() {
       industry: "Fintech",
       location: "New York, NY",
       bio: "Leads a backend engineering team at a fintech startup. Loves doing mock interviews for engineers.",
+      openToGigWork: true,
       offerings: [
         { category: "MOCK_INTERVIEW", compensation: "FREE" },
         { category: "PAID_CONSULTING", compensation: "PAID", notes: "1:1 career coaching for engineers, $75/session." },
       ],
+      relationships: [{ label: "Stripe", notes: "Ex-teammate now on the infra team." }],
     },
     {
       name: "Sasha Ivanova",
@@ -79,10 +90,12 @@ async function main() {
       industry: "Technology",
       location: "Austin, TX",
       bio: "Product leader with a background in growth and B2B SaaS. Open to ongoing mentorship for aspiring PMs.",
+      openToRoles: true,
       offerings: [
         { category: "MENTORSHIP", compensation: "BARTER", notes: "Open to a skills trade." },
         { category: "COFFEE_CHAT", compensation: "FREE" },
       ],
+      relationships: [{ label: "Meta", notes: "Close friend on the product team." }],
     },
     {
       name: "David Okafor",
@@ -105,10 +118,12 @@ async function main() {
       industry: "Logistics",
       location: "Chicago, IL",
       bio: "HR professional with a passion for helping career changers land their next role.",
+      openToGigWork: true,
       offerings: [
         { category: "RESUME_REVIEW", compensation: "FREE" },
         { category: "MOCK_INTERVIEW", compensation: "FREE" },
       ],
+      relationships: [{ label: "LinkedIn Talent Solutions", notes: "Runs recruiter workshops with them." }],
     },
     {
       name: "Admin User",
@@ -137,7 +152,10 @@ async function main() {
         industry: m.industry,
         location: m.location,
         bio: m.bio,
+        linkedinUrl: m.linkedinUrl,
         isAdmin: m.isAdmin ?? false,
+        openToRoles: m.openToRoles ?? false,
+        openToGigWork: m.openToGigWork ?? false,
         communityId: community.id,
         offerings: {
           create: m.offerings.map((o) => ({
@@ -145,6 +163,9 @@ async function main() {
             compensation: o.compensation,
             notes: o.notes,
           })),
+        },
+        relationships: {
+          create: (m.relationships ?? []).map((r) => ({ label: r.label, notes: r.notes })),
         },
       },
     });
@@ -211,6 +232,68 @@ async function main() {
     });
     await prisma.creditEntry.create({
       data: { memberId: helper.id, points: 15, reason: "COMPLETED_POSITIVE", refId: match.id },
+    });
+  }
+
+  // Sample opportunity-style requests (job opening + gig hiring) so the
+  // new intents are visible without having to create them by hand.
+  const sasha = created["sasha@example.com"];
+  const marcus = created["marcus@example.com"];
+
+  const existingJobOpening = await prisma.request.findFirst({
+    where: { requesterId: requester.id, rawText: { contains: "hiring a Product Manager" } },
+  });
+  if (!existingJobOpening) {
+    const jobRequest = await prisma.request.create({
+      data: {
+        requesterId: requester.id,
+        communityId: community.id,
+        rawText: "We're hiring a Product Manager for our health tech startup — know anyone great, or interested yourself?",
+        status: "MATCHED",
+        parsedIndustry: "Technology",
+        parsedFunction: "Product Management",
+        parsedIntent: "JOB_OPENING",
+        parsedSummary: "Hiring a Product Manager; open to referrals or direct interest.",
+        parsedRaw: JSON.stringify({ seed: true }),
+      },
+    });
+    await prisma.match.create({
+      data: {
+        requestId: jobRequest.id,
+        memberId: sasha.id,
+        rank: 1,
+        score: 0.81,
+        reason: "Sasha is open to new roles and has relevant product leadership experience.",
+        status: "PENDING",
+      },
+    });
+  }
+
+  const existingGigRequest = await prisma.request.findFirst({
+    where: { requesterId: requester.id, rawText: { contains: "freelancer to help redesign" } },
+  });
+  if (!existingGigRequest) {
+    const gigRequest = await prisma.request.create({
+      data: {
+        requesterId: requester.id,
+        communityId: community.id,
+        rawText: "I need a freelancer to help redesign our onboarding flow for a few weeks.",
+        status: "MATCHED",
+        parsedFunction: "Design",
+        parsedIntent: "HIRING_GIG_WORK",
+        parsedSummary: "Needs a freelance designer for a short-term onboarding redesign project.",
+        parsedRaw: JSON.stringify({ seed: true }),
+      },
+    });
+    await prisma.match.create({
+      data: {
+        requestId: gigRequest.id,
+        memberId: marcus.id,
+        rank: 1,
+        score: 0.6,
+        reason: "Marcus is open to gig/freelance work.",
+        status: "PENDING",
+      },
     });
   }
 

@@ -21,18 +21,36 @@ interactions build a visible reputation over time.
 ## Core loop
 
 1. **Ask** — a member types a request in plain language on their dashboard.
+   This covers requests for help (intros, resume review, mentorship, etc.)
+   as well as two opportunity-style asks: looking for or hiring for gig/
+   freelance work, and posting an open role ("dropping a role") for the
+   network to fill or refer into.
 2. **Get connected** — Claude parses the request (company / industry /
    function / intent) and ranks the community directory against it,
    returning a short list of matches with a natural-language reason each.
-   Only the matched members see the request (it shows up in their
-   dashboard's "Requests for you").
-3. **Get help** — a matched member accepts or declines; accepting opens a
-   simple message thread with the requester.
+   Matching considers each member's own job *and* their listed
+   relationships (see below), plus their "open to new roles" / "open to
+   gig work" signals for opportunity-style asks. Only the matched members
+   see the request (it shows up in their dashboard's "Requests for you").
+3. **Get help** — a matched member accepts or declines (opportunity-style
+   requests show "I'm interested" / "Not for me" instead); accepting opens
+   a simple message thread with the requester.
 4. **Say what happened** — the requester logs an outcome (helped / didn't
    work out / no response) with an optional 1-5 star rating and comment.
 5. **Earn credit** — responding and being positively reviewed earns points;
    crossing point thresholds unlocks a visible badge tier (e.g. "Trusted
    Connector") shown on a member's profile and in the nav bar.
+
+### Relationships, not just employers
+
+At signup and on their profile, members can optionally list places they
+have a **solid personal relationship** — not necessarily their own
+employer (e.g. "Google" because a close friend works there, or "DC policy
+circles"). A LinkedIn URL is also optional. When a request names a company
+or industry, a member with a matching relationship is usually the single
+best match for a warm intro, even if their own job is unrelated — the
+match reason calls this out explicitly (e.g. "Jordan doesn't work at
+Google but has a relationship there.").
 
 ## Data model
 
@@ -77,8 +95,8 @@ keyword-based fallback (clearly flagged in the admin view). Set the key in
 ## Project layout
 
 ```
-prisma/schema.prisma       Data model
-prisma/seed.ts             Demo community + members + sample completed request
+prisma/schema.prisma       Data model (includes Relationship, open-to-work flags)
+prisma/seed.ts             Demo community + members + sample requests (help + opportunity)
 src/lib/claude.ts          Claude parsing + ranking, with heuristic fallback
 src/lib/matching.ts        Orchestrates parse -> rank -> persist Request/Match
 src/lib/credit.ts          Points ledger + badge tier logic

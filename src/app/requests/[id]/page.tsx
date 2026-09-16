@@ -13,6 +13,7 @@ import {
   INTENT_LABELS,
   OUTCOME_LABELS,
 } from "@/lib/labels";
+import { isOpportunityIntent } from "@/lib/enums";
 
 export default async function RequestDetailPage({ params }: { params: { id: string } }) {
   const member = await getCurrentMember();
@@ -37,6 +38,7 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
   const isRequester = request.requesterId === member.id;
   const myMatch = request.matches.find((m) => m.memberId === member.id);
   const canView = isRequester || !!myMatch || member.isAdmin;
+  const opportunity = isOpportunityIntent(request.parsedIntent);
   if (!canView) {
     return <p className="text-sm text-gray-500">You don't have access to this request.</p>;
   }
@@ -52,8 +54,12 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
       <div className="card p-5">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs text-gray-500">
-              Asked by <span className="font-medium text-gray-700">{request.requester.name}</span>
+            <p className="text-xs text-gray-500 flex items-center gap-2">
+              {opportunity ? "Posted by" : "Asked by"}{" "}
+              <span className="font-medium text-gray-700">{request.requester.name}</span>
+              {opportunity && (
+                <span className="badge bg-purple-50 text-purple-700 border border-purple-100">Opportunity</span>
+              )}
             </p>
             <h1 className="text-lg font-semibold text-gray-900 mt-1">"{request.rawText}"</h1>
           </div>
@@ -108,7 +114,7 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
                   <StatusPill status={m.status} label={MATCH_STATUS_LABELS[m.status] ?? m.status} />
                 </div>
 
-                {canRespond && <MatchRespondButtons matchId={m.id} />}
+                {canRespond && <MatchRespondButtons matchId={m.id} opportunity={opportunity} />}
 
                 {canChat && (
                   <ThreadView

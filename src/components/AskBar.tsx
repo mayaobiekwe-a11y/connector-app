@@ -7,6 +7,8 @@ const EXAMPLES = [
   "Who in this group has a connection at a healthcare startup in DC?",
   "I need someone who's worked in public policy to review my resume.",
   "Looking for an ongoing mentor in product management.",
+  "We're hiring a product designer — know anyone great, or interested yourself?",
+  "I'm looking for freelance/contract work this month, ideally in design.",
 ];
 
 export default function AskBar() {

@@ -3,6 +3,7 @@
 import { useEffect, useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import RelationshipsInput, { type RelationshipRow } from "@/components/RelationshipsInput";
 
 interface Community {
   id: string;
@@ -24,7 +25,9 @@ export default function SignupPage() {
     industry: "",
     location: "",
     bio: "",
+    linkedinUrl: "",
   });
+  const [relationships, setRelationships] = useState<RelationshipRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -47,7 +50,12 @@ export default function SignupPage() {
     setLoading(true);
     setError(null);
 
-    const payload: Record<string, string> = { ...form };
+    const payload: Record<string, unknown> = {
+      ...form,
+      relationships: relationships
+        .filter((r) => r.label.trim())
+        .map((r) => ({ label: r.label.trim(), notes: r.notes.trim() || undefined })),
+    };
     if (communityChoice === "__new__") {
       if (!newCommunityName.trim()) {
         setError("Please name your community/network");
@@ -135,6 +143,20 @@ export default function SignupPage() {
               placeholder="What you've worked on, what you know well..."
             />
           </div>
+          <div className="col-span-2">
+            <label className="label">LinkedIn (optional)</label>
+            <input
+              className="input"
+              type="url"
+              placeholder="https://linkedin.com/in/you"
+              value={form.linkedinUrl}
+              onChange={(e) => update("linkedinUrl", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="border-t border-gray-100 pt-4">
+          <RelationshipsInput rows={relationships} onChange={setRelationships} />
         </div>
 
         <div className="border-t border-gray-100 pt-4">

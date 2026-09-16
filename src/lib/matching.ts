@@ -28,7 +28,7 @@ export async function createRequestWithMatches(requesterId: string, communityId:
 
   const candidateMembers = await prisma.member.findMany({
     where: { communityId, id: { not: requesterId } },
-    include: { offerings: true },
+    include: { offerings: true, relationships: true },
   });
 
   const candidates: CandidateMember[] = candidateMembers.map((m) => ({
@@ -38,11 +38,14 @@ export async function createRequestWithMatches(requesterId: string, communityId:
     company: m.company,
     industry: m.industry,
     bio: m.bio,
+    openToRoles: m.openToRoles,
+    openToGigWork: m.openToGigWork,
     offerings: m.offerings.map((o) => ({
       category: o.category as HelpCategory,
       compensation: o.compensation as CompensationType,
       notes: o.notes,
     })),
+    relationships: m.relationships.map((r) => ({ label: r.label, notes: r.notes })),
   }));
 
   const { matches } = await rankMatches(rawText, parsed, candidates, MATCH_LIMIT);

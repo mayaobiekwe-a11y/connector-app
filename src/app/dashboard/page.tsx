@@ -6,6 +6,7 @@ import AskBar from "@/components/AskBar";
 import StatusPill from "@/components/StatusPill";
 import MatchRespondButtons from "@/components/MatchRespondButtons";
 import { REQUEST_STATUS_LABELS, MATCH_STATUS_LABELS, INTENT_LABELS } from "@/lib/labels";
+import { isOpportunityIntent } from "@/lib/enums";
 
 export default async function DashboardPage() {
   const member = await getCurrentMember();
@@ -37,28 +38,36 @@ export default async function DashboardPage() {
           <p className="text-sm text-gray-500">No one has requested your help yet.</p>
         ) : (
           <div className="space-y-3">
-            {incomingMatches.map((m) => (
-              <div key={m.id} className="card p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="text-xs text-gray-500">
-                      From <span className="font-medium text-gray-700">{m.request.requester.name}</span>
-                    </p>
-                    <Link href={`/requests/${m.requestId}`} className="font-medium text-gray-900 hover:text-brand-700">
-                      "{m.request.rawText}"
-                    </Link>
-                    <p className="text-sm text-gray-600 mt-1">{m.reason}</p>
+            {incomingMatches.map((m) => {
+              const opportunity = isOpportunityIntent(m.request.parsedIntent);
+              return (
+                <div key={m.id} className="card p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-500 flex items-center gap-2">
+                        From <span className="font-medium text-gray-700">{m.request.requester.name}</span>
+                        {opportunity && (
+                          <span className="badge bg-purple-50 text-purple-700 border border-purple-100">
+                            Opportunity
+                          </span>
+                        )}
+                      </p>
+                      <Link href={`/requests/${m.requestId}`} className="font-medium text-gray-900 hover:text-brand-700">
+                        "{m.request.rawText}"
+                      </Link>
+                      <p className="text-sm text-gray-600 mt-1">{m.reason}</p>
+                    </div>
+                    <StatusPill status={m.status} label={MATCH_STATUS_LABELS[m.status] ?? m.status} />
                   </div>
-                  <StatusPill status={m.status} label={MATCH_STATUS_LABELS[m.status] ?? m.status} />
+                  {m.status === "PENDING" && <MatchRespondButtons matchId={m.id} opportunity={opportunity} />}
+                  {m.status === "ACCEPTED" && (
+                    <Link href={`/requests/${m.requestId}`} className="text-sm text-brand-700 font-medium mt-2 inline-block">
+                      Open conversation →
+                    </Link>
+                  )}
                 </div>
-                {m.status === "PENDING" && <MatchRespondButtons matchId={m.id} />}
-                {m.status === "ACCEPTED" && (
-                  <Link href={`/requests/${m.requestId}`} className="text-sm text-brand-700 font-medium mt-2 inline-block">
-                    Open conversation →
-                  </Link>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </section>

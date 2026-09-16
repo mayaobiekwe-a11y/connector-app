@@ -14,8 +14,13 @@ const schema = z.object({
   industry: z.string().max(100).optional(),
   location: z.string().max(100).optional(),
   bio: z.string().max(1000).optional(),
+  linkedinUrl: z.string().trim().url().max(300).optional().or(z.literal("")),
   communityId: z.string().optional(),
   newCommunityName: z.string().max(100).optional(),
+  relationships: z
+    .array(z.object({ label: z.string().min(1).max(120), notes: z.string().max(300).optional() }))
+    .max(20)
+    .optional(),
 });
 
 export async function POST(req: Request) {
@@ -60,7 +65,11 @@ export async function POST(req: Request) {
       industry: data.industry,
       location: data.location,
       bio: data.bio,
+      linkedinUrl: data.linkedinUrl || null,
       communityId,
+      relationships: data.relationships?.length
+        ? { create: data.relationships.filter((r) => r.label.trim()) }
+        : undefined,
     },
   });
 

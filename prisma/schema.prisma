@@ -39,13 +39,19 @@ model Member {
   industry     String?
   location     String?
   bio          String?
+  linkedinUrl  String? // optional; not required to join
   isAdmin      Boolean  @default(false)
+  // "Open to work" style signals used to match opportunity-style requests
+  // (job openings / gig-hiring asks) against interested members.
+  openToRoles   Boolean @default(false)
+  openToGigWork Boolean @default(false)
   createdAt    DateTime @default(now())
 
   communityId String
   community   Community @relation(fields: [communityId], references: [id])
 
-  offerings HelpOffering[]
+  offerings     HelpOffering[]
+  relationships Relationship[]
 
   requestsMade    Request[]     @relation("RequestsMade")
   matches         Match[]       @relation("MatchesForMember")
@@ -72,9 +78,25 @@ model HelpOffering {
   @@unique([memberId, category])
 }
 
+// A place a member has a solid personal relationship — not necessarily
+// their own employer (e.g. a close friend at a company, a former team,
+// a circle like "DC policy folks"). This is the strongest signal for
+// warm-intro-style requests that name a specific company or industry,
+// and is entirely optional / freeform so it fits any community.
+model Relationship {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id])
+  label     String // e.g. "Google", "Meridian Health leadership", "DC policy circles"
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([memberId])
+}
+
 // The free-text "Ask" plus the structured fields an LLM extracts from it.
 // status: OPEN | MATCHED | IN_PROGRESS | COMPLETED | CLOSED
-// parsedIntent: SPECIFIC_ROLE | INFORMATIONAL_CHAT | EXPLORING_PIVOT | ONGOING_MENTOR | GENERAL_NETWORKING | BUSINESS_INTRO
+// parsedIntent: SPECIFIC_ROLE | INFORMATIONAL_CHAT | EXPLORING_PIVOT | ONGOING_MENTOR | GENERAL_NETWORKING | BUSINESS_INTRO | SEEKING_GIG_WORK | HIRING_GIG_WORK | JOB_OPENING
 model Request {
   id          String    @id @default(cuid())
   requesterId String

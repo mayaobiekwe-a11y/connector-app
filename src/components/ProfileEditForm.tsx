@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { HELP_CATEGORIES, COMPENSATION_TYPES, type HelpCategory, type CompensationType } from "@/lib/enums";
 import { HELP_CATEGORY_LABELS, COMPENSATION_LABELS } from "@/lib/labels";
+import RelationshipsInput, { type RelationshipRow } from "./RelationshipsInput";
 
 interface OfferingRow {
   category: HelpCategory;
@@ -19,23 +20,29 @@ interface MemberFields {
   industry: string;
   location: string;
   bio: string;
+  linkedinUrl: string;
+  openToRoles: boolean;
+  openToGigWork: boolean;
 }
 
 export default function ProfileEditForm({
   member,
   offerings,
+  relationships,
 }: {
   member: MemberFields;
   offerings: OfferingRow[];
+  relationships: RelationshipRow[];
 }) {
   const router = useRouter();
   const [form, setForm] = useState(member);
   const [rows, setRows] = useState<OfferingRow[]>(offerings);
+  const [relRows, setRelRows] = useState<RelationshipRow[]>(relationships);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  function update<K extends keyof MemberFields>(key: K, value: string) {
+  function update<K extends keyof MemberFields>(key: K, value: MemberFields[K]) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
@@ -55,7 +62,7 @@ export default function ProfileEditForm({
     setError(null);
     setSaved(false);
 
-    const [profileRes, offeringsRes] = await Promise.all([
+    const [profileRes, offeringsRes, relationshipsRes] = await Promise.all([
       fetch("/api/members/me", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -66,6 +73,9 @@ export default function ProfileEditForm({
           industry: form.industry,
           location: form.location,
           bio: form.bio,
+          linkedinUrl: form.linkedinUrl,
+          openToRoles: form.openToRoles,
+          openToGigWork: form.openToGigWork,
         }),
       }),
       fetch("/api/members/me/offerings", {
@@ -75,10 +85,19 @@ export default function ProfileEditForm({
           offerings: rows.map((r) => ({ ...r, notes: r.notes || undefined })),
         }),
       }),
+      fetch("/api/members/me/relationships", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          relationships: relRows
+            .filter((r) => r.label.trim())
+            .map((r) => ({ label: r.label.trim(), notes: r.notes.trim() || undefined })),
+        }),
+      }),
     ]);
 
     setSaving(false);
-    if (!profileRes.ok || !offeringsRes.ok) {
+    if (!profileRes.ok || !offeringsRes.ok || !relationshipsRes.ok) {
       setError("Something went wrong saving your profile");
       return;
     }
@@ -116,6 +135,38 @@ export default function ProfileEditForm({
           <label className="label">Bio</label>
           <textarea className="input" rows={3} value={form.bio} onChange={(e) => update("bio", e.target.value)} />
         </div>
+        <div>
+          <label className="label">LinkedIn (optional)</label>
+          <input
+            className="input"
+            type="url"
+            placeholder="https://linkedin.com/in/you"
+            value={form.linkedinUrl}
+            onChange={(e) => update("linkedinUrl", e.target.value)}
+          />
+        </div>
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 pt-1">
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={form.openToRoles}
+              onChange={(e) => update("openToRoles", e.target.checked)}
+            />
+            Open to new roles
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={form.openToGigWork}
+              onChange={(e) => update("openToGigWork", e.target.checked)}
+            />
+            Open to gig/freelance work
+          </label>
+        </div>
+      </div>
+
+      <div className="card p-5">
+        <RelationshipsInput rows={relRows} onChange={setRelRows} />
       </div>
 
       <div className="card p-5">

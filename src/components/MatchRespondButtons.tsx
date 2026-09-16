@@ -3,7 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function MatchRespondButtons({ matchId }: { matchId: string }) {
+export default function MatchRespondButtons({
+  matchId,
+  opportunity = false,
+}: {
+  matchId: string;
+  // true for JOB_OPENING / HIRING_GIG_WORK requests: the member is being
+  // asked "are you interested?" rather than "can you help?".
+  opportunity?: boolean;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState<"accept" | "decline" | null>(null);
 
@@ -18,13 +26,16 @@ export default function MatchRespondButtons({ matchId }: { matchId: string }) {
     router.refresh();
   }
 
+  const acceptLabel = opportunity ? "I'm interested" : "Accept";
+  const declineLabel = opportunity ? "Not for me" : "Decline";
+
   return (
     <div className="flex gap-2 mt-3">
       <button className="btn-primary" disabled={!!loading} onClick={() => respond("accept")}>
-        {loading === "accept" ? "Accepting..." : "Accept"}
+        {loading === "accept" ? "Saving..." : acceptLabel}
       </button>
       <button className="btn-secondary" disabled={!!loading} onClick={() => respond("decline")}>
-        {loading === "decline" ? "Declining..." : "Decline"}
+        {loading === "decline" ? "Saving..." : declineLabel}
       </button>
     </div>
   );

@@ -126,6 +126,18 @@ function heuristicParse(rawText: string): ParsedRequest {
     ["INFORMATIONAL_CHAT", ["informational", "learn more about", "chat about", "pick their brain"]],
     ["EXPLORING_PIVOT", ["pivot", "switch careers", "transition into", "break into", "considering a move"]],
     ["ONGOING_MENTOR", ["mentor", "mentorship", "ongoing guidance", "long-term advice"]],
+    [
+      "JOB_OPENING",
+      ["we're hiring", "we are hiring", "open role", "open position", "job opening", "looking to fill", "hiring a", "hiring for a"],
+    ],
+    [
+      "HIRING_GIG_WORK",
+      ["hire a freelancer", "hire a contractor", "need a freelancer", "need a contractor", "looking to hire", "need someone to build", "contract help"],
+    ],
+    [
+      "SEEKING_GIG_WORK",
+      ["freelance work", "contract work", "gig work", "looking for freelance", "available for freelance", "freelance opportunities", "freelance gigs", "side project", "moonlight"],
+    ],
     ["BUSINESS_INTRO", ["client", "partnership", "vendor", "business intro", "sell to", "invest in"]],
   ];
   let intent: RequestIntent = "GENERAL_NETWORKING";
@@ -151,12 +163,25 @@ function heuristicParse(rawText: string): ParsedRequest {
   const fn = functionKeywords.find((k) => text.includes(k)) ?? null;
 
   return {
-    company: null,
+    company: extractCompany(rawText),
     industry,
     function: fn,
     intent,
     summary: rawText.length > 140 ? rawText.slice(0, 137) + "..." : rawText,
   };
+}
+
+// Naive proper-noun extraction for "at/with/from <Company>" phrasing. Good
+// enough for a fallback parser; Claude does the real extraction otherwise.
+const COMPANY_STOPWORDS = new Set([
+  "I", "We", "They", "He", "She", "It", "This", "That", "Who", "What",
+  "Where", "When", "Please", "Thanks", "My", "Our", "The", "A",
+]);
+function extractCompany(rawText: string): string | null {
+  const match = rawText.match(/\b(?:at|with|from)\s+([A-Z][\w&.'-]*(?:\s+[A-Z][\w&.'-]*){0,2})/);
+  if (!match) return null;
+  const words = match[1].split(/\s+/).filter((w) => !COMPANY_STOPWORDS.has(w));
+  return words.length > 0 ? words.join(" ") : null;
 }
 
 // --- 2. Rank directory members against a parsed request --------------------
@@ -168,7 +193,13 @@ export interface CandidateMember {
   company: string | null;
   industry: string | null;
   bio: string | null;
+  openToRoles: boolean;
+  openToGigWork: boolean;
   offerings: { category: HelpCategory; compensation: CompensationType; notes: string | null }[];
+  // Places this member has a solid personal relationship (not necessarily
+  // their own employer) — e.g. "Google", "DC policy circles". The single
+  // strongest signal for warm-intro-style requests naming a company/industry.
+  relationships: { label: string; notes: string | null }[];
 }
 
 export interface RankedMatch {
@@ -228,7 +259,10 @@ export async function rankMatches(
     company: c.company,
     industry: c.industry,
     bio: c.bio,
+    openToNewRoles: c.openToRoles,
+    openToGigWork: c.openToGigWork,
     offers: c.offerings.map((o) => ({ category: o.category, compensation: o.compensation, notes: o.notes })),
+    relationships: c.relationships.map((r) => ({ where: r.label, notes: r.notes })),
   }));
 
   try {
@@ -240,7 +274,7 @@ export async function rankMatches(
       messages: [
         {
           role: "user",
-          content: `A member submitted this request to a trusted professional referral network:\n\nRequest: "${rawText}"\nParsed intent: ${parsed.intent}\nParsed industry: ${parsed.industry ?? "unspecified"}\nParsed function: ${parsed.function ?? "unspecified"}\nParsed company: ${parsed.company ?? "unspecified"}\n\nHere is the member directory (excluding the requester) as JSON:\n${JSON.stringify(directory, null, 2)}\n\nSelect and rank the top ${limit} members who could best help with this request, considering their industry, title, company, bio, and what they've offered to help with. Only include genuinely plausible matches.`,
+          content: `A member submitted this request to a trusted professional referral network:\n\nRequest: "${rawText}"\nParsed intent: ${parsed.intent}\nParsed industry: ${parsed.industry ?? "unspecified"}\nParsed function: ${parsed.function ?? "unspecified"}\nParsed company: ${parsed.company ?? "unspecified"}\n\nHere is the member directory (excluding the requester) as JSON:\n${JSON.stringify(directory, null, 2)}\n\nSelect and rank the top ${limit} members who could best help with this request, considering their industry, title, company, bio, and what they've offered to help with.\n\nEach member's "relationships" list is where they have a solid personal connection — not necessarily their own employer (e.g. a member at a nonprofit might list "Google" because a close friend works there). If the request names a specific company or industry, a member with a matching relationship is usually the single best match, even if their own job is unrelated — call this out explicitly in the reason (e.g. "Dana doesn't work at Acme but has a close contact there.").\n\nIf the parsed intent is JOB_OPENING or HIRING_GIG_WORK, the requester is distributing an opportunity, not asking for help — prioritize members flagged openToNewRoles (for JOB_OPENING) or openToGigWork (for HIRING_GIG_WORK) who also fit the industry/function, and phrase the reason as why they'd be interested (e.g. "Sasha is open to new product roles and has relevant experience."). If the intent is SEEKING_GIG_WORK, the requester wants freelance/contract work for themselves — prioritize members who could plausibly hire them or know of paid opportunities (founders, managers, people with relevant relationships), not members who also just want gig work.\n\nOnly include genuinely plausible matches.`,
         },
       ],
     });
@@ -278,6 +312,18 @@ function heuristicRank(
     let score = 0.05;
     const reasons: string[] = [];
 
+    // A listed relationship at the named company/industry beats even
+    // working there yourself — it's the whole point of a warm intro.
+    const matchingRelationship = c.relationships.find(
+      (r) =>
+        (parsed.company && r.label.toLowerCase().includes(parsed.company.toLowerCase())) ||
+        (parsed.industry && r.label.toLowerCase().includes(parsed.industry.toLowerCase()))
+    );
+    if (matchingRelationship) {
+      score += 0.5;
+      reasons.push(`has a relationship at ${matchingRelationship.label}`);
+    }
+
     if (parsed.industry && c.industry && c.industry.toLowerCase().includes(parsed.industry.toLowerCase())) {
       score += 0.35;
       reasons.push(`works in ${c.industry}`);
@@ -285,6 +331,22 @@ function heuristicRank(
     if (parsed.company && c.company && c.company.toLowerCase().includes(parsed.company.toLowerCase())) {
       score += 0.35;
       reasons.push(`is at ${c.company}`);
+    }
+    if (parsed.intent === "JOB_OPENING" && c.openToRoles) {
+      score += 0.4;
+      reasons.push(`is open to new roles`);
+    }
+    if (parsed.intent === "HIRING_GIG_WORK" && c.openToGigWork) {
+      score += 0.4;
+      reasons.push(`is open to gig/freelance work`);
+    }
+    if (
+      parsed.intent === "SEEKING_GIG_WORK" &&
+      c.title &&
+      /founder|ceo|director|manager|lead|head of|vp/i.test(c.title)
+    ) {
+      score += 0.15;
+      reasons.push(`may have freelance work to share in their role as ${c.title}`);
     }
     if (parsed.function) {
       const fn = parsed.function.toLowerCase();

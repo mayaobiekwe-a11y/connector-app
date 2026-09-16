@@ -22,8 +22,18 @@ export const REQUEST_INTENTS = [
   "ONGOING_MENTOR",
   "GENERAL_NETWORKING",
   "BUSINESS_INTRO",
+  "SEEKING_GIG_WORK", // requester wants freelance/contract/paid project work for themselves
+  "HIRING_GIG_WORK", // requester needs to hire someone for freelance/contract work
+  "JOB_OPENING", // requester is posting an open role at their company for others to fill/refer
 ] as const;
 export type RequestIntent = (typeof REQUEST_INTENTS)[number];
+
+// Intents where the requester is distributing an opportunity (a role or gig
+// to fill) rather than asking for help — matched members are being asked
+// "are you interested / do you know someone?" rather than "can you help?".
+export const OPPORTUNITY_INTENTS: RequestIntent[] = ["HIRING_GIG_WORK", "JOB_OPENING"];
+export const isOpportunityIntent = (intent: string | null | undefined): boolean =>
+  !!intent && (OPPORTUNITY_INTENTS as string[]).includes(intent);
 
 export const REQUEST_STATUSES = ["OPEN", "MATCHED", "IN_PROGRESS", "COMPLETED", "CLOSED"] as const;
 export type RequestStatus = (typeof REQUEST_STATUSES)[number];

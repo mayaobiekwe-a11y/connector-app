@@ -12,7 +12,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
 
   const profileMember = await prisma.member.findUnique({
     where: { id: params.id },
-    include: { offerings: true, community: true },
+    include: { offerings: true, community: true, relationships: true },
   });
   if (!profileMember) notFound();
 
@@ -55,6 +55,24 @@ export default async function ProfilePage({ params }: { params: { id: string } }
           )}
         </div>
         {profileMember.bio && <p className="text-sm text-gray-600 mt-4">{profileMember.bio}</p>}
+        <div className="flex flex-wrap gap-2 mt-4">
+          {profileMember.openToRoles && (
+            <span className="badge bg-green-50 text-green-700 border border-green-100">Open to new roles</span>
+          )}
+          {profileMember.openToGigWork && (
+            <span className="badge bg-green-50 text-green-700 border border-green-100">Open to gig work</span>
+          )}
+          {profileMember.linkedinUrl && (
+            <a
+              href={profileMember.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="badge bg-gray-100 text-gray-600 hover:bg-gray-200"
+            >
+              LinkedIn ↗
+            </a>
+          )}
+        </div>
       </div>
 
       <div className="card p-5">
@@ -99,6 +117,21 @@ export default async function ProfilePage({ params }: { params: { id: string } }
               </li>
             ))}
           </ul>
+        )}
+      </div>
+
+      <div className="card p-5">
+        <h2 className="font-semibold text-gray-900 mb-3">Has relationships at</h2>
+        {profileMember.relationships.length === 0 ? (
+          <p className="text-sm text-gray-500">None listed yet.</p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {profileMember.relationships.map((r) => (
+              <span key={r.id} className="badge bg-gray-100 text-gray-700" title={r.notes ?? undefined}>
+                {r.label}
+              </span>
+            ))}
+          </div>
         )}
       </div>
 
