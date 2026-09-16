@@ -9,8 +9,9 @@ interactions build a visible reputation over time.
 
 - **Next.js 14** (App Router, TypeScript) — pages, API routes, and server
   components in one app.
-- **SQLite via Prisma** — zero-config local database; the schema is generic
-  enough to point at Postgres later by changing the `datasource` provider.
+- **Postgres via Prisma** — works with any Postgres (local, Neon, Supabase,
+  Vercel Postgres, Railway, ...); the schema has no Postgres-specific
+  features, so it'd also run on SQLite/MySQL with a one-line provider change.
 - **Claude (Anthropic API)** — parses free-text asks into structured fields
   and ranks the member directory against each request. Falls back to a
   deterministic keyword-based parser/ranker if no API key is configured, so
@@ -56,21 +57,28 @@ Google but has a relationship there.").
 
 See `prisma/schema.prisma`. Everything is scoped under a `Community` so the
 same deployment can host multiple independent trusted networks — nothing is
-hardcoded to one group. SQLite has no native enum type, so enum-like fields
-(help category, compensation type, request intent/status, match status,
-review outcome, credit reason) are stored as validated strings; the allowed
-values live in `src/lib/enums.ts`.
+hardcoded to one group. Enum-like fields (help category, compensation type,
+request intent/status, match status, review outcome, credit reason) are
+stored as validated strings rather than native Postgres enums, so adding a
+new value (like the gig-work/job-opening intents) never needs a migration
+that alters a type — the allowed values live in `src/lib/enums.ts`.
 
-## Getting started
+## Getting started (local)
+
+You need a Postgres database to point at — a local install, or a free
+hosted one (e.g. [Neon](https://neon.tech), which gives you a connection
+string in under a minute with no credit card).
 
 ```bash
 npm install
-cp .env.example .env      # fill in ANTHROPIC_API_KEY if you have one
-npx prisma migrate dev    # creates prisma/dev.db and applies the schema
+cp .env.example .env       # set DATABASE_URL to your Postgres connection string,
+                            # and ANTHROPIC_API_KEY if you have one
+npx prisma migrate deploy  # applies the schema
+npx prisma db seed         # loads demo community + members
 npm run dev
 ```
 
-Open http://localhost:3000. The migration step seeds a demo community
+Open http://localhost:3000. The seed step creates a demo community
 ("Riverside Alumni Network") with a handful of members — log in as any of
 them with password `password123`:
 
@@ -91,6 +99,45 @@ signup form.
 Without `ANTHROPIC_API_KEY` set, parsing and ranking use a deterministic
 keyword-based fallback (clearly flagged in the admin view). Set the key in
 `.env` to use Claude for both steps — see `src/lib/claude.ts`.
+
+## Deploying (get a real URL)
+
+This gets you a live, shareable link. Total cost: $0 on the free tiers below.
+
+**1. Create a free Postgres database.** [Neon](https://neon.tech) is the
+easiest — sign up, create a project, and copy the connection string it
+gives you (looks like `postgresql://user:pass@ep-xxx.neon.tech/neondb`).
+Vercel Postgres and Supabase work the same way if you'd rather use one of
+those.
+
+**2. Push this repo to your own GitHub account** (skip if it's already
+there — this branch already is).
+
+**3. Import the repo into [Vercel](https://vercel.com).** Sign up with
+GitHub, click "Add New... → Project", and select this repository. Vercel
+auto-detects Next.js — you don't need to change any build settings.
+
+**4. Set environment variables** in the Vercel project's Settings →
+Environment Variables, before the first deploy (or redeploy after adding
+them):
+- `DATABASE_URL` — the Neon connection string from step 1
+- `SESSION_SECRET` — any random 32+ character string
+- `ANTHROPIC_API_KEY` — optional, but this is what turns on real Claude
+  parsing/matching instead of the heuristic fallback
+
+**5. Deploy.** Vercel's build runs `prisma migrate deploy && next build`
+(already wired up in `package.json`), so the database schema is created
+automatically on the first deploy — no manual migration step needed.
+
+**6. Seed demo data (once).** Migrations run automatically, but seeding
+doesn't, since you may not want demo accounts in a real deployment. To add
+them: run `DATABASE_URL="<your Neon URL>" npx prisma db seed` from your own
+machine (with this repo checked out and `npm install` run), pointing at
+the same `DATABASE_URL` you set in Vercel. Or just sign up for real through
+the deployed app's `/signup` page instead — seeding is optional.
+
+That's it — Vercel gives you a `https://<project>.vercel.app` URL after the
+first deploy, and every push to this branch redeploys it automatically.
 
 ## Project layout
 

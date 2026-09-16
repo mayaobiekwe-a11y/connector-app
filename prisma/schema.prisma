@@ -2,16 +2,17 @@
 // Designed so any community/network can run on the same schema —
 // nothing here is hardcoded to a single group.
 //
-// SQLite has no native enum type, so enum-like fields are plain Strings.
-// The allowed values for each are defined as TS union types + validators
-// in src/lib/enums.ts, which is the source of truth the app code uses.
+// Enum-like fields are plain Strings rather than native Prisma enums (this
+// schema started on SQLite, which has no enum type, and there's no reason
+// to reintroduce them now). The allowed values for each are defined as TS
+// union types + validators in src/lib/enums.ts, the source of truth.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
