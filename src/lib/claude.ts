@@ -200,6 +200,9 @@ export interface CandidateMember {
   // their own employer) — e.g. "Google", "DC policy circles". The single
   // strongest signal for warm-intro-style requests naming a company/industry.
   relationships: { label: string; notes: string | null }[];
+  // Businesses/projects this member is building outside their day job. For
+  // requests about that space, this can matter more than their actual job.
+  sideHustles: { name: string; description: string | null }[];
 }
 
 export interface RankedMatch {
@@ -263,6 +266,7 @@ export async function rankMatches(
     openToGigWork: c.openToGigWork,
     offers: c.offerings.map((o) => ({ category: o.category, compensation: o.compensation, notes: o.notes })),
     relationships: c.relationships.map((r) => ({ where: r.label, notes: r.notes })),
+    sideHustles: c.sideHustles.map((s) => ({ name: s.name, description: s.description })),
   }));
 
   try {
@@ -274,7 +278,7 @@ export async function rankMatches(
       messages: [
         {
           role: "user",
-          content: `A member submitted this request to a trusted professional referral network:\n\nRequest: "${rawText}"\nParsed intent: ${parsed.intent}\nParsed industry: ${parsed.industry ?? "unspecified"}\nParsed function: ${parsed.function ?? "unspecified"}\nParsed company: ${parsed.company ?? "unspecified"}\n\nHere is the member directory (excluding the requester) as JSON:\n${JSON.stringify(directory, null, 2)}\n\nSelect and rank the top ${limit} members who could best help with this request, considering their industry, title, company, bio, and what they've offered to help with.\n\nEach member's "relationships" list is where they have a solid personal connection — not necessarily their own employer (e.g. a member at a nonprofit might list "Google" because a close friend works there). If the request names a specific company or industry, a member with a matching relationship is usually the single best match, even if their own job is unrelated — call this out explicitly in the reason (e.g. "Dana doesn't work at Acme but has a close contact there.").\n\nIf the parsed intent is JOB_OPENING or HIRING_GIG_WORK, the requester is distributing an opportunity, not asking for help — prioritize members flagged openToNewRoles (for JOB_OPENING) or openToGigWork (for HIRING_GIG_WORK) who also fit the industry/function, and phrase the reason as why they'd be interested (e.g. "Sasha is open to new product roles and has relevant experience."). If the intent is SEEKING_GIG_WORK, the requester wants freelance/contract work for themselves — prioritize members who could plausibly hire them or know of paid opportunities (founders, managers, people with relevant relationships), not members who also just want gig work.\n\nOnly include genuinely plausible matches.`,
+          content: `A member submitted this request to a trusted professional referral network:\n\nRequest: "${rawText}"\nParsed intent: ${parsed.intent}\nParsed industry: ${parsed.industry ?? "unspecified"}\nParsed function: ${parsed.function ?? "unspecified"}\nParsed company: ${parsed.company ?? "unspecified"}\n\nHere is the member directory (excluding the requester) as JSON:\n${JSON.stringify(directory, null, 2)}\n\nSelect and rank the top ${limit} members who could best help with this request, considering their industry, title, company, bio, and what they've offered to help with.\n\nEach member's "relationships" list is where they have a solid personal connection — not necessarily their own employer (e.g. a member at a nonprofit might list "Google" because a close friend works there). If the request names a specific company or industry, a member with a matching relationship is usually the single best match, even if their own job is unrelated — call this out explicitly in the reason (e.g. "Dana doesn't work at Acme but has a close contact there.").\n\nA member's "sideHustles" are businesses or projects they run outside their day job — their day job may just pay the bills while the side hustle is their actual area of expertise or passion. For a request in that space, treat a matching side hustle as at least as strong a signal as their job title (e.g. someone with a day job in accounting but a side hustle as a wedding photographer is a great match for a photography request).\n\nIf the parsed intent is JOB_OPENING or HIRING_GIG_WORK, the requester is distributing an opportunity, not asking for help — prioritize members flagged openToNewRoles (for JOB_OPENING) or openToGigWork (for HIRING_GIG_WORK) who also fit the industry/function, and phrase the reason as why they'd be interested (e.g. "Sasha is open to new product roles and has relevant experience."). If the intent is SEEKING_GIG_WORK, the requester wants freelance/contract work for themselves — prioritize members who could plausibly hire them or know of paid opportunities (founders, managers, people with relevant relationships), not members who also just want gig work.\n\nOnly include genuinely plausible matches.`,
         },
       ],
     });
@@ -298,6 +302,15 @@ export async function rankMatches(
     return { matches: heuristicRank(rawText, parsed, candidates, limit), usedFallback: true };
   }
 }
+
+// Common long-ish words excluded from the "distinctive shared word" side
+// hustle check below, so generic phrasing doesn't manufacture false matches.
+const COMMON_LONG_WORDS = new Set([
+  "someone", "anybody", "anyone", "network", "connect", "connection", "connections",
+  "looking", "working", "worked", "resource", "resources", "support", "question",
+  "another", "helping", "something", "business", "company", "companies", "people",
+  "person", "member", "members", "group", "groups", "community", "general",
+]);
 
 // Deterministic keyword/overlap scoring fallback for ranking.
 function heuristicRank(
@@ -355,8 +368,33 @@ function heuristicRank(
         reasons.push(`has ${parsed.function} experience`);
       }
     }
+    // A matching side hustle counts at least as much as the day job — for
+    // a lot of people the side hustle is the thing they actually want to
+    // be known/asked for. A precise function/industry hit earns the full
+    // boost; so does a fairly distinctive shared word (the request might
+    // name a craft/niche, like "woodworking", that isn't in the parser's
+    // fixed industry/function keyword lists at all). Looser overlap is
+    // credited only via the generic word scan below.
+    const matchingHustle = c.sideHustles.find((s) => {
+      const haystack = `${s.name} ${s.description ?? ""}`.toLowerCase();
+      if (parsed.function && haystack.includes(parsed.function.toLowerCase())) return true;
+      if (parsed.industry && haystack.includes(parsed.industry.toLowerCase())) return true;
+      return text
+        .split(/\s+/)
+        .some((word) => word.length >= 7 && !COMMON_LONG_WORDS.has(word) && haystack.includes(word));
+    });
+    if (matchingHustle) {
+      score += 0.3;
+      reasons.push(`runs ${matchingHustle.name} on the side`);
+    }
+    const hustleText = c.sideHustles.map((s) => `${s.name} ${s.description ?? ""}`).join(" ").toLowerCase();
     for (const word of text.split(/\s+/)) {
-      if (word.length > 4 && ((c.bio && c.bio.toLowerCase().includes(word)) || (c.title && c.title.toLowerCase().includes(word)))) {
+      if (
+        word.length > 4 &&
+        ((c.bio && c.bio.toLowerCase().includes(word)) ||
+          (c.title && c.title.toLowerCase().includes(word)) ||
+          hustleText.includes(word))
+      ) {
         score += 0.02;
       }
     }

@@ -55,6 +55,21 @@ export async function getMemberPoints(memberId: string): Promise<number> {
   return agg._sum.points ?? 0;
 }
 
+// Bulk variant for listing pages (directory, admin) so they don't do one
+// aggregate query per member.
+export async function getPointsForMembers(memberIds: string[]): Promise<Record<string, number>> {
+  if (memberIds.length === 0) return {};
+  const groups = await prisma.creditEntry.groupBy({
+    by: ["memberId"],
+    where: { memberId: { in: memberIds } },
+    _sum: { points: true },
+  });
+  const result: Record<string, number> = {};
+  for (const id of memberIds) result[id] = 0;
+  for (const g of groups) result[g.memberId] = g._sum.points ?? 0;
+  return result;
+}
+
 export function reasonForRating(rating: number): CreditReason {
   if (rating >= 4) return "COMPLETED_POSITIVE";
   if (rating === 3) return "COMPLETED_NEUTRAL";

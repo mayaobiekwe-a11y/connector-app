@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import type { HelpCategory, CompensationType } from "../src/lib/enums";
+import type { HelpCategory, CompensationType, ProfileType } from "../src/lib/enums";
 
 const prisma = new PrismaClient();
 
@@ -31,8 +31,11 @@ async function main() {
     isAdmin?: boolean;
     openToRoles?: boolean;
     openToGigWork?: boolean;
+    profileType?: ProfileType;
+    monthlyCapacity?: number;
     offerings: { category: HelpCategory; compensation: CompensationType; notes?: string }[];
     relationships?: { label: string; notes?: string }[];
+    sideHustles?: { name: string; description?: string; url?: string }[];
   };
 
   const members: SeedMember[] = [
@@ -76,11 +79,19 @@ async function main() {
       location: "New York, NY",
       bio: "Leads a backend engineering team at a fintech startup. Loves doing mock interviews for engineers.",
       openToGigWork: true,
+      profileType: "SERVICE_PROVIDER",
+      monthlyCapacity: 5,
       offerings: [
         { category: "MOCK_INTERVIEW", compensation: "FREE" },
         { category: "PAID_CONSULTING", compensation: "PAID", notes: "1:1 career coaching for engineers, $75/session." },
       ],
       relationships: [{ label: "Stripe", notes: "Ex-teammate now on the infra team." }],
+      // The day job pays the bills; the woodworking business is what he
+      // actually wants to be known for — and a good match for anyone
+      // asking about furniture-making, not engineering.
+      sideHustles: [
+        { name: "Chen Woodworks", description: "Custom furniture and woodworking, evenings and weekends." },
+      ],
     },
     {
       name: "Sasha Ivanova",
@@ -96,6 +107,7 @@ async function main() {
         { category: "COFFEE_CHAT", compensation: "FREE" },
       ],
       relationships: [{ label: "Meta", notes: "Close friend on the product team." }],
+      sideHustles: [{ name: "Firehouse Ceramics", description: "A small pottery studio she runs on weekends." }],
     },
     {
       name: "David Okafor",
@@ -156,6 +168,9 @@ async function main() {
         isAdmin: m.isAdmin ?? false,
         openToRoles: m.openToRoles ?? false,
         openToGigWork: m.openToGigWork ?? false,
+        profileType: m.profileType ?? "GENERAL",
+        subscriptionStatus: m.profileType === "SERVICE_PROVIDER" ? "ACTIVE" : "NONE",
+        monthlyCapacity: m.monthlyCapacity,
         communityId: community.id,
         offerings: {
           create: m.offerings.map((o) => ({
@@ -166,6 +181,9 @@ async function main() {
         },
         relationships: {
           create: (m.relationships ?? []).map((r) => ({ label: r.label, notes: r.notes })),
+        },
+        sideHustles: {
+          create: (m.sideHustles ?? []).map((s) => ({ name: s.name, description: s.description, url: s.url })),
         },
       },
     });

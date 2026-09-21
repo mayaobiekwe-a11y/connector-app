@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentMember } from "@/lib/session";
 import ProfileEditForm from "@/components/ProfileEditForm";
-import type { HelpCategory, CompensationType } from "@/lib/enums";
+import type { HelpCategory, CompensationType, ProfileType } from "@/lib/enums";
 
 export default async function ProfileEditPage({
   searchParams,
@@ -30,8 +30,13 @@ export default async function ProfileEditPage({
           location: member.location ?? "",
           bio: member.bio ?? "",
           linkedinUrl: member.linkedinUrl ?? "",
+          avatarUrl: member.avatarUrl ?? "",
           openToRoles: member.openToRoles,
           openToGigWork: member.openToGigWork,
+          profileType: member.profileType as ProfileType,
+          subscriptionStatus: member.subscriptionStatus,
+          monthlyCapacity: member.monthlyCapacity != null ? String(member.monthlyCapacity) : "",
+          visibleInDirectory: member.visibleInDirectory,
         }}
         offerings={member.offerings.map((o) => ({
           category: o.category as HelpCategory,
@@ -39,6 +44,11 @@ export default async function ProfileEditPage({
           notes: o.notes ?? "",
         }))}
         relationships={member.relationships.map((r) => ({ label: r.label, notes: r.notes ?? "" }))}
+        sideHustles={member.sideHustles.map((s) => ({
+          name: s.name,
+          description: s.description ?? "",
+          url: s.url ?? "",
+        }))}
       />
     </div>
   );

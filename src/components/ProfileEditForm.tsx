@@ -2,9 +2,10 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { HELP_CATEGORIES, COMPENSATION_TYPES, type HelpCategory, type CompensationType } from "@/lib/enums";
-import { HELP_CATEGORY_LABELS, COMPENSATION_LABELS } from "@/lib/labels";
+import { HELP_CATEGORIES, COMPENSATION_TYPES, type HelpCategory, type CompensationType, type ProfileType } from "@/lib/enums";
+import { HELP_CATEGORY_LABELS, COMPENSATION_LABELS, PROFILE_TYPE_LABELS } from "@/lib/labels";
 import RelationshipsInput, { type RelationshipRow } from "./RelationshipsInput";
+import SideHustlesInput, { type SideHustleRow } from "./SideHustlesInput";
 
 interface OfferingRow {
   category: HelpCategory;
@@ -21,23 +22,31 @@ interface MemberFields {
   location: string;
   bio: string;
   linkedinUrl: string;
+  avatarUrl: string;
   openToRoles: boolean;
   openToGigWork: boolean;
+  profileType: ProfileType;
+  subscriptionStatus: string;
+  monthlyCapacity: string;
+  visibleInDirectory: boolean;
 }
 
 export default function ProfileEditForm({
   member,
   offerings,
   relationships,
+  sideHustles,
 }: {
   member: MemberFields;
   offerings: OfferingRow[];
   relationships: RelationshipRow[];
+  sideHustles: SideHustleRow[];
 }) {
   const router = useRouter();
   const [form, setForm] = useState(member);
   const [rows, setRows] = useState<OfferingRow[]>(offerings);
   const [relRows, setRelRows] = useState<RelationshipRow[]>(relationships);
+  const [hustleRows, setHustleRows] = useState<SideHustleRow[]>(sideHustles);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -62,7 +71,7 @@ export default function ProfileEditForm({
     setError(null);
     setSaved(false);
 
-    const [profileRes, offeringsRes, relationshipsRes] = await Promise.all([
+    const [profileRes, offeringsRes, relationshipsRes, sideHustlesRes] = await Promise.all([
       fetch("/api/members/me", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -74,8 +83,12 @@ export default function ProfileEditForm({
           location: form.location,
           bio: form.bio,
           linkedinUrl: form.linkedinUrl,
+          avatarUrl: form.avatarUrl,
           openToRoles: form.openToRoles,
           openToGigWork: form.openToGigWork,
+          profileType: form.profileType,
+          monthlyCapacity: form.monthlyCapacity ? Number(form.monthlyCapacity) : null,
+          visibleInDirectory: form.visibleInDirectory,
         }),
       }),
       fetch("/api/members/me/offerings", {
@@ -94,10 +107,23 @@ export default function ProfileEditForm({
             .map((r) => ({ label: r.label.trim(), notes: r.notes.trim() || undefined })),
         }),
       }),
+      fetch("/api/members/me/side-hustles", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sideHustles: hustleRows
+            .filter((s) => s.name.trim())
+            .map((s) => ({
+              name: s.name.trim(),
+              description: s.description.trim() || undefined,
+              url: s.url.trim() || undefined,
+            })),
+        }),
+      }),
     ]);
 
     setSaving(false);
-    if (!profileRes.ok || !offeringsRes.ok || !relationshipsRes.ok) {
+    if (!profileRes.ok || !offeringsRes.ok || !relationshipsRes.ok || !sideHustlesRes.ok) {
       setError("Something went wrong saving your profile");
       return;
     }
@@ -145,6 +171,16 @@ export default function ProfileEditForm({
             onChange={(e) => update("linkedinUrl", e.target.value)}
           />
         </div>
+        <div>
+          <label className="label">Photo URL (optional)</label>
+          <input
+            className="input"
+            type="url"
+            placeholder="https://..."
+            value={form.avatarUrl}
+            onChange={(e) => update("avatarUrl", e.target.value)}
+          />
+        </div>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-6 pt-1">
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
@@ -163,6 +199,70 @@ export default function ProfileEditForm({
             Open to gig/freelance work
           </label>
         </div>
+      </div>
+
+      <div className="card p-5 space-y-4">
+        <h2 className="font-semibold text-gray-900">Profile type & visibility</h2>
+        <div className="flex gap-2">
+          {(Object.keys(PROFILE_TYPE_LABELS) as ProfileType[]).map((pt) => (
+            <button
+              type="button"
+              key={pt}
+              onClick={() => update("profileType", pt)}
+              className={`flex-1 text-sm rounded-lg border px-3 py-2 text-left ${
+                form.profileType === pt
+                  ? "bg-brand-600 text-white border-brand-600"
+                  : "bg-white text-gray-700 border-gray-300"
+              }`}
+            >
+              {PROFILE_TYPE_LABELS[pt]}
+              {pt === "SERVICE_PROVIDER" && (
+                <span className={`block text-xs ${form.profileType === pt ? "text-brand-100" : "text-gray-400"}`}>
+                  Paid subscription
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+        {form.profileType === "SERVICE_PROVIDER" && (
+          <p className="text-xs text-gray-500">
+            Subscription status: <span className="font-medium">{form.subscriptionStatus}</span> (no real
+            billing in this prototype — this updates automatically when you switch profile type).
+          </p>
+        )}
+        <div>
+          <label className="label">Monthly capacity (optional)</label>
+          <input
+            className="input"
+            type="number"
+            min={0}
+            placeholder="e.g. 3 — how many requests you can take on per month"
+            value={form.monthlyCapacity}
+            onChange={(e) => update("monthlyCapacity", e.target.value)}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Once you're matched to this many open requests in a month, you'll stop being suggested
+            for new ones until the next month.
+          </p>
+        </div>
+        <label className="flex items-start gap-2 text-sm text-gray-700">
+          <input
+            type="checkbox"
+            className="mt-0.5"
+            checked={form.visibleInDirectory}
+            onChange={(e) => update("visibleInDirectory", e.target.checked)}
+          />
+          <span>
+            Show my profile in the member directory and in AI matching.
+            <span className="block text-xs text-gray-400">
+              Turn this off to stop appearing anywhere, without deleting your account.
+            </span>
+          </span>
+        </label>
+      </div>
+
+      <div className="card p-5">
+        <SideHustlesInput rows={hustleRows} onChange={setHustleRows} />
       </div>
 
       <div className="card p-5">

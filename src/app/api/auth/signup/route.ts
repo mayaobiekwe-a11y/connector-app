@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { slugify } from "@/lib/slugify";
+import { PROFILE_TYPES } from "@/lib/enums";
 
 const schema = z.object({
   name: z.string().min(1).max(100),
@@ -15,11 +16,25 @@ const schema = z.object({
   location: z.string().max(100).optional(),
   bio: z.string().max(1000).optional(),
   linkedinUrl: z.string().trim().url().max(300).optional().or(z.literal("")),
+  avatarUrl: z.string().trim().url().max(500).optional().or(z.literal("")),
+  profileType: z.enum(PROFILE_TYPES).optional(),
+  monthlyCapacity: z.number().int().min(0).max(1000).optional(),
+  visibleInDirectory: z.boolean().optional(),
   communityId: z.string().optional(),
   newCommunityName: z.string().max(100).optional(),
   relationships: z
     .array(z.object({ label: z.string().min(1).max(120), notes: z.string().max(300).optional() }))
     .max(20)
+    .optional(),
+  sideHustles: z
+    .array(
+      z.object({
+        name: z.string().min(1).max(120),
+        description: z.string().max(300).optional(),
+        url: z.string().trim().url().max(500).optional().or(z.literal("")),
+      })
+    )
+    .max(10)
     .optional(),
 });
 
@@ -55,6 +70,7 @@ export async function POST(req: Request) {
   }
 
   const passwordHash = await bcrypt.hash(data.password, 10);
+  const profileType = data.profileType ?? "GENERAL";
   const member = await prisma.member.create({
     data: {
       email: data.email,
@@ -66,9 +82,23 @@ export async function POST(req: Request) {
       location: data.location,
       bio: data.bio,
       linkedinUrl: data.linkedinUrl || null,
+      avatarUrl: data.avatarUrl || null,
+      profileType,
+      // No real billing in this prototype: a Service Provider's subscription
+      // starts "ACTIVE" on signup rather than gating on payment.
+      subscriptionStatus: profileType === "SERVICE_PROVIDER" ? "ACTIVE" : "NONE",
+      monthlyCapacity: data.monthlyCapacity,
+      visibleInDirectory: data.visibleInDirectory ?? true,
       communityId,
       relationships: data.relationships?.length
         ? { create: data.relationships.filter((r) => r.label.trim()) }
+        : undefined,
+      sideHustles: data.sideHustles?.length
+        ? {
+            create: data.sideHustles
+              .filter((s) => s.name.trim())
+              .map((s) => ({ name: s.name, description: s.description, url: s.url || undefined })),
+          }
         : undefined,
     },
   });

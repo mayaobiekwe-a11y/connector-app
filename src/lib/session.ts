@@ -26,7 +26,7 @@ export async function getCurrentMember() {
   if (!session.memberId) return null;
   const member = await prisma.member.findUnique({
     where: { id: session.memberId },
-    include: { community: true, offerings: true, relationships: true },
+    include: { community: true, offerings: true, relationships: true, sideHustles: true },
   });
   return member;
 }

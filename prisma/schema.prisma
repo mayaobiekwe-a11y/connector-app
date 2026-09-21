@@ -30,6 +30,9 @@ model Community {
   requests Request[]
 }
 
+// profileType: GENERAL | SERVICE_PROVIDER
+// subscriptionStatus: NONE | ACTIVE | INACTIVE (only meaningful for SERVICE_PROVIDER;
+// a status flag set manually for the prototype, no real billing integration)
 model Member {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -41,18 +44,32 @@ model Member {
   location     String?
   bio          String?
   linkedinUrl  String? // optional; not required to join
+  avatarUrl    String? // optional; a pasted image URL (no file upload in this prototype)
   isAdmin      Boolean  @default(false)
   // "Open to work" style signals used to match opportunity-style requests
   // (job openings / gig-hiring asks) against interested members.
   openToRoles   Boolean @default(false)
   openToGigWork Boolean @default(false)
-  createdAt    DateTime @default(now())
+
+  profileType        String  @default("GENERAL")
+  subscriptionStatus String  @default("NONE")
+  // How many open requests this member wants to take on per month. Null
+  // means no self-imposed limit. Used to avoid overloading popular
+  // connectors and to keep the responsiveness badge meaningful.
+  monthlyCapacity Int?
+  // Whether this member appears in the directory and the AI matching pool.
+  // Off by default it'd defeat the point of joining, so it defaults to true;
+  // members can opt out for privacy.
+  visibleInDirectory Boolean @default(true)
+
+  createdAt DateTime @default(now())
 
   communityId String
   community   Community @relation(fields: [communityId], references: [id])
 
   offerings     HelpOffering[]
   relationships Relationship[]
+  sideHustles   SideHustle[]
 
   requestsMade    Request[]     @relation("RequestsMade")
   matches         Match[]       @relation("MatchesForMember")
@@ -91,6 +108,23 @@ model Relationship {
   label     String // e.g. "Google", "Meridian Health leadership", "DC policy circles"
   notes     String?
   createdAt DateTime @default(now())
+
+  @@index([memberId])
+}
+
+// A business, passion project, or venture a member is building outside
+// their day job. For a lot of members the day job pays the bills but the
+// side hustle is what they actually want to be known for and want help
+// advancing — so it's modeled and surfaced separately from title/company,
+// not folded into the bio.
+model SideHustle {
+  id          String   @id @default(cuid())
+  memberId    String
+  member      Member   @relation(fields: [memberId], references: [id])
+  name        String
+  description String?
+  url         String?
+  createdAt   DateTime @default(now())
 
   @@index([memberId])
 }

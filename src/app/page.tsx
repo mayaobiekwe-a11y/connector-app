@@ -10,12 +10,11 @@ export default async function HomePage() {
     <div className="py-10 sm:py-16">
       <div className="max-w-2xl">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
-          Warm intros, from people who actually know you.
+          Everyone needs a Marie.
         </h1>
         <p className="mt-4 text-lg text-gray-600">
-          Connector is a trusted network for referrals, mentorship, and career help.
-          Ask in plain language — our AI finds the right person in your network and
-          asks them directly, instead of a cold blast on LinkedIn.
+          Connector is a trusted network for referrals, mentorship, and career help — built to
+          work the way the best-connected person you know already does.
         </p>
         <div className="mt-8 flex gap-3">
           <Link href="/signup" className="btn-primary text-base px-6 py-3">
@@ -26,6 +25,28 @@ export default async function HomePage() {
           </Link>
         </div>
       </div>
+
+      <div className="mt-12 max-w-2xl border-l-4 border-brand-200 pl-5 sm:pl-6">
+        <p className="text-gray-600">
+          Growing up, if my mom knew someone needed a job or was looking for a resource, she took
+          it seriously. She remembered people — not just their names, but what they needed and
+          what they knew. She was an extrovert who was always meeting someone new, and when she
+          met someone whose line of work lined up with someone else's need, she made the
+          connection. No app, no form. Just paying attention, and following through.
+        </p>
+        <p className="mt-4 text-gray-600">
+          Not a lot of people are like Marie. Most networks aren't. LinkedIn is full of messages
+          that never get a reply. Connector exists because that kind of person shouldn't be rare —
+          your community already has people who'd help if you asked them directly. It just needs
+          someone paying attention, and asking on your behalf.
+        </p>
+      </div>
+
+      <p className="mt-8 max-w-2xl text-lg font-medium text-gray-900">
+        A community isn't a stagnant list of names in a group chat. It's a place where people
+        actually connect and build together — where showing up means sharing what you know, and
+        opening yourself to what someone else needs.
+      </p>
 
       <div className="mt-14 grid gap-6 sm:grid-cols-2">
         <div className="card p-5">

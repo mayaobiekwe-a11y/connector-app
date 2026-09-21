@@ -48,3 +48,8 @@ export const OUTCOME_LABELS: Record<string, string> = {
   DIDNT_WORK_OUT: "Didn't work out",
   NO_RESPONSE: "No response",
 };
+
+export const PROFILE_TYPE_LABELS: Record<string, string> = {
+  GENERAL: "General Member",
+  SERVICE_PROVIDER: "Service Provider",
+};

@@ -21,6 +21,9 @@ export default async function Navbar() {
               <Link href="/dashboard" className="hidden sm:inline text-gray-600 hover:text-brand-700">
                 Dashboard
               </Link>
+              <Link href="/directory" className="hidden sm:inline text-gray-600 hover:text-brand-700">
+                Directory
+              </Link>
               {member.isAdmin && (
                 <Link href="/admin" className="hidden sm:inline text-gray-600 hover:text-brand-700">
                   Admin

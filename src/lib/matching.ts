@@ -27,11 +27,18 @@ export async function createRequestWithMatches(requesterId: string, communityId:
   });
 
   const candidateMembers = await prisma.member.findMany({
-    where: { communityId, id: { not: requesterId } },
-    include: { offerings: true, relationships: true },
+    // Only match members who've opted into the directory/matching pool.
+    where: { communityId, id: { not: requesterId }, visibleInDirectory: true },
+    include: { offerings: true, relationships: true, sideHustles: true },
   });
 
-  const candidates: CandidateMember[] = candidateMembers.map((m) => ({
+  // Members with a monthlyCapacity who've already hit it (accepted matches
+  // since the start of this calendar month) are excluded from new matches
+  // so the busiest connectors don't get buried in requests.
+  const overCapacity = new Set(await getMembersOverCapacity(candidateMembers));
+  const eligibleMembers = candidateMembers.filter((m) => !overCapacity.has(m.id));
+
+  const candidates: CandidateMember[] = eligibleMembers.map((m) => ({
     id: m.id,
     name: m.name,
     title: m.title,
@@ -46,6 +53,7 @@ export async function createRequestWithMatches(requesterId: string, communityId:
       notes: o.notes,
     })),
     relationships: m.relationships.map((r) => ({ label: r.label, notes: r.notes })),
+    sideHustles: m.sideHustles.map((s) => ({ name: s.name, description: s.description })),
   }));
 
   const { matches } = await rankMatches(rawText, parsed, candidates, MATCH_LIMIT);
@@ -68,4 +76,30 @@ export async function createRequestWithMatches(requesterId: string, communityId:
     where: { id: request.id },
     include: { matches: { include: { member: true }, orderBy: { rank: "asc" } } },
   });
+}
+
+// Returns the ids of the given members who've already been accepted for
+// as many (or more) requests as their monthlyCapacity this calendar month.
+async function getMembersOverCapacity(
+  members: { id: string; monthlyCapacity: number | null }[]
+): Promise<string[]> {
+  const capped = members.filter((m) => m.monthlyCapacity != null);
+  if (capped.length === 0) return [];
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const counts = await prisma.match.groupBy({
+    by: ["memberId"],
+    where: {
+      memberId: { in: capped.map((m) => m.id) },
+      status: "ACCEPTED",
+      createdAt: { gte: startOfMonth },
+    },
+    _count: { _all: true },
+  });
+  const countByMember = new Map(counts.map((c) => [c.memberId, c._count._all]));
+
+  return capped.filter((m) => (countByMember.get(m.id) ?? 0) >= m.monthlyCapacity!).map((m) => m.id);
 }

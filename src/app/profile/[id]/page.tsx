@@ -3,8 +3,9 @@ import Link from "next/link";
 import { getCurrentMember } from "@/lib/session";
 import { prisma } from "@/lib/db";
 import { getMemberPoints, badgeForPoints, nextBadge } from "@/lib/credit";
-import { HELP_CATEGORY_LABELS, COMPENSATION_LABELS, OUTCOME_LABELS } from "@/lib/labels";
+import { HELP_CATEGORY_LABELS, COMPENSATION_LABELS, OUTCOME_LABELS, PROFILE_TYPE_LABELS } from "@/lib/labels";
 import StarRatingDisplay from "@/components/StarRatingDisplay";
+import Avatar from "@/components/Avatar";
 
 export default async function ProfilePage({ params }: { params: { id: string } }) {
   const viewer = await getCurrentMember();
@@ -12,7 +13,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
 
   const profileMember = await prisma.member.findUnique({
     where: { id: params.id },
-    include: { offerings: true, community: true, relationships: true },
+    include: { offerings: true, community: true, relationships: true, sideHustles: true },
   });
   if (!profileMember) notFound();
 
@@ -38,15 +39,25 @@ export default async function ProfilePage({ params }: { params: { id: string } }
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="card p-5">
         <div className="flex items-start justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">{profileMember.name}</h1>
-            <p className="text-sm text-gray-500">
-              {profileMember.title ?? "Member"} {profileMember.company ? `at ${profileMember.company}` : ""}
-            </p>
-            <p className="text-xs text-gray-400 mt-1">
-              {profileMember.industry ?? ""} {profileMember.location ? `· ${profileMember.location}` : ""}
-            </p>
-            <p className="text-xs text-gray-400 mt-1">{profileMember.community.name}</p>
+          <div className="flex items-start gap-3">
+            <Avatar name={profileMember.name} avatarUrl={profileMember.avatarUrl} size={56} />
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl font-semibold text-gray-900">{profileMember.name}</h1>
+                {profileMember.profileType === "SERVICE_PROVIDER" && (
+                  <span className="badge bg-purple-50 text-purple-700 border border-purple-100">
+                    {PROFILE_TYPE_LABELS.SERVICE_PROVIDER}
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-gray-500">
+                {profileMember.title ?? "Member"} {profileMember.company ? `at ${profileMember.company}` : ""}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">
+                {profileMember.industry ?? ""} {profileMember.location ? `· ${profileMember.location}` : ""}
+              </p>
+              <p className="text-xs text-gray-400 mt-1">{profileMember.community.name}</p>
+            </div>
           </div>
           {isSelf && (
             <Link href="/profile/edit" className="btn-secondary shrink-0">
@@ -55,12 +66,39 @@ export default async function ProfilePage({ params }: { params: { id: string } }
           )}
         </div>
         {profileMember.bio && <p className="text-sm text-gray-600 mt-4">{profileMember.bio}</p>}
+        {profileMember.sideHustles.length > 0 && (
+          <div className="mt-4 space-y-1">
+            {profileMember.sideHustles.map((s) => (
+              <p key={s.id} className="text-sm">
+                <span className="text-gray-400">🚀 Also building:</span>{" "}
+                {s.url ? (
+                  <a
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-brand-700 hover:underline"
+                  >
+                    {s.name}
+                  </a>
+                ) : (
+                  <span className="font-medium text-gray-800">{s.name}</span>
+                )}
+                {s.description && <span className="text-gray-500"> — {s.description}</span>}
+              </p>
+            ))}
+          </div>
+        )}
         <div className="flex flex-wrap gap-2 mt-4">
           {profileMember.openToRoles && (
             <span className="badge bg-green-50 text-green-700 border border-green-100">Open to new roles</span>
           )}
           {profileMember.openToGigWork && (
             <span className="badge bg-green-50 text-green-700 border border-green-100">Open to gig work</span>
+          )}
+          {profileMember.monthlyCapacity != null && (
+            <span className="badge bg-gray-100 text-gray-600">
+              Takes up to {profileMember.monthlyCapacity}/month
+            </span>
           )}
           {profileMember.linkedinUrl && (
             <a
@@ -73,6 +111,12 @@ export default async function ProfilePage({ params }: { params: { id: string } }
             </a>
           )}
         </div>
+        {isSelf && !profileMember.visibleInDirectory && (
+          <p className="text-xs text-amber-600 mt-3">
+            Your profile is currently hidden from the directory and AI matching. Turn this back on
+            from <Link href="/profile/edit" className="underline">Edit profile</Link>.
+          </p>
+        )}
       </div>
 
       <div className="card p-5">

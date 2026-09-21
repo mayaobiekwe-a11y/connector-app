@@ -53,6 +53,41 @@ best match for a warm intro, even if their own job is unrelated — the
 match reason calls this out explicitly (e.g. "Jordan doesn't work at
 Google but has a relationship there.").
 
+### Side hustles count too
+
+A member's day job might just pay the bills — their side hustle or passion
+project can be what they actually want to be known for, and matching
+treats it that way: a request about woodworking will surface someone whose
+*side hustle* is woodworking even if their job title has nothing to do
+with it. Side hustles (name, one-line description, optional link) are
+editable on the profile page and shown prominently on both the profile and
+the directory card.
+
+### Profile types: General Member vs. Service Provider
+
+Every member picks a profile type at signup (editable later): **General
+Member**, or **Service Provider** — someone offering paid services to the
+community, conceptually gated by a subscription. There's no real billing
+in this prototype (see Notes below); switching to Service Provider just
+flips a `subscriptionStatus` flag to `ACTIVE`. Service Providers get a
+visible tag on their profile and in the directory.
+
+### Directory + visibility + capacity
+
+`/directory` lists every member in your community (name, photo, blurb,
+side hustles, relationships, badge), with a client-side search box —
+this is "profiles show in the group," made literal. Two things members
+control from their profile:
+- **Visible in directory** — off by default it'd defeat the point of
+  joining, so it's on by default; members can opt out to stop appearing in
+  the directory or the AI matching pool entirely, without deleting their
+  account.
+- **Monthly capacity** — an optional cap on how many requests someone
+  wants to be matched to per month. Once a member has that many *accepted*
+  matches in the current calendar month, matching stops suggesting them
+  until the next month — so your most helpful people don't get flooded
+  into unresponsiveness.
+
 ## Data model
 
 See `prisma/schema.prisma`. Everything is scoped under a `Community` so the
@@ -142,23 +177,26 @@ first deploy, and every push to this branch redeploys it automatically.
 ## Project layout
 
 ```
-prisma/schema.prisma       Data model (includes Relationship, open-to-work flags)
+prisma/schema.prisma       Data model (Relationship, SideHustle, profile type, capacity, ...)
 prisma/seed.ts             Demo community + members + sample requests (help + opportunity)
 src/lib/claude.ts          Claude parsing + ranking, with heuristic fallback
-src/lib/matching.ts        Orchestrates parse -> rank -> persist Request/Match
+src/lib/matching.ts        Orchestrates parse -> rank -> persist Request/Match; visibility + capacity filtering
 src/lib/credit.ts          Points ledger + badge tier logic
 src/lib/session.ts         iron-session cookie auth helpers
 src/app/dashboard          Ask bar, "requests for you", "your asks"
 src/app/requests/[id]      Request detail: matches, accept/decline, thread, review
-src/app/profile/[id]       Public profile: badge, offerings, help history
-src/app/profile/edit       Edit profile + manage what you offer to help with
+src/app/profile/[id]       Public profile: badge, offerings, relationships, side hustles, help history
+src/app/profile/edit       Edit profile, offerings, relationships, side hustles, visibility/capacity
+src/app/directory          Browsable member directory with search
 src/app/admin              Admin view of all requests, AI parsing, match status
 ```
 
 ## Notes / known limitations (prototype scope)
 
 - No payment processing — `compensation` (free / barter / tip / paid) is
-  just a status field on each offering, as specified.
+  just a status field on each offering, and a Service Provider's
+  `subscriptionStatus` is a self-service flag with no real billing behind
+  it, as specified.
 - Auth is intentionally minimal (email + password, no email verification,
   no password reset) — fine for a prototype, not for production.
 - The admin view is scoped to the logged-in admin's own community.

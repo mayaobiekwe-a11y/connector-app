@@ -15,6 +15,16 @@ export type HelpCategory = (typeof HELP_CATEGORIES)[number];
 export const COMPENSATION_TYPES = ["FREE", "BARTER", "TIP", "PAID"] as const;
 export type CompensationType = (typeof COMPENSATION_TYPES)[number];
 
+// GENERAL: a normal member. SERVICE_PROVIDER: an individual or business
+// offering paid services to the community, gated by a subscription.
+export const PROFILE_TYPES = ["GENERAL", "SERVICE_PROVIDER"] as const;
+export type ProfileType = (typeof PROFILE_TYPES)[number];
+
+// Only meaningful when profileType is SERVICE_PROVIDER. This is a status
+// flag set manually for the prototype — no real billing integration.
+export const SUBSCRIPTION_STATUSES = ["NONE", "ACTIVE", "INACTIVE"] as const;
+export type SubscriptionStatus = (typeof SUBSCRIPTION_STATUSES)[number];
+
 export const REQUEST_INTENTS = [
   "SPECIFIC_ROLE",
   "INFORMATIONAL_CHAT",
