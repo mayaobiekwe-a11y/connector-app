@@ -67,6 +67,7 @@ export async function createRequestWithMatches(requesterId: string, communityId:
         score: m.score,
         reason: m.reason,
         status: "PENDING",
+        source: "AI_MATCH",
       })),
     });
     await prisma.request.update({ where: { id: request.id }, data: { status: "MATCHED" } });

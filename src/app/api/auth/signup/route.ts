@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { slugify } from "@/lib/slugify";
 import { PROFILE_TYPES } from "@/lib/enums";
+import { awardAskCredits } from "@/lib/askCredits";
 
 const schema = z.object({
   name: z.string().min(1).max(100),
@@ -102,6 +103,8 @@ export async function POST(req: Request) {
         : undefined,
     },
   });
+
+  await awardAskCredits(member.id, "SIGNUP_BONUS");
 
   const session = await getSession();
   session.memberId = member.id;

@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import type { HelpCategory, CompensationType, ProfileType } from "../src/lib/enums";
+import { ASK_CREDIT_AMOUNTS } from "../src/lib/askCredits";
 
 const prisma = new PrismaClient();
 
@@ -188,6 +189,15 @@ async function main() {
       },
     });
     created[m.email] = member;
+
+    const hasSignupBonus = await prisma.askCreditEntry.findFirst({
+      where: { memberId: member.id, reason: "SIGNUP_BONUS" },
+    });
+    if (!hasSignupBonus) {
+      await prisma.askCreditEntry.create({
+        data: { memberId: member.id, amount: ASK_CREDIT_AMOUNTS.SIGNUP_BONUS, reason: "SIGNUP_BONUS" },
+      });
+    }
   }
 
   // A sample completed request to make the profile/admin/credit views feel real.
@@ -251,6 +261,30 @@ async function main() {
     await prisma.creditEntry.create({
       data: { memberId: helper.id, points: 15, reason: "COMPLETED_POSITIVE", refId: match.id },
     });
+    await prisma.askCreditEntry.create({
+      data: {
+        memberId: requester.id,
+        amount: ASK_CREDIT_AMOUNTS.ASK_SPENT,
+        reason: "ASK_SPENT",
+        refId: request.id,
+      },
+    });
+    await prisma.askCreditEntry.create({
+      data: {
+        memberId: helper.id,
+        amount: ASK_CREDIT_AMOUNTS.RESPONDED_TO_REQUEST,
+        reason: "RESPONDED_TO_REQUEST",
+        refId: match.id,
+      },
+    });
+    await prisma.askCreditEntry.create({
+      data: {
+        memberId: helper.id,
+        amount: ASK_CREDIT_AMOUNTS.COMPLETED_POSITIVE,
+        reason: "COMPLETED_POSITIVE",
+        refId: match.id,
+      },
+    });
   }
 
   // Sample opportunity-style requests (job opening + gig hiring) so the
@@ -285,6 +319,14 @@ async function main() {
         status: "PENDING",
       },
     });
+    await prisma.askCreditEntry.create({
+      data: {
+        memberId: requester.id,
+        amount: ASK_CREDIT_AMOUNTS.ASK_SPENT,
+        reason: "ASK_SPENT",
+        refId: jobRequest.id,
+      },
+    });
   }
 
   const existingGigRequest = await prisma.request.findFirst({
@@ -311,6 +353,14 @@ async function main() {
         score: 0.6,
         reason: "Marcus is open to gig/freelance work.",
         status: "PENDING",
+      },
+    });
+    await prisma.askCreditEntry.create({
+      data: {
+        memberId: requester.id,
+        amount: ASK_CREDIT_AMOUNTS.ASK_SPENT,
+        reason: "ASK_SPENT",
+        refId: gigRequest.id,
       },
     });
   }

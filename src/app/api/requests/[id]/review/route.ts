@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getCurrentMember } from "@/lib/session";
 import { awardCredit, reasonForRating } from "@/lib/credit";
+import { awardAskCredits } from "@/lib/askCredits";
 import { REQUEST_OUTCOMES } from "@/lib/enums";
 
 const schema = z.object({
@@ -55,6 +56,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   if (outcome === "HELPED" && rating) {
     await awardCredit(match.memberId, reasonForRating(rating), match.id);
+    if (rating >= 4) {
+      await awardAskCredits(match.memberId, "COMPLETED_POSITIVE", match.id);
+    }
   } else if (outcome === "DIDNT_WORK_OUT") {
     await awardCredit(match.memberId, "DIDNT_WORK_OUT", match.id);
   }

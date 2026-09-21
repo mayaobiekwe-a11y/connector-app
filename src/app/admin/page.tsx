@@ -86,7 +86,9 @@ export default async function AdminPage() {
                 <div className="flex flex-wrap gap-2">
                   {r.matches.map((m) => (
                     <span key={m.id} className="text-xs bg-gray-50 border border-gray-200 rounded-full px-2 py-1">
-                      #{m.rank} {m.member.name} — {MATCH_STATUS_LABELS[m.status] ?? m.status} ({Math.round(m.score * 100)}%)
+                      {m.source === "VOLUNTEER" ? "🙋" : `#${m.rank}`} {m.member.name} —{" "}
+                      {MATCH_STATUS_LABELS[m.status] ?? m.status}
+                      {m.source === "AI_MATCH" && ` (${Math.round(m.score * 100)}%)`}
                     </span>
                   ))}
                 </div>

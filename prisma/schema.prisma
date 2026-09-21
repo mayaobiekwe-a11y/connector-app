@@ -77,6 +77,7 @@ model Member {
   reviewsGiven    Review[]      @relation("ReviewsGiven")
   reviewsReceived Review[]      @relation("ReviewsReceived")
   creditEntries   CreditEntry[]
+  askCreditEntries AskCreditEntry[]
 
   @@index([communityId])
 }
@@ -161,8 +162,10 @@ model Request {
   @@index([requesterId])
 }
 
-// A ranked, AI-suggested member for a given request.
+// A member connected to a request — either AI-suggested (privately notified)
+// or self-volunteered from the public community feed.
 // status: PENDING | ACCEPTED | DECLINED | EXPIRED
+// source: AI_MATCH | VOLUNTEER
 model Match {
   id        String @id @default(cuid())
   requestId String
@@ -170,10 +173,11 @@ model Match {
   memberId  String
   member    Member  @relation("MatchesForMember", fields: [memberId], references: [id])
 
-  rank        Int // 1 = best match
-  score       Float // 0-1 relevance score from the AI ranking
+  rank        Int // 1 = best match; unused (0) for volunteer matches
+  score       Float // 0-1 relevance score from the AI ranking; 1 for volunteers
   reason      String // natural-language explanation shown to the requester
   status      String    @default("PENDING")
+  source      String    @default("AI_MATCH")
   respondedAt DateTime?
 
   createdAt DateTime @default(now())
@@ -238,6 +242,23 @@ model CreditEntry {
   points    Int
   reason    String
   refId     String? // e.g. the Match or Review id this entry is tied to
+  createdAt DateTime @default(now())
+
+  @@index([memberId])
+}
+
+// Append-only ledger for the *spendable* ask-credit balance — separate from
+// CreditEntry's permanent reputation points. A member's balance is the sum
+// of their entries; making a request costs credits so asking isn't
+// unlimited, and helping (responding, being positively reviewed) earns more.
+// reason: SIGNUP_BONUS | MONTHLY_REFRESH | ASK_SPENT | RESPONDED_TO_REQUEST | COMPLETED_POSITIVE
+model AskCreditEntry {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id])
+  amount    Int // positive to earn, negative to spend
+  reason    String
+  refId     String? // e.g. the Request or Match id this entry is tied to
   createdAt DateTime @default(now())
 
   @@index([memberId])

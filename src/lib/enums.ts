@@ -51,6 +51,11 @@ export type RequestStatus = (typeof REQUEST_STATUSES)[number];
 export const MATCH_STATUSES = ["PENDING", "ACCEPTED", "DECLINED", "EXPIRED"] as const;
 export type MatchStatus = (typeof MATCH_STATUSES)[number];
 
+// AI_MATCH: suggested by the ranking pipeline and privately notified.
+// VOLUNTEER: a member self-selected from the public community feed.
+export const MATCH_SOURCES = ["AI_MATCH", "VOLUNTEER"] as const;
+export type MatchSource = (typeof MATCH_SOURCES)[number];
+
 export const REQUEST_OUTCOMES = ["HELPED", "DIDNT_WORK_OUT", "NO_RESPONSE"] as const;
 export type RequestOutcome = (typeof REQUEST_OUTCOMES)[number];
 
@@ -62,6 +67,17 @@ export const CREDIT_REASONS = [
   "DIDNT_WORK_OUT",
 ] as const;
 export type CreditReason = (typeof CREDIT_REASONS)[number];
+
+// Reasons for ask-credit ledger entries (see src/lib/askCredits.ts). Positive
+// amounts earn credits, negative amounts spend them.
+export const ASK_CREDIT_REASONS = [
+  "SIGNUP_BONUS",
+  "MONTHLY_REFRESH",
+  "ASK_SPENT",
+  "RESPONDED_TO_REQUEST",
+  "COMPLETED_POSITIVE",
+] as const;
+export type AskCreditReason = (typeof ASK_CREDIT_REASONS)[number];
 
 function isOneOf<T extends readonly string[]>(values: T, x: unknown): x is T[number] {
   return typeof x === "string" && (values as readonly string[]).includes(x);

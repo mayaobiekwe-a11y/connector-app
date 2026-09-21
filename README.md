@@ -26,21 +26,41 @@ interactions build a visible reputation over time.
    as well as two opportunity-style asks: looking for or hiring for gig/
    freelance work, and posting an open role ("dropping a role") for the
    network to fill or refer into.
-2. **Get connected** — Claude parses the request (company / industry /
-   function / intent) and ranks the community directory against it,
-   returning a short list of matches with a natural-language reason each.
-   Matching considers each member's own job *and* their listed
-   relationships (see below), plus their "open to new roles" / "open to
-   gig work" signals for opportunity-style asks. Only the matched members
-   see the request (it shows up in their dashboard's "Requests for you").
+2. **Get connected** — Claude (personified in the UI as "Marie") parses the
+   request (company / industry / function / intent) and ranks the community
+   directory against it, returning a short list of matches with a
+   natural-language reason each. Matching considers each member's own job
+   *and* their listed relationships and side hustles (see below), plus
+   their "open to new roles" / "open to gig work" signals for
+   opportunity-style asks. Matched members are notified privately (it shows
+   up in their dashboard's "Requests for you") — **and** the ask also
+   appears on the public **community feed** (`/feed`), where any member can
+   see it and volunteer to help, not just Marie's picks. Both paths lead to
+   the same accept/thread/outcome flow.
 3. **Get help** — a matched member accepts or declines (opportunity-style
-   requests show "I'm interested" / "Not for me" instead); accepting opens
-   a simple message thread with the requester.
+   requests show "I'm interested" / "Not for me" instead), or a member
+   volunteers straight from the feed (an immediate commitment — no separate
+   approval step); either way it opens a simple message thread with the
+   requester.
 4. **Say what happened** — the requester logs an outcome (helped / didn't
    work out / no response) with an optional 1-5 star rating and comment.
-5. **Earn credit** — responding and being positively reviewed earns points;
-   crossing point thresholds unlocks a visible badge tier (e.g. "Trusted
-   Connector") shown on a member's profile and in the nav bar.
+5. **Earn credit** — responding and being positively reviewed earns
+   reputation points; crossing point thresholds unlocks a visible badge
+   tier (e.g. "Trusted Connector") shown on a member's profile and in the
+   nav bar. Separately, it also earns **ask credits** — see below.
+
+### Ask credits: asking isn't free
+
+Posting an ask costs 1 ask credit, so a member can't post an unlimited
+stream of requests. Everyone starts with 3 (signup bonus), earns 1 back for
+responding to any request (AI-matched or volunteered from the feed) and 2
+more when they're rated 4-5 stars for actually helping, plus a small
+no-cron-needed monthly top-up. Run out, and the Ask bar explains how to
+earn more instead of accepting the request — the point is reciprocity:
+you can keep asking as long as you're also willing to help. This is a
+separate ledger (`AskCreditEntry`) from the permanent reputation points
+used for badges, so spending down your ask credits never affects your
+badge tier.
 
 ### Relationships, not just employers
 
@@ -177,18 +197,20 @@ first deploy, and every push to this branch redeploys it automatically.
 ## Project layout
 
 ```
-prisma/schema.prisma       Data model (Relationship, SideHustle, profile type, capacity, ...)
+prisma/schema.prisma       Data model (Relationship, SideHustle, profile type, capacity, AskCreditEntry, ...)
 prisma/seed.ts             Demo community + members + sample requests (help + opportunity)
 src/lib/claude.ts          Claude parsing + ranking, with heuristic fallback
 src/lib/matching.ts        Orchestrates parse -> rank -> persist Request/Match; visibility + capacity filtering
-src/lib/credit.ts          Points ledger + badge tier logic
+src/lib/credit.ts          Reputation points ledger + badge tier logic
+src/lib/askCredits.ts      Spendable ask-credit ledger: signup bonus, spend-on-ask, earn-by-helping, monthly refresh
 src/lib/session.ts         iron-session cookie auth helpers
-src/app/dashboard          Ask bar, "requests for you", "your asks"
+src/app/dashboard          Ask bar (Marie), ask-credit balance, "requests for you", "your asks"
+src/app/feed               Public community feed of open asks + volunteer-to-help
 src/app/requests/[id]      Request detail: matches, accept/decline, thread, review
 src/app/profile/[id]       Public profile: badge, offerings, relationships, side hustles, help history
 src/app/profile/edit       Edit profile, offerings, relationships, side hustles, visibility/capacity
 src/app/directory          Browsable member directory with search
-src/app/admin              Admin view of all requests, AI parsing, match status
+src/app/admin              Admin view of all requests, AI parsing, match status (AI-matched vs. volunteered)
 ```
 
 ## Notes / known limitations (prototype scope)

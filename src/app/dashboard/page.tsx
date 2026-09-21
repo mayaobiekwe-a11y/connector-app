@@ -7,12 +7,15 @@ import StatusPill from "@/components/StatusPill";
 import MatchRespondButtons from "@/components/MatchRespondButtons";
 import { REQUEST_STATUS_LABELS, MATCH_STATUS_LABELS, INTENT_LABELS } from "@/lib/labels";
 import { isOpportunityIntent } from "@/lib/enums";
+import { ensureMonthlyRefresh, getAskCreditBalance } from "@/lib/askCredits";
 
 export default async function DashboardPage() {
   const member = await getCurrentMember();
   if (!member) redirect("/login");
 
-  const [myRequests, incomingMatches] = await Promise.all([
+  await ensureMonthlyRefresh(member.id);
+
+  const [myRequests, incomingMatches, askCredits] = await Promise.all([
     prisma.request.findMany({
       where: { requesterId: member.id },
       include: { matches: true },
@@ -23,14 +26,36 @@ export default async function DashboardPage() {
       include: { request: { include: { requester: true } } },
       orderBy: [{ status: "asc" }, { createdAt: "desc" }],
     }),
+    getAskCreditBalance(member.id),
   ]);
 
   return (
     <div className="space-y-10">
       <div>
-        <span className="eyebrow">Get started</span>
-        <h1 className="text-2xl font-semibold text-gray-900 mt-1 mb-3">Ask your network</h1>
-        <AskBar />
+        <div className="flex items-center justify-between mt-1 mb-3">
+          <div>
+            <span className="eyebrow">Get started</span>
+            <h1 className="text-2xl font-semibold text-gray-900">Ask Marie</h1>
+          </div>
+          <span
+            className={`badge border ${
+              askCredits > 0
+                ? "bg-brand-50 text-brand-700 border-brand-100"
+                : "bg-red-50 text-red-700 border-red-200"
+            }`}
+            title="Earn more by responding to requests or being rated highly for helping someone"
+          >
+            {askCredits} ask credit{askCredits === 1 ? "" : "s"}
+          </span>
+        </div>
+        <AskBar credits={askCredits} />
+        <p className="text-sm text-gray-500 mt-2">
+          Your ask also shows up in the{" "}
+          <Link href="/feed" className="text-brand-700 font-medium hover:underline">
+            community feed
+          </Link>{" "}
+          — anyone can jump in, not just who Marie matches you to.
+        </p>
       </div>
 
       <section>

@@ -9,7 +9,7 @@ const STEPS = [
   },
   {
     title: "Get connected",
-    body: "AI matches you to the best people in your network and tells you why, then reaches out to them directly on your behalf.",
+    body: "Marie privately asks the best-matched people in your network — and your ask shows up in the community feed too, so anyone who can help can just jump in.",
   },
   {
     title: "Get help",
@@ -17,7 +17,7 @@ const STEPS = [
   },
   {
     title: "Earn trust",
-    body: "Helpful members earn points, badges, and a reputation as a Trusted Connector.",
+    body: "Helpful members earn points, badges, and more ask credits to keep asking for help themselves.",
   },
 ];
 
@@ -35,11 +35,13 @@ export default async function HomePage() {
         <div className="relative max-w-2xl">
           <span className="eyebrow">A trusted-network referral platform</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            Everyone needs a Marie.
+            Marie remembers everyone.
+            <br />
+            Just ask Marie.
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Connector finds the right person in your network and asks them directly —
-            instead of a cold blast that never gets a reply.
+            Marie finds the right person in your network and asks them directly — and your
+            request shows up in the community feed too, so anyone who can help, can.
           </p>
           <div className="mt-8 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
@@ -54,11 +56,11 @@ export default async function HomePage() {
 
       <div className="mt-8 max-w-2xl rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
         <p className="text-gray-700">
-          Marie remembered everyone — who needed a job, who knew someone, who could help.
-          No app. No form. She just paid attention, and made the call.
+          Who needed a job. Who knew someone. Who could help. No app, no form —
+          she just paid attention, and made the call.
         </p>
         <p className="mt-3 font-medium text-gray-900">
-          Most networks don't work like that. Connector does.
+          Most networks don't work like that. This one does.
         </p>
       </div>
 

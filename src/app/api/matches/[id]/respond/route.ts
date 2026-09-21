@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getCurrentMember } from "@/lib/session";
 import { awardCredit } from "@/lib/credit";
+import { awardAskCredits } from "@/lib/askCredits";
 
 const schema = z.object({ action: z.enum(["accept", "decline"]) });
 
@@ -29,6 +30,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   });
 
   await awardCredit(member.id, "RESPONDED_TO_REQUEST", match.id);
+  await awardAskCredits(member.id, "RESPONDED_TO_REQUEST", match.id);
 
   if (newStatus === "ACCEPTED") {
     await prisma.thread.upsert({

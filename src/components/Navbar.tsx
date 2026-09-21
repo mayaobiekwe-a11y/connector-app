@@ -34,6 +34,7 @@ export default async function Navbar() {
           {member ? (
             <nav className="flex items-center gap-1 sm:gap-2 text-sm">
               <NavLink href="/dashboard">Dashboard</NavLink>
+              <NavLink href="/feed">Feed</NavLink>
               <NavLink href="/directory">Directory</NavLink>
               {member.isAdmin && <NavLink href="/admin">Admin</NavLink>}
               <Link
