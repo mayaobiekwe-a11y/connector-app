@@ -12,7 +12,7 @@ export default async function ProfileEditPage({
   if (!member) redirect("/login");
 
   return (
-    <div className="max-w-lg mx-auto space-y-4">
+    <div className="max-w-2xl mx-auto space-y-4">
       {searchParams.welcome && (
         <div className="card p-4 bg-brand-50 border-brand-100 text-sm text-brand-800">
           Welcome to {member.community.name}! Tell people what you're willing to help with so the

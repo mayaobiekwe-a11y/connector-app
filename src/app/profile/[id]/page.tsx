@@ -45,7 +45,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl font-semibold text-gray-900">{profileMember.name}</h1>
                 {profileMember.profileType === "SERVICE_PROVIDER" && (
-                  <span className="badge bg-purple-50 text-purple-700 border border-purple-100">
+                  <span className="badge bg-brand-50 text-brand-700 border border-brand-200">
                     {PROFILE_TYPE_LABELS.SERVICE_PROVIDER}
                   </span>
                 )}

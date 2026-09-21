@@ -56,7 +56,7 @@ export default function DirectoryList({ members }: { members: DirectoryMember[] 
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-medium text-gray-900">{m.name}</p>
                     {m.profileType === "SERVICE_PROVIDER" && (
-                      <span className="badge bg-purple-50 text-purple-700 border border-purple-100 text-xs">
+                      <span className="badge bg-brand-50 text-brand-700 border border-brand-200 text-xs">
                         {PROFILE_TYPE_LABELS.SERVICE_PROVIDER}
                       </span>
                     )}

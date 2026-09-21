@@ -303,7 +303,7 @@ export default function ProfileEditForm({
                 ))}
               </select>
               <input
-                className="input flex-1"
+                className="input flex-1 min-w-0"
                 placeholder="Notes (optional)"
                 value={row.notes}
                 onChange={(e) => updateRow(idx, { notes: e.target.value })}

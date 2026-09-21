@@ -3,6 +3,18 @@ import { getCurrentMember } from "@/lib/session";
 import { badgeForPoints } from "@/lib/credit";
 import { getMemberPoints } from "@/lib/credit";
 import LogoutButton from "./LogoutButton";
+import Avatar from "./Avatar";
+
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="hidden sm:inline-block rounded-full px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-brand-50 hover:text-brand-700"
+    >
+      {children}
+    </Link>
+  );
+}
 
 export default async function Navbar() {
   const member = await getCurrentMember();
@@ -10,29 +22,25 @@ export default async function Navbar() {
   const badge = member ? badgeForPoints(points) : null;
 
   return (
-    <header className="sticky top-0 z-20 bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-20 border-b border-gray-200/80 bg-white/85 backdrop-blur-md">
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="flex h-14 items-center justify-between">
-          <Link href="/" className="font-semibold text-brand-700 text-lg">
+        <div className="flex h-16 items-center justify-between">
+          <Link href="/" className="flex items-center gap-2 font-semibold text-gray-900 text-lg">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white text-xs font-bold">
+              C
+            </span>
             Connector
           </Link>
           {member ? (
-            <nav className="flex items-center gap-3 sm:gap-4 text-sm">
-              <Link href="/dashboard" className="hidden sm:inline text-gray-600 hover:text-brand-700">
-                Dashboard
-              </Link>
-              <Link href="/directory" className="hidden sm:inline text-gray-600 hover:text-brand-700">
-                Directory
-              </Link>
-              {member.isAdmin && (
-                <Link href="/admin" className="hidden sm:inline text-gray-600 hover:text-brand-700">
-                  Admin
-                </Link>
-              )}
+            <nav className="flex items-center gap-1 sm:gap-2 text-sm">
+              <NavLink href="/dashboard">Dashboard</NavLink>
+              <NavLink href="/directory">Directory</NavLink>
+              {member.isAdmin && <NavLink href="/admin">Admin</NavLink>}
               <Link
                 href={`/profile/${member.id}`}
-                className="flex items-center gap-2 text-gray-700 hover:text-brand-700"
+                className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 sm:pr-3 text-gray-700 transition-colors hover:bg-gray-100"
               >
+                <Avatar name={member.name} avatarUrl={member.avatarUrl} size={28} />
                 <span className="hidden sm:inline">{member.name}</span>
                 {badge && (
                   <span className="badge bg-brand-50 text-brand-700 border border-brand-100">

@@ -58,7 +58,7 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
               {opportunity ? "Posted by" : "Asked by"}{" "}
               <span className="font-medium text-gray-700">{request.requester.name}</span>
               {opportunity && (
-                <span className="badge bg-purple-50 text-purple-700 border border-purple-100">Opportunity</span>
+                <span className="badge bg-accent-50 text-accent-700 border border-accent-200">Opportunity</span>
               )}
             </p>
             <h1 className="text-lg font-semibold text-gray-900 mt-1">"{request.rawText}"</h1>

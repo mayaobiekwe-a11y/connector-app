@@ -2,79 +2,84 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentMember } from "@/lib/session";
 
+const STEPS = [
+  {
+    title: "Ask",
+    body: "Type your request like you'd text a friend — \"I need someone who's worked in public policy to review my resume.\"",
+  },
+  {
+    title: "Get connected",
+    body: "AI matches you to the best people in your network and tells you why, then reaches out to them directly on your behalf.",
+  },
+  {
+    title: "Get help",
+    body: "Matched members accept or decline, then you coordinate in a simple thread.",
+  },
+  {
+    title: "Earn trust",
+    body: "Helpful members earn points, badges, and a reputation as a Trusted Connector.",
+  },
+];
+
 export default async function HomePage() {
   const member = await getCurrentMember();
   if (member) redirect("/dashboard");
 
   return (
-    <div className="py-10 sm:py-16">
-      <div className="max-w-2xl">
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
-          Everyone needs a Marie.
-        </h1>
-        <p className="mt-4 text-lg text-gray-600">
-          Connector is a trusted network for referrals, mentorship, and career help — built to
-          work the way the best-connected person you know already does.
-        </p>
-        <div className="mt-8 flex gap-3">
-          <Link href="/signup" className="btn-primary text-base px-6 py-3">
-            Join your network
-          </Link>
-          <Link href="/login" className="btn-secondary text-base px-6 py-3">
-            Log in
-          </Link>
+    <div className="py-6 sm:py-10">
+      <div className="relative overflow-hidden rounded-3xl border border-gray-200/80 bg-white px-6 py-12 sm:px-12 sm:py-16">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-brand-200 to-accent-200 opacity-40 blur-3xl"
+        />
+        <div className="relative max-w-2xl">
+          <span className="eyebrow">A trusted-network referral platform</span>
+          <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
+            Everyone needs a Marie.
+          </h1>
+          <p className="mt-4 text-lg text-gray-600">
+            Connector finds the right person in your network and asks them directly —
+            instead of a cold blast that never gets a reply.
+          </p>
+          <div className="mt-8 flex gap-3">
+            <Link href="/signup" className="btn-primary text-base px-6 py-3">
+              Join your network
+            </Link>
+            <Link href="/login" className="btn-secondary text-base px-6 py-3">
+              Log in
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="mt-12 max-w-2xl border-l-4 border-brand-200 pl-5 sm:pl-6">
-        <p className="text-gray-600">
-          Growing up, if my mom knew someone needed a job or was looking for a resource, she took
-          it seriously. She remembered people — not just their names, but what they needed and
-          what they knew. She was an extrovert who was always meeting someone new, and when she
-          met someone whose line of work lined up with someone else's need, she made the
-          connection. No app, no form. Just paying attention, and following through.
+      <div className="mt-8 max-w-2xl rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
+        <p className="text-gray-700">
+          Marie remembered everyone — who needed a job, who knew someone, who could help.
+          No app. No form. She just paid attention, and made the call.
         </p>
-        <p className="mt-4 text-gray-600">
-          Not a lot of people are like Marie. Most networks aren't. LinkedIn is full of messages
-          that never get a reply. Connector exists because that kind of person shouldn't be rare —
-          your community already has people who'd help if you asked them directly. It just needs
-          someone paying attention, and asking on your behalf.
+        <p className="mt-3 font-medium text-gray-900">
+          Most networks don't work like that. Connector does.
         </p>
       </div>
 
       <p className="mt-8 max-w-2xl text-lg font-medium text-gray-900">
         A community isn't a stagnant list of names in a group chat. It's a place where people
-        actually connect and build together — where showing up means sharing what you know, and
-        opening yourself to what someone else needs.
+        connect and build together — where showing up means sharing what you know, and opening
+        yourself to what someone else needs.
       </p>
 
-      <div className="mt-14 grid gap-6 sm:grid-cols-2">
-        <div className="card p-5">
-          <h3 className="font-semibold text-gray-900">1. Ask</h3>
-          <p className="mt-1 text-sm text-gray-600">
-            Type your request like you'd text a friend — "I need someone who's worked in
-            public policy to review my resume."
-          </p>
-        </div>
-        <div className="card p-5">
-          <h3 className="font-semibold text-gray-900">2. Get connected</h3>
-          <p className="mt-1 text-sm text-gray-600">
-            AI matches you to the best people in your network and tells you why, then
-            reaches out to them directly on your behalf.
-          </p>
-        </div>
-        <div className="card p-5">
-          <h3 className="font-semibold text-gray-900">3. Get help</h3>
-          <p className="mt-1 text-sm text-gray-600">
-            Matched members accept or decline, then you coordinate in a simple thread.
-          </p>
-        </div>
-        <div className="card p-5">
-          <h3 className="font-semibold text-gray-900">4. Earn trust</h3>
-          <p className="mt-1 text-sm text-gray-600">
-            Helpful members earn points, badges, and a reputation as a Trusted Connector.
-          </p>
-        </div>
+      <div className="mt-14 grid gap-5 sm:grid-cols-2">
+        {STEPS.map((step, i) => (
+          <div key={step.title} className="card p-5">
+            <div className="flex items-center gap-3">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
+                {i + 1}
+              </span>
+              <h3 className="font-semibold text-gray-900">{step.title}</h3>
+            </div>
+            <p className="mt-2 text-sm text-gray-600">{step.body}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

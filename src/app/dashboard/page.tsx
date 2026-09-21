@@ -26,16 +26,24 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <div>
-        <h1 className="text-xl font-semibold mb-3">Ask your network</h1>
+        <span className="eyebrow">Get started</span>
+        <h1 className="text-2xl font-semibold text-gray-900 mt-1 mb-3">Ask your network</h1>
         <AskBar />
       </div>
 
       <section>
-        <h2 className="text-lg font-semibold mb-3">Requests for you</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">
+          Requests for you
+          {incomingMatches.length > 0 && (
+            <span className="ml-2 text-sm font-normal text-gray-400">({incomingMatches.length})</span>
+          )}
+        </h2>
         {incomingMatches.length === 0 ? (
-          <p className="text-sm text-gray-500">No one has requested your help yet.</p>
+          <div className="rounded-2xl border-2 border-dashed border-gray-200 p-6 text-center text-sm text-gray-500">
+            No one has requested your help yet.
+          </div>
         ) : (
           <div className="space-y-3">
             {incomingMatches.map((m) => {
@@ -47,7 +55,7 @@ export default async function DashboardPage() {
                       <p className="text-xs text-gray-500 flex items-center gap-2">
                         From <span className="font-medium text-gray-700">{m.request.requester.name}</span>
                         {opportunity && (
-                          <span className="badge bg-purple-50 text-purple-700 border border-purple-100">
+                          <span className="badge bg-accent-50 text-accent-700 border border-accent-200">
                             Opportunity
                           </span>
                         )}
@@ -73,9 +81,16 @@ export default async function DashboardPage() {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold mb-3">Your asks</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-3">
+          Your asks
+          {myRequests.length > 0 && (
+            <span className="ml-2 text-sm font-normal text-gray-400">({myRequests.length})</span>
+          )}
+        </h2>
         {myRequests.length === 0 ? (
-          <p className="text-sm text-gray-500">You haven't asked for anything yet — try the box above.</p>
+          <div className="rounded-2xl border-2 border-dashed border-gray-200 p-6 text-center text-sm text-gray-500">
+            You haven't asked for anything yet — try the box above.
+          </div>
         ) : (
           <div className="space-y-3">
             {myRequests.map((r) => (
