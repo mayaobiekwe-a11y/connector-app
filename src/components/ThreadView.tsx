@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { firstNameOnly } from "@/lib/displayName";
 
 interface ThreadMessage {
   id: string;
@@ -56,7 +57,7 @@ export default function ThreadView({
                   mine ? "bg-brand-600 text-white" : "bg-white border border-gray-200 text-gray-800"
                 }`}
               >
-                {!mine && <p className="text-xs font-medium mb-0.5 opacity-70">{m.sender.name}</p>}
+                {!mine && <p className="text-xs font-medium mb-0.5 opacity-70">{firstNameOnly(m.sender.name)}</p>}
                 {m.body}
               </div>
             </div>

@@ -6,6 +6,7 @@ import { getMemberPoints, badgeForPoints, nextBadge } from "@/lib/credit";
 import { HELP_CATEGORY_LABELS, COMPENSATION_LABELS, OUTCOME_LABELS, PROFILE_TYPE_LABELS } from "@/lib/labels";
 import StarRatingDisplay from "@/components/StarRatingDisplay";
 import Avatar from "@/components/Avatar";
+import { firstNameOnly } from "@/lib/displayName";
 
 export default async function ProfilePage({ params }: { params: { id: string } }) {
   const viewer = await getCurrentMember();
@@ -29,6 +30,8 @@ export default async function ProfilePage({ params }: { params: { id: string } }
   const badge = badgeForPoints(points);
   const upcoming = nextBadge(points);
   const isSelf = viewer.id === profileMember.id;
+  const isAdmin = viewer.isAdmin;
+  const displayName = isSelf || isAdmin ? profileMember.name : firstNameOnly(profileMember.name);
 
   const completed = reviewsReceived.filter((r) => r.outcome === "HELPED").length;
   const avgRating =
@@ -40,10 +43,10 @@ export default async function ProfilePage({ params }: { params: { id: string } }
       <div className="card p-5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <Avatar name={profileMember.name} avatarUrl={profileMember.avatarUrl} size={56} />
+            <Avatar name={displayName} avatarUrl={profileMember.avatarUrl} size={56} />
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl font-semibold text-gray-900">{profileMember.name}</h1>
+                <h1 className="text-xl font-semibold text-gray-900">{displayName}</h1>
                 {profileMember.profileType === "SERVICE_PROVIDER" && (
                   <span className="badge bg-brand-50 text-brand-700 border border-brand-200">
                     {PROFILE_TYPE_LABELS.SERVICE_PROVIDER}
@@ -100,7 +103,10 @@ export default async function ProfilePage({ params }: { params: { id: string } }
               Takes up to {profileMember.monthlyCapacity}/month
             </span>
           )}
-          {profileMember.linkedinUrl && (
+          {/* LinkedIn is intentionally not shown here for other members — it's
+              an easy way to route around the platform entirely once someone
+              has a name and a link. Self/admin can still see it. */}
+          {profileMember.linkedinUrl && (isSelf || isAdmin) && (
             <a
               href={profileMember.linkedinUrl}
               target="_blank"
@@ -189,7 +195,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
               <li key={r.id} className="text-sm border-b border-gray-100 pb-3 last:border-0">
                 <div className="flex items-center justify-between">
                   <p className="text-gray-700">
-                    {OUTCOME_LABELS[r.outcome] ?? r.outcome} — for {r.reviewer.name}
+                    {OUTCOME_LABELS[r.outcome] ?? r.outcome} — for {firstNameOnly(r.reviewer.name)}
                   </p>
                   {r.rating && <StarRatingDisplay rating={r.rating} />}
                 </div>

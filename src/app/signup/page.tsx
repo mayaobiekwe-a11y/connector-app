@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RelationshipsInput, { type RelationshipRow } from "@/components/RelationshipsInput";
@@ -8,16 +8,8 @@ import SideHustlesInput, { type SideHustleRow } from "@/components/SideHustlesIn
 import { PROFILE_TYPE_LABELS } from "@/lib/labels";
 import type { ProfileType } from "@/lib/enums";
 
-interface Community {
-  id: string;
-  name: string;
-}
-
 export default function SignupPage() {
   const router = useRouter();
-  const [communities, setCommunities] = useState<Community[]>([]);
-  const [communityChoice, setCommunityChoice] = useState<string>("__new__");
-  const [newCommunityName, setNewCommunityName] = useState("");
 
   const [form, setForm] = useState({
     name: "",
@@ -38,16 +30,6 @@ export default function SignupPage() {
   const [sideHustles, setSideHustles] = useState<SideHustleRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetch("/api/communities")
-      .then((r) => r.json())
-      .then((data) => {
-        setCommunities(data.communities ?? []);
-        if (data.communities?.length) setCommunityChoice(data.communities[0].id);
-      })
-      .catch(() => {});
-  }, []);
 
   function update<K extends keyof typeof form>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -74,16 +56,6 @@ export default function SignupPage() {
           url: s.url.trim() || undefined,
         })),
     };
-    if (communityChoice === "__new__") {
-      if (!newCommunityName.trim()) {
-        setError("Please name your community/network");
-        setLoading(false);
-        return;
-      }
-      payload.newCommunityName = newCommunityName.trim();
-    } else {
-      payload.communityId = communityChoice;
-    }
 
     const res = await fetch("/api/auth/signup", {
       method: "POST",
@@ -102,9 +74,9 @@ export default function SignupPage() {
 
   return (
     <div className="max-w-lg mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-1">Join your network</h1>
+      <h1 className="text-2xl font-bold mb-1">Join the network</h1>
       <p className="text-sm text-gray-500 mb-6">
-        Connector works for any trusted group — pick your existing network or start a new one.
+        Ask for what you need, offer what you know — every member here can see and reach you.
       </p>
       <form onSubmit={onSubmit} className="card p-5 space-y-4">
         {error && <p className="text-sm text-red-600">{error}</p>}
@@ -250,30 +222,6 @@ export default function SignupPage() {
 
         <div className="border-t border-gray-100 pt-4">
           <RelationshipsInput rows={relationships} onChange={setRelationships} />
-        </div>
-
-        <div className="border-t border-gray-100 pt-4">
-          <label className="label">Community / network</label>
-          <select
-            className="input"
-            value={communityChoice}
-            onChange={(e) => setCommunityChoice(e.target.value)}
-          >
-            {communities.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-            <option value="__new__">+ Start a new community</option>
-          </select>
-          {communityChoice === "__new__" && (
-            <input
-              className="input mt-2"
-              placeholder="e.g. Riverside MBA Alumni"
-              value={newCommunityName}
-              onChange={(e) => setNewCommunityName(e.target.value)}
-            />
-          )}
         </div>
 
         <button type="submit" disabled={loading} className="btn-primary w-full">

@@ -3,9 +3,9 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
-import { slugify } from "@/lib/slugify";
 import { PROFILE_TYPES } from "@/lib/enums";
 import { awardAskCredits } from "@/lib/askCredits";
+import { getDefaultCommunityId } from "@/lib/community";
 
 const schema = z.object({
   name: z.string().min(1).max(100),
@@ -21,8 +21,6 @@ const schema = z.object({
   profileType: z.enum(PROFILE_TYPES).optional(),
   monthlyCapacity: z.number().int().min(0).max(1000).optional(),
   visibleInDirectory: z.boolean().optional(),
-  communityId: z.string().optional(),
-  newCommunityName: z.string().max(100).optional(),
   relationships: z
     .array(z.object({ label: z.string().min(1).max(120), notes: z.string().max(300).optional() }))
     .max(20)
@@ -47,29 +45,12 @@ export async function POST(req: Request) {
   }
   const data = parsed.data;
 
-  if (!data.communityId && !data.newCommunityName) {
-    return NextResponse.json({ error: "Select or create a community" }, { status: 400 });
-  }
-
   const existing = await prisma.member.findUnique({ where: { email: data.email } });
   if (existing) {
     return NextResponse.json({ error: "An account with this email already exists" }, { status: 409 });
   }
 
-  let communityId = data.communityId;
-  if (!communityId && data.newCommunityName) {
-    const slug = slugify(data.newCommunityName) || `network-${Date.now()}`;
-    const community = await prisma.community.upsert({
-      where: { slug },
-      update: {},
-      create: { name: data.newCommunityName, slug },
-    });
-    communityId = community.id;
-  }
-  if (!communityId) {
-    return NextResponse.json({ error: "Invalid community" }, { status: 400 });
-  }
-
+  const communityId = await getDefaultCommunityId();
   const passwordHash = await bcrypt.hash(data.password, 10);
   const profileType = data.profileType ?? "GENERAL";
   const member = await prisma.member.create({

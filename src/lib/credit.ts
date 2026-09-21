@@ -23,6 +23,9 @@ export const BADGE_TIERS: BadgeTier[] = [
   { key: "ACTIVE_HELPER", label: "Active Helper", minPoints: 15 },
   { key: "TRUSTED_CONNECTOR", label: "Trusted Connector", minPoints: 40 },
   { key: "SUPER_CONNECTOR", label: "Super Connector", minPoints: 80 },
+  // A genuinely rare tier for the network's most prolific connectors —
+  // roughly 13+ positively-rated completions, not just a handful.
+  { key: "HIGHLY_CONNECTED", label: "Highly Connected", minPoints: 200 },
 ];
 
 export function badgeForPoints(points: number): BadgeTier {

@@ -3,6 +3,7 @@ import { getCurrentMember } from "@/lib/session";
 import { prisma } from "@/lib/db";
 import { getPointsForMembers, badgeForPoints } from "@/lib/credit";
 import DirectoryList, { type DirectoryMember } from "@/components/DirectoryList";
+import { firstNameOnly } from "@/lib/displayName";
 
 export default async function DirectoryPage() {
   const member = await getCurrentMember();
@@ -18,7 +19,7 @@ export default async function DirectoryPage() {
 
   const directoryMembers: DirectoryMember[] = members.map((m) => ({
     id: m.id,
-    name: m.name,
+    name: firstNameOnly(m.name),
     title: m.title,
     company: m.company,
     industry: m.industry,

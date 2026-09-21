@@ -6,6 +6,7 @@ import StatusPill from "@/components/StatusPill";
 import VolunteerButton from "@/components/VolunteerButton";
 import { REQUEST_STATUS_LABELS, INTENT_LABELS, MATCH_STATUS_LABELS } from "@/lib/labels";
 import { isOpportunityIntent } from "@/lib/enums";
+import { firstNameOnly } from "@/lib/displayName";
 
 export default async function FeedPage() {
   const member = await getCurrentMember();
@@ -50,7 +51,9 @@ export default async function FeedPage() {
                       {isMine ? (
                         <span className="badge bg-gray-100 text-gray-600">Your ask</span>
                       ) : (
-                        <>From <span className="font-medium text-gray-700">{r.requester.name}</span></>
+                        <>
+                          From <span className="font-medium text-gray-700">{firstNameOnly(r.requester.name)}</span>
+                        </>
                       )}
                       {opportunity && (
                         <span className="badge bg-accent-50 text-accent-700 border border-accent-200">

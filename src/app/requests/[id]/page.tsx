@@ -14,6 +14,7 @@ import {
   OUTCOME_LABELS,
 } from "@/lib/labels";
 import { isOpportunityIntent } from "@/lib/enums";
+import { firstNameOnly } from "@/lib/displayName";
 
 export default async function RequestDetailPage({ params }: { params: { id: string } }) {
   const member = await getCurrentMember();
@@ -56,7 +57,7 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
           <div>
             <p className="text-xs text-gray-500 flex items-center gap-2">
               {opportunity ? "Posted by" : "Asked by"}{" "}
-              <span className="font-medium text-gray-700">{request.requester.name}</span>
+              <span className="font-medium text-gray-700">{firstNameOnly(request.requester.name)}</span>
               {opportunity && (
                 <span className="badge bg-accent-50 text-accent-700 border border-accent-200">Opportunity</span>
               )}
@@ -104,7 +105,7 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <Link href={`/profile/${m.member.id}`} className="font-medium text-gray-900 hover:text-brand-700">
-                      {m.member.name}
+                      {firstNameOnly(m.member.name)}
                     </Link>
                     <p className="text-xs text-gray-500">
                       {m.member.title ?? "Member"} {m.member.company ? `at ${m.member.company}` : ""}

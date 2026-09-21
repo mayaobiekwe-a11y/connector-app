@@ -8,6 +8,7 @@ import MatchRespondButtons from "@/components/MatchRespondButtons";
 import { REQUEST_STATUS_LABELS, MATCH_STATUS_LABELS, INTENT_LABELS } from "@/lib/labels";
 import { isOpportunityIntent } from "@/lib/enums";
 import { ensureMonthlyRefresh, getAskCreditBalance } from "@/lib/askCredits";
+import { firstNameOnly } from "@/lib/displayName";
 
 export default async function DashboardPage() {
   const member = await getCurrentMember();
@@ -78,7 +79,10 @@ export default async function DashboardPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <p className="text-xs text-gray-500 flex items-center gap-2">
-                        From <span className="font-medium text-gray-700">{m.request.requester.name}</span>
+                        From{" "}
+                        <span className="font-medium text-gray-700">
+                          {firstNameOnly(m.request.requester.name)}
+                        </span>
                         {opportunity && (
                           <span className="badge bg-accent-50 text-accent-700 border border-accent-200">
                             Opportunity

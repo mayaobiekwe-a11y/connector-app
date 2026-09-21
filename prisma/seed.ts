@@ -8,13 +8,15 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Seeding demo data...");
 
+  // Same global community every real signup lands in (see src/lib/community.ts) —
+  // demo members need to be in it too, not a separate siloed "demo" community.
   const community = await prisma.community.upsert({
-    where: { slug: "demo-network" },
+    where: { slug: "global" },
     update: {},
     create: {
-      name: "Riverside Alumni Network",
-      slug: "demo-network",
-      description: "A demo trusted network for the Connector prototype.",
+      name: "The Network",
+      slug: "global",
+      description: "The Connector network.",
     },
   });
 
@@ -141,11 +143,11 @@ async function main() {
     {
       name: "Admin User",
       email: "admin@example.com",
-      title: "Community Admin",
-      company: "Riverside Alumni Network",
+      title: "Network Admin",
+      company: "The Network",
       industry: "Community Management",
       location: "Remote",
-      bio: "Runs the Riverside Alumni Network.",
+      bio: "Runs the network.",
       isAdmin: true,
       offerings: [],
     },

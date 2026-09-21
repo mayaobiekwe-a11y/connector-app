@@ -108,11 +108,27 @@ control from their profile:
   until the next month — so your most helpful people don't get flooded
   into unresponsiveness.
 
+### Privacy: first names only, no LinkedIn until you're in
+
+Members only ever see each other's **first name** (`src/lib/displayName.ts`)
+— in the directory, the feed, profile pages, match lists, and thread
+messages. Full names are visible only to the member themself and to admins
+(who need real identities for moderation). Profile pages also don't show a
+member's LinkedIn link to anyone but that member and admins. The point is
+to keep enough friction that getting help actually goes through the
+platform (and its credit/reputation loop) instead of "see a name on the
+directory, look them up on LinkedIn, DM them directly" bypassing it
+entirely.
+
 ## Data model
 
-See `prisma/schema.prisma`. Everything is scoped under a `Community` so the
-same deployment can host multiple independent trusted networks — nothing is
-hardcoded to one group. Enum-like fields (help category, compensation type,
+See `prisma/schema.prisma`. Everything is scoped under a `Community`, but the
+MVP only ever uses one: every signup auto-joins the same global network
+(`src/lib/community.ts`) rather than picking/creating one, since reach beyond
+any single group is the point — most members are job-searching and want more
+surface area, not a smaller silo. The schema still supports multiple
+independent communities; exposing that as a real "create a private network"
+feature is future work, not a rebuild. Enum-like fields (help category, compensation type,
 request intent/status, match status, review outcome, credit reason) are
 stored as validated strings rather than native Postgres enums, so adding a
 new value (like the gig-work/job-opening intents) never needs a migration
@@ -129,13 +145,12 @@ npm install
 cp .env.example .env       # set DATABASE_URL to your Postgres connection string,
                             # and ANTHROPIC_API_KEY if you have one
 npx prisma migrate deploy  # applies the schema
-npx prisma db seed         # loads demo community + members
+npx prisma db seed         # loads the global network + demo members
 npm run dev
 ```
 
-Open http://localhost:3000. The seed step creates a demo community
-("Riverside Alumni Network") with a handful of members — log in as any of
-them with password `password123`:
+Open http://localhost:3000. The seed step adds a handful of demo members to
+the network — log in as any of them with password `password123`:
 
 - `jordan@example.com` — healthcare data strategy, offers intros
 - `priya@example.com` — public policy, offers resume review + mentorship
@@ -146,8 +161,8 @@ them with password `password123`:
 - `emily@example.com` — HR, offers resume review + mock interviews
 - `admin@example.com` — flagged as a community admin, see `/admin`
 
-Or sign up as a brand-new member and start (or join) a community from the
-signup form.
+Or sign up as a brand-new member from the signup form — you'll land in the
+same network automatically.
 
 ### Using the real AI matching
 
