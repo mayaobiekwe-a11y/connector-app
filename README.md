@@ -1,4 +1,4 @@
-# Connector
+# Mobi
 
 A working prototype of a trusted-network referral and mentorship matching
 platform: members ask for help in plain language, an AI parses the request

@@ -27,9 +27,9 @@ export default async function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-semibold text-gray-900 text-lg">
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white text-xs font-bold">
-              C
+              M
             </span>
-            Connector
+            Mobi
           </Link>
           {member ? (
             <nav className="flex items-center gap-1 sm:gap-2 text-sm">

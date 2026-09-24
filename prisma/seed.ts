@@ -16,7 +16,7 @@ async function main() {
     create: {
       name: "The Network",
       slug: "global",
-      description: "The Connector network.",
+      description: "The Mobi network.",
     },
   });
 

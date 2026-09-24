@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Connector — warm intros from people who know you",
+  title: "Mobi — warm intros from people who know you",
   description: "A trusted-network referral and mentorship matching prototype.",
 };
 
