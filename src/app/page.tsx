@@ -56,8 +56,9 @@ export default async function HomePage() {
 
       <div className="mt-8 max-w-2xl rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
         <p className="text-gray-700">
-          Marie Obi has always been a dot connector. She notices what people need, remembers
-          who in her world could help, and picks up the phone herself to make the introduction.
+          Marie Obi is social, loves meeting people, and remembers the details that connect
+          them. When someone is looking for something specific, a job, a program, a contact,
+          she's usually the one who already knows who to call.
         </p>
         <p className="mt-3 font-medium text-gray-900">
           Mobi carries that same instinct into a whole network. We named it after her.
