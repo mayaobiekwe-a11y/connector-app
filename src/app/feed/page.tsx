@@ -27,7 +27,7 @@ export default async function FeedPage() {
         <span className="eyebrow">Live</span>
         <h1 className="text-2xl font-semibold text-gray-900 mt-1">Community feed</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Every open ask in {member.community.name} — not just the ones Marie privately matched you
+          Every open ask in {member.community.name} — not just the ones Mobi privately matched you
           to. See something you can help with? Jump in.
         </p>
       </div>

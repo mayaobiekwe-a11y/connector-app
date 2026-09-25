@@ -26,7 +26,7 @@ interactions build a visible reputation over time.
    as well as two opportunity-style asks: looking for or hiring for gig/
    freelance work, and posting an open role ("dropping a role") for the
    network to fill or refer into.
-2. **Get connected** — Claude (personified in the UI as "Marie") parses the
+2. **Get connected** — Claude (personified in the UI as "Mobi") parses the
    request (company / industry / function / intent) and ranks the community
    directory against it, returning a short list of matches with a
    natural-language reason each. Matching considers each member's own job
@@ -35,7 +35,7 @@ interactions build a visible reputation over time.
    opportunity-style asks. Matched members are notified privately (it shows
    up in their dashboard's "Requests for you") — **and** the ask also
    appears on the public **community feed** (`/feed`), where any member can
-   see it and volunteer to help, not just Marie's picks. Both paths lead to
+   see it and volunteer to help, not just Mobi's picks. Both paths lead to
    the same accept/thread/outcome flow.
 3. **Get help** — a matched member accepts or declines (opportunity-style
    requests show "I'm interested" / "Not for me" instead), or a member
@@ -209,6 +209,13 @@ the deployed app's `/signup` page instead — seeding is optional.
 That's it — Vercel gives you a `https://<project>.vercel.app` URL after the
 first deploy, and every push to this branch redeploys it automatically.
 
+**7. Point the real domain at it (optional).** If you own a domain (e.g.
+`themobiapp.com`), go to the Vercel project's Settings → Domains, add it,
+and Vercel shows you the DNS records to add at your registrar (usually an
+`A` record for the apex domain and a `CNAME` for `www`). Propagation
+usually takes a few minutes to a few hours. Vercel issues a free SSL
+certificate for it automatically once DNS resolves.
+
 ## Project layout
 
 ```
@@ -219,7 +226,7 @@ src/lib/matching.ts        Orchestrates parse -> rank -> persist Request/Match; 
 src/lib/credit.ts          Reputation points ledger + badge tier logic
 src/lib/askCredits.ts      Spendable ask-credit ledger: signup bonus, spend-on-ask, earn-by-helping, monthly refresh
 src/lib/session.ts         iron-session cookie auth helpers
-src/app/dashboard          Ask bar (Marie), ask-credit balance, "requests for you", "your asks"
+src/app/dashboard          Ask bar (Mobi), ask-credit balance, "requests for you", "your asks"
 src/app/feed               Public community feed of open asks + volunteer-to-help
 src/app/requests/[id]      Request detail: matches, accept/decline, thread, review
 src/app/profile/[id]       Public profile: badge, offerings, relationships, side hustles, help history

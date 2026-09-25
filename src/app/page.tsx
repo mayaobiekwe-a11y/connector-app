@@ -9,7 +9,7 @@ const STEPS = [
   },
   {
     title: "Get connected",
-    body: "Marie privately asks the best-matched people in your network — and your ask shows up in the community feed too, so anyone who can help can just jump in.",
+    body: "Mobi privately asks the best-matched people in your network — and your ask shows up in the community feed too, so anyone who can help can just jump in.",
   },
   {
     title: "Get help",
@@ -35,12 +35,12 @@ export default async function HomePage() {
         <div className="relative max-w-2xl">
           <span className="eyebrow">A trusted-network referral platform</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            Marie remembers everyone.
+            Mobi remembers everyone.
             <br />
-            Just ask Marie.
+            Just ask Mobi.
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Marie finds the right person in your network and asks them directly — and your
+            Mobi finds the right person in your network and asks them directly — and your
             request shows up in the community feed too, so anyone who can help, can.
           </p>
           <div className="mt-8 flex gap-3">

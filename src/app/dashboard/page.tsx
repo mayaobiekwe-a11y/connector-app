@@ -36,7 +36,7 @@ export default async function DashboardPage() {
         <div className="flex items-center justify-between mt-1 mb-3">
           <div>
             <span className="eyebrow">Get started</span>
-            <h1 className="text-2xl font-semibold text-gray-900">Ask Marie</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">Ask Mobi</h1>
           </div>
           <span
             className={`badge border ${
@@ -55,7 +55,7 @@ export default async function DashboardPage() {
           <Link href="/feed" className="text-brand-700 font-medium hover:underline">
             community feed
           </Link>{" "}
-          — anyone can jump in, not just who Marie matches you to.
+          — anyone can jump in, not just who Mobi matches you to.
         </p>
       </div>
 

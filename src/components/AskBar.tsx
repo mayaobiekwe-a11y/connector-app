@@ -55,7 +55,7 @@ export default function AskBar({ credits }: { credits: number }) {
           <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2">
             <input
               className="input flex-1 bg-white text-base py-3"
-              placeholder="Ask Marie anything... e.g. who's worked in fintech?"
+              placeholder="Ask Mobi anything... e.g. who's worked in fintech?"
               value={text}
               onChange={(e) => setText(e.target.value)}
               disabled={loading}
@@ -65,7 +65,7 @@ export default function AskBar({ credits }: { credits: number }) {
                 "Finding matches..."
               ) : (
                 <>
-                  Ask Marie
+                  Ask Mobi
                   <svg className="ml-1.5 h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={2}>
                     <path d="M4 10h12M12 6l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
