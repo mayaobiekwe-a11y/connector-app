@@ -56,19 +56,17 @@ export default async function HomePage() {
 
       <div className="mt-8 max-w-2xl rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
         <p className="text-gray-700">
-          Marie has always been that person — the one who remembers what you need, who you
-          are, and who in her world might be able to help, then actually picks up the phone
-          and makes the introduction. No app, no form, just her paying attention.
+          Marie Obi has always been a dot connector. She notices what people need, remembers
+          who in her world could help, and picks up the phone herself to make the introduction.
         </p>
         <p className="mt-3 font-medium text-gray-900">
-          Mobi is that, for everyone — we named it after her.
+          Mobi carries that same instinct into a whole network. We named it after her.
         </p>
       </div>
 
       <p className="mt-8 max-w-2xl text-lg font-medium text-gray-900">
-        A community isn't a stagnant list of names in a group chat. It's a place where people
-        connect and build together — where showing up means sharing what you know, and opening
-        yourself to what someone else needs.
+        A community is a place where people connect and build together, where showing up
+        means sharing what you know and opening yourself to what someone else needs.
       </p>
 
       <div className="mt-14 grid gap-5 sm:grid-cols-2">
