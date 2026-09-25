@@ -56,11 +56,12 @@ export default async function HomePage() {
 
       <div className="mt-8 max-w-2xl rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
         <p className="text-gray-700">
-          Marie always knew who needed a job, who knew someone, who could help.
-          No app, no form — she just paid attention, and made the call.
+          Marie has always been that person — the one who remembers what you need, who you
+          are, and who in her world might be able to help, then actually picks up the phone
+          and makes the introduction. No app, no form, just her paying attention.
         </p>
         <p className="mt-3 font-medium text-gray-900">
-          Most networks don't work like that. Mobi does — we named it after her.
+          Mobi is that, for everyone — we named it after her.
         </p>
       </div>
 
