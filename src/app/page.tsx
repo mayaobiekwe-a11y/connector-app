@@ -35,7 +35,7 @@ export default async function HomePage() {
         <div className="relative max-w-2xl">
           <span className="eyebrow">A trusted-network referral platform</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            Mobi remembers everyone.
+            Built to remember everyone.
             <br />
             Just ask Mobi.
           </h1>
