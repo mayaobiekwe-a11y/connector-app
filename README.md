@@ -17,6 +17,9 @@ interactions build a visible reputation over time.
   deterministic keyword-based parser/ranker if no API key is configured, so
   the whole app still works out of the box.
 - **iron-session + bcrypt** — simple cookie-based email/password auth.
+- **Resend** — sends email notifications for new matches, thread messages,
+  accepted/declined requests, and reviews. Optional: without a key, emails
+  are silently skipped and everything still works via in-app notifications.
 - **Tailwind CSS** — mobile-responsive UI.
 
 ## Core loop
@@ -33,7 +36,8 @@ interactions build a visible reputation over time.
    *and* their listed relationships and side hustles (see below), plus
    their "open to new roles" / "open to gig work" signals for
    opportunity-style asks. Matched members are notified privately (it shows
-   up in their dashboard's "Requests for you") — **and** the ask also
+   up in their dashboard's "Requests for you," and by email if Resend is
+   configured — see below) — **and** the ask also
    appears on the public **community feed** (`/feed`), where any member can
    see it and volunteer to help, not just Mobi's picks. Both paths lead to
    the same accept/thread/outcome flow.
@@ -194,6 +198,13 @@ them):
 - `SESSION_SECRET` — any random 32+ character string
 - `ANTHROPIC_API_KEY` — optional, but this is what turns on real Claude
   parsing/matching instead of the heuristic fallback
+- `RESEND_API_KEY` — optional, turns on email notifications (new match,
+  new message, accepted/declined, review received). Needs a domain
+  verified in [Resend](https://resend.com).
+- `EMAIL_FROM` — the "from" address for those emails, e.g.
+  `Mobi <notifications@themobiapp.com>`
+- `APP_URL` — your live URL (e.g. `https://themobiapp.com`), used to build
+  links inside emails
 
 **5. Deploy.** Vercel's build runs `prisma migrate deploy && next build`
 (already wired up in `package.json`), so the database schema is created

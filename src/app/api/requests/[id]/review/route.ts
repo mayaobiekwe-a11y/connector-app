@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { getCurrentMember } from "@/lib/session";
 import { awardCredit, reasonForRating } from "@/lib/credit";
 import { awardAskCredits } from "@/lib/askCredits";
+import { sendReviewReceivedEmail } from "@/lib/email";
 import { REQUEST_OUTCOMES } from "@/lib/enums";
 
 const schema = z.object({
@@ -29,7 +30,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "Only the requester can log an outcome" }, { status: 403 });
   }
 
-  const match = await prisma.match.findUnique({ where: { id: parsed.data.matchId } });
+  const match = await prisma.match.findUnique({
+    where: { id: parsed.data.matchId },
+    include: { member: true },
+  });
   if (!match || match.requestId !== request.id) {
     return NextResponse.json({ error: "Match not found for this request" }, { status: 404 });
   }
@@ -65,6 +69,13 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   // NO_RESPONSE earns no credit for the matched member.
 
   await prisma.request.update({ where: { id: request.id }, data: { status: "COMPLETED" } });
+
+  await sendReviewReceivedEmail(
+    match.member.email,
+    match.member.name,
+    outcome === "HELPED" ? rating ?? null : null,
+    request.id
+  );
 
   return NextResponse.json({ review });
 }

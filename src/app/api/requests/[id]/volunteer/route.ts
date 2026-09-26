@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { getCurrentMember } from "@/lib/session";
 import { awardCredit } from "@/lib/credit";
 import { awardAskCredits } from "@/lib/askCredits";
+import { sendMatchRespondedEmail } from "@/lib/email";
 
 // Lets any community member volunteer to help with a request straight from
 // the public feed, rather than waiting to be AI-matched. Since volunteering
@@ -12,7 +13,10 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
   const member = await getCurrentMember();
   if (!member) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
 
-  const request = await prisma.request.findUnique({ where: { id: params.id } });
+  const request = await prisma.request.findUnique({
+    where: { id: params.id },
+    include: { requester: true },
+  });
   if (!request || request.communityId !== member.communityId) {
     return NextResponse.json({ error: "Request not found" }, { status: 404 });
   }
@@ -51,6 +55,8 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
   if (request.status === "OPEN" || request.status === "MATCHED") {
     await prisma.request.update({ where: { id: request.id }, data: { status: "IN_PROGRESS" } });
   }
+
+  await sendMatchRespondedEmail(request.requester.email, request.requester.name, member.name, true, request.id);
 
   return NextResponse.json({ match });
 }

@@ -1,6 +1,7 @@
 import { prisma } from "./db";
 import { parseAskRequest, rankMatches, type CandidateMember } from "./claude";
 import type { HelpCategory, CompensationType } from "./enums";
+import { sendNewMatchEmail } from "./email";
 
 const MATCH_LIMIT = 5;
 
@@ -73,10 +74,18 @@ export async function createRequestWithMatches(requesterId: string, communityId:
     await prisma.request.update({ where: { id: request.id }, data: { status: "MATCHED" } });
   }
 
-  return prisma.request.findUniqueOrThrow({
+  const result = await prisma.request.findUniqueOrThrow({
     where: { id: request.id },
     include: { matches: { include: { member: true }, orderBy: { rank: "asc" } } },
   });
+
+  await Promise.all(
+    result.matches.map((m) =>
+      sendNewMatchEmail(m.member.email, m.member.name, rawText, m.reason, request.id)
+    )
+  );
+
+  return result;
 }
 
 // Returns the ids of the given members who've already been accepted for

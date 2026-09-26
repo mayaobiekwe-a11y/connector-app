@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { getCurrentMember } from "@/lib/session";
 import { awardCredit } from "@/lib/credit";
 import { awardAskCredits } from "@/lib/askCredits";
+import { sendMatchRespondedEmail } from "@/lib/email";
 
 const schema = z.object({ action: z.enum(["accept", "decline"]) });
 
@@ -15,7 +16,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Invalid input" }, { status: 400 });
 
-  const match = await prisma.match.findUnique({ where: { id: params.id } });
+  const match = await prisma.match.findUnique({
+    where: { id: params.id },
+    include: { request: { include: { requester: true } } },
+  });
   if (!match) return NextResponse.json({ error: "Match not found" }, { status: 404 });
   if (match.memberId !== member.id) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   if (match.status !== "PENDING") {
@@ -40,6 +44,14 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     });
     await prisma.request.update({ where: { id: match.requestId }, data: { status: "IN_PROGRESS" } });
   }
+
+  await sendMatchRespondedEmail(
+    match.request.requester.email,
+    match.request.requester.name,
+    member.name,
+    newStatus === "ACCEPTED",
+    match.requestId
+  );
 
   return NextResponse.json({ ok: true });
 }

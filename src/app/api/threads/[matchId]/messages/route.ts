@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getCurrentMember } from "@/lib/session";
+import { sendNewMessageEmail } from "@/lib/email";
 
 async function authorizeThread(matchId: string, memberId: string) {
   const match = await prisma.match.findUnique({
     where: { id: matchId },
-    include: { request: true },
+    include: { request: { include: { requester: true } }, member: true },
   });
   if (!match) return null;
   const isParticipant = match.memberId === memberId || match.request.requesterId === memberId;
@@ -54,6 +55,9 @@ export async function POST(req: Request, { params }: { params: { matchId: string
     data: { threadId: thread.id, senderId: member.id, body: parsed.data.body },
     include: { sender: true },
   });
+
+  const recipient = member.id === match.memberId ? match.request.requester : match.member;
+  await sendNewMessageEmail(recipient.email, recipient.name, member.name, match.requestId);
 
   return NextResponse.json({ message });
 }
