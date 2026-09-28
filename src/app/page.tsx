@@ -40,8 +40,8 @@ export default async function HomePage() {
             Just ask Mobi.
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Mobi finds the right person in your network and asks them directly — and your
-            request shows up in the community feed too, so anyone who can help, can.
+            Post your ask in plain language and get matched with someone in your network who
+            can actually help.
           </p>
           <div className="mt-8 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
@@ -60,15 +60,8 @@ export default async function HomePage() {
           people, she remembers the details about them, and becomes a natural Rolodex for
           anyone looking for something specific: a job, a program, a contact.
         </p>
-        <p className="mt-3 font-medium text-gray-900">
-          We built Mobi in that same spirit. Just ask Mobi.
-        </p>
+        <p className="mt-3 font-medium text-gray-900">We built Mobi in that same spirit.</p>
       </div>
-
-      <p className="mt-8 max-w-2xl text-lg font-medium text-gray-900">
-        A community is a place where people connect and build together, where showing up
-        means sharing what you know and opening yourself to what someone else needs.
-      </p>
 
       <div className="mt-14 grid gap-5 sm:grid-cols-2">
         {STEPS.map((step, i) => (
