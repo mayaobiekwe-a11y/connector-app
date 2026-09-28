@@ -33,15 +33,15 @@ export default async function HomePage() {
           className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-brand-200 to-accent-200 opacity-40 blur-3xl"
         />
         <div className="relative max-w-2xl">
-          <span className="eyebrow">A trusted-network referral platform</span>
+          <span className="eyebrow">Mobi is the network</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
             Built to remember everyone.
             <br />
             Just ask Mobi.
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Post your ask in plain language and get matched with someone in the network who
-            can actually help.
+            Ask for what you need, or be the person someone else needs — every member here is
+            both.
           </p>
           <div className="mt-8 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
