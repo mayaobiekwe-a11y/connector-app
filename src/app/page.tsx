@@ -40,8 +40,7 @@ export default async function HomePage() {
             Just ask Mobi.
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Ask for what you need, or be the person someone else needs — every member here is
-            both.
+            You can ask for what you need, and you can be the person someone else needs too.
           </p>
           <div className="mt-8 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
