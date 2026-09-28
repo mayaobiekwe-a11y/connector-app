@@ -46,7 +46,7 @@ export async function sendNewMatchEmail(
     "Mobi thinks you can help with something",
     layout(
       `<p>Hi ${firstName(memberName)},</p>
-       <p>Mobi matched you to a request from someone in your network:</p>
+       <p>Mobi matched you to a request from someone in the network:</p>
        <p style="font-style: italic; border-left: 3px solid #ddd6fe; padding-left: 12px;">"${requestText}"</p>
        <p>${reason}</p>`,
       `${APP_URL}/requests/${requestId}`,

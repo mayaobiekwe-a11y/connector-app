@@ -9,7 +9,7 @@ const STEPS = [
   },
   {
     title: "Get connected",
-    body: "Mobi privately asks the best-matched people in your network — and your ask shows up in the community feed too, so anyone who can help can just jump in.",
+    body: "Mobi privately asks the best-matched people in the network — and your ask shows up in the community feed too, so anyone who can help can just jump in.",
   },
   {
     title: "Get help",
@@ -40,12 +40,12 @@ export default async function HomePage() {
             Just ask Mobi.
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Post your ask in plain language and get matched with someone in your network who
+            Post your ask in plain language and get matched with someone in the network who
             can actually help.
           </p>
           <div className="mt-8 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
-              Join your network
+              Join the network
             </Link>
             <Link href="/login" className="btn-secondary text-base px-6 py-3">
               Log in

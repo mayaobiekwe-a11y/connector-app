@@ -33,7 +33,7 @@ export default function LoginPage() {
   return (
     <div className="max-w-sm mx-auto py-10">
       <h1 className="text-2xl font-bold mb-1">Welcome back</h1>
-      <p className="text-sm text-gray-500 mb-6">Log in to your network.</p>
+      <p className="text-sm text-gray-500 mb-6">Log in to the network.</p>
       <form onSubmit={onSubmit} className="card p-5 space-y-4">
         {error && <p className="text-sm text-red-600">{error}</p>}
         <div>
