@@ -81,7 +81,14 @@ export async function createRequestWithMatches(requesterId: string, communityId:
 
   await Promise.all(
     result.matches.map((m) =>
-      sendNewMatchEmail(m.member.email, m.member.name, rawText, m.reason, request.id)
+      sendNewMatchEmail(
+        m.member.email,
+        m.member.name,
+        rawText,
+        m.reason,
+        request.id,
+        m.member.passwordHash ? null : m.member.claimToken
+      )
     )
   );
 

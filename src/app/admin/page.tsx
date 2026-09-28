@@ -24,9 +24,14 @@ export default async function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold">Admin — {member.community.name}</h1>
-        <p className="text-sm text-gray-500">All requests, how the AI parsed them, and match status.</p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-semibold">Admin — {member.community.name}</h1>
+          <p className="text-sm text-gray-500">All requests, how the AI parsed them, and match status.</p>
+        </div>
+        <Link href="/admin/import" className="btn-secondary shrink-0">
+          Import members
+        </Link>
       </div>
 
       <div className="grid grid-cols-3 gap-3">

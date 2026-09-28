@@ -17,6 +17,7 @@ export interface DirectoryMember {
   badgeLabel: string;
   relationships: string[];
   sideHustleNames: string[];
+  claimed: boolean;
 }
 
 function truncate(text: string, max: number) {
@@ -58,6 +59,11 @@ export default function DirectoryList({ members }: { members: DirectoryMember[] 
                     {m.profileType === "SERVICE_PROVIDER" && (
                       <span className="badge bg-brand-50 text-brand-700 border border-brand-200 text-xs">
                         {PROFILE_TYPE_LABELS.SERVICE_PROVIDER}
+                      </span>
+                    )}
+                    {!m.claimed && (
+                      <span className="badge bg-amber-50 text-amber-700 border border-amber-200 text-xs">
+                        Not yet on Mobi
                       </span>
                     )}
                   </div>

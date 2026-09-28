@@ -20,6 +20,12 @@ export async function POST(req: Request) {
   if (!member) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
   }
+  if (!member.passwordHash) {
+    return NextResponse.json(
+      { error: "This account hasn't been claimed yet. Check your email for an invite from Mobi." },
+      { status: 401 }
+    );
+  }
   const valid = await bcrypt.compare(parsed.data.password, member.passwordHash);
   if (!valid) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });

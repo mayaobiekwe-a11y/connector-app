@@ -124,6 +124,34 @@ platform (and its credit/reputation loop) instead of "see a name on the
 directory, look them up on LinkedIn, DM them directly" bypassing it
 entirely.
 
+### Importing an existing community
+
+A brand-new network is an empty directory, which is a bad first impression
+if you're bringing in people who already know each other from somewhere
+else (a Discord, an Airtable intake form, a spreadsheet of past members).
+Admins can bulk-load that data from `/admin/import`:
+
+1. **Upload a CSV** and map its columns to profile fields (name/email are
+   required; title, company, industry, relationships, side hustles, etc.
+   are optional). Rows whose email already exists are skipped, not
+   overwritten.
+2. Imported profiles show up in the directory and the AI matching pool
+   immediately (`visibleInDirectory: true`) — so new joiners see a
+   populated network on day one instead of an empty one — but each one has
+   no password yet (`Member.passwordHash` is null) and can't log in. A
+   small "Not yet on Mobi" badge marks these on the directory and profile
+   pages so it's clear they haven't actually joined.
+3. **Send claim invites** — a second button on the same page emails
+   everyone imported-but-not-yet-invited a personal link
+   (`/claim/[token]`) to set a password and activate their pre-loaded
+   profile, without re-entering anything. Safe to click repeatedly; it
+   only emails people who haven't already gotten an invite
+   (`inviteSentAt`).
+4. If an imported (unclaimed) member gets AI-matched to a request, their
+   notification email points to the claim link instead of the request —
+   so getting matched to something relevant becomes the reason they
+   actually join.
+
 ## Data model
 
 See `prisma/schema.prisma`. Everything is scoped under a `Community`, but the
@@ -244,6 +272,8 @@ src/app/profile/[id]       Public profile: badge, offerings, relationships, side
 src/app/profile/edit       Edit profile, offerings, relationships, side hustles, visibility/capacity
 src/app/directory          Browsable member directory with search
 src/app/admin              Admin view of all requests, AI parsing, match status (AI-matched vs. volunteered)
+src/app/admin/import       Bulk CSV import + claim-invite sending for pre-loading an existing community
+src/app/claim/[token]      Where an imported member sets a password and activates their profile
 ```
 
 ## Notes / known limitations (prototype scope)

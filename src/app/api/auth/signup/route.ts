@@ -46,6 +46,12 @@ export async function POST(req: Request) {
   const data = parsed.data;
 
   const existing = await prisma.member.findUnique({ where: { email: data.email } });
+  if (existing && !existing.passwordHash) {
+    return NextResponse.json(
+      { error: "We already have a profile for this email — check your inbox for a Mobi invite to claim it." },
+      { status: 409 }
+    );
+  }
   if (existing) {
     return NextResponse.json({ error: "An account with this email already exists" }, { status: 409 });
   }

@@ -29,6 +29,7 @@ export default async function DirectoryPage() {
     badgeLabel: badgeForPoints(points[m.id] ?? 0).label,
     relationships: m.relationships.map((r) => r.label),
     sideHustleNames: m.sideHustles.map((s) => s.name),
+    claimed: Boolean(m.claimedAt) || Boolean(m.passwordHash),
   }));
 
   return (

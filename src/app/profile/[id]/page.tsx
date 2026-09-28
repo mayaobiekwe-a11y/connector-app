@@ -52,6 +52,11 @@ export default async function ProfilePage({ params }: { params: { id: string } }
                     {PROFILE_TYPE_LABELS.SERVICE_PROVIDER}
                   </span>
                 )}
+                {!profileMember.claimedAt && !profileMember.passwordHash && (
+                  <span className="badge bg-amber-50 text-amber-700 border border-amber-200">
+                    Not yet on Mobi
+                  </span>
+                )}
               </div>
               <p className="text-sm text-gray-500">
                 {profileMember.title ?? "Member"} {profileMember.company ? `at ${profileMember.company}` : ""}

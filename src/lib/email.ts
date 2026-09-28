@@ -39,8 +39,10 @@ export async function sendNewMatchEmail(
   memberName: string,
   requestText: string,
   reason: string,
-  requestId: string
+  requestId: string,
+  claimToken?: string | null
 ) {
+  const unclaimed = Boolean(claimToken);
   await send(
     to,
     "Mobi thinks you can help with something",
@@ -48,9 +50,25 @@ export async function sendNewMatchEmail(
       `<p>Hi ${firstName(memberName)},</p>
        <p>Mobi matched you to a request from someone in the network:</p>
        <p style="font-style: italic; border-left: 3px solid #ddd6fe; padding-left: 12px;">"${requestText}"</p>
-       <p>${reason}</p>`,
-      `${APP_URL}/requests/${requestId}`,
-      "View request"
+       <p>${reason}</p>
+       ${unclaimed ? `<p>You're not on Mobi yet — claim your account to respond.</p>` : ""}`,
+      unclaimed ? `${APP_URL}/claim/${claimToken}` : `${APP_URL}/requests/${requestId}`,
+      unclaimed ? "Claim your account" : "View request"
+    )
+  );
+}
+
+export async function sendClaimInviteEmail(to: string, memberName: string, claimToken: string) {
+  await send(
+    to,
+    "You're already on Mobi — claim your account",
+    layout(
+      `<p>Hi ${firstName(memberName)},</p>
+       <p>Your profile is already set up on Mobi, the network built to remember everyone
+       and connect you to the right person when you need something specific.</p>
+       <p>Claim your account to start asking, matching, and connecting.</p>`,
+      `${APP_URL}/claim/${claimToken}`,
+      "Claim your account"
     )
   );
 }

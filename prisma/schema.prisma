@@ -36,7 +36,15 @@ model Community {
 model Member {
   id           String   @id @default(cuid())
   email        String   @unique
-  passwordHash String
+  // Null for a member imported in bulk (e.g. from an existing community's
+  // data) who hasn't claimed their account yet — they can't log in until
+  // they do. Real signups always set this immediately.
+  passwordHash String?
+  // A one-time token emailed to an imported member so they can claim their
+  // pre-loaded profile without re-entering everything. Cleared once used.
+  claimToken   String?  @unique
+  claimedAt    DateTime?
+  inviteSentAt DateTime?
   name         String
   title        String? // current role, e.g. "Product Manager"
   company      String?
