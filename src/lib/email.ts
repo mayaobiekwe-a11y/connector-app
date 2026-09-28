@@ -4,7 +4,7 @@ import { Resend } from "resend";
 // RESEND_API_KEY means emails are silently skipped rather than breaking the
 // app. In-app notifications (dashboard/feed) always work regardless.
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-const FROM = process.env.EMAIL_FROM || "Mobi <notifications@themobiapp.com>";
+const FROM = process.env.EMAIL_FROM || "Mobi <hello@themobiapp.com>";
 const APP_URL = process.env.APP_URL || "https://themobiapp.com";
 
 function firstName(fullName: string): string {

@@ -202,7 +202,7 @@ them):
   new message, accepted/declined, review received). Needs a domain
   verified in [Resend](https://resend.com).
 - `EMAIL_FROM` — the "from" address for those emails, e.g.
-  `Mobi <notifications@themobiapp.com>`
+  `Mobi <hello@themobiapp.com>`
 - `APP_URL` — your live URL (e.g. `https://themobiapp.com`), used to build
   links inside emails
 
