@@ -54,18 +54,36 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="mt-8 max-w-2xl rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
-        <p className="text-gray-700">
-          Everyone needs a Marie Obiekwe in their life. Mobi is a super connector, always
-          looking for two people in her orbit who belong in the same room. She understands that
-          opportunities live in people, not systems, and that one introduction can change the
-          course of your career, business, or academic aspirations.
-        </p>
-        <p className="mt-3 text-gray-700">
-          Mobi is here to help you find it. In return, we ask that you show up as an active
-          participant. That means being responsive. We only invite people who have the capacity
-          to engage and help.
-        </p>
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
+        <div className="rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
+          <p className="text-xl font-semibold text-gray-900 leading-snug">
+            Opportunities live in people, not systems.
+          </p>
+          <p className="mt-3 text-gray-600">
+            Everyone needs a super connector in their life, someone always looking for two
+            people who belong in the same room, someone who knows one introduction can change
+            the course of your career, your business, or your next big idea.
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-white border border-gray-200 px-6 py-6 sm:px-8 sm:py-7">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white text-sm font-bold">
+              M
+            </span>
+            <p className="font-semibold text-gray-900">Introducing Mobi</p>
+          </div>
+          <p className="mt-3 text-gray-600">
+            Your well-connected AI assistant, here to help you find your people.
+          </p>
+          <p className="mt-3 text-sm text-gray-500">In return, we ask you to show up as:</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Responsive</span>
+            <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Engaged</span>
+            <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Ready to help</span>
+          </div>
+          <p className="mt-3 text-sm text-gray-500">That's who we invite in.</p>
+        </div>
       </div>
 
       <div className="mt-14 grid gap-5 sm:grid-cols-2">
