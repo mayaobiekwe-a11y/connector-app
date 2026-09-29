@@ -55,11 +55,16 @@ export default async function HomePage() {
 
       <div className="mt-8 max-w-2xl rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
         <p className="text-gray-700">
-          Marie Obiekwe has always been a dot connector. A social butterfly, she doesn't just meet
-          people, she remembers the details about them, and becomes a natural Rolodex for
-          anyone looking for something specific: a job, a program, a contact.
+          Everyone needs a Marie Obiekwe in their life. Mobi is a super connector, always
+          looking for two people in her orbit who belong in the same room. She understands that
+          opportunities live in people, not systems.
         </p>
-        <p className="mt-3 font-medium text-gray-900">We built Mobi in that same spirit.</p>
+        <p className="mt-3 text-gray-700">
+          One introduction can change the course of your career, business or academic
+          aspirations. Mobi is here to help you find it. In return, we ask that you show up as
+          an active participant. That means being responsive. We only invite people who have
+          the capacity to engage and help.
+        </p>
       </div>
 
       <div className="mt-14 grid gap-5 sm:grid-cols-2">
