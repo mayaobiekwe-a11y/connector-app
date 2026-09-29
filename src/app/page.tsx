@@ -76,13 +76,11 @@ export default async function HomePage() {
           <p className="mt-3 text-gray-600">
             Your well-connected AI assistant, here to help you find your people.
           </p>
-          <p className="mt-3 text-sm text-gray-500">In return, we ask you to show up as:</p>
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
             <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Responsive</span>
             <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Engaged</span>
             <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Ready to help</span>
           </div>
-          <p className="mt-3 text-sm text-gray-500">That's who we invite in.</p>
         </div>
       </div>
 
