@@ -68,14 +68,17 @@ badge tier.
 
 ### Relationships, not just employers
 
-At signup and on their profile, members can optionally list places they
-have a **solid personal relationship** — not necessarily their own
-employer (e.g. "Google" because a close friend works there, or "DC policy
-circles"). A LinkedIn URL is also optional. When a request names a company
-or industry, a member with a matching relationship is usually the single
-best match for a warm intro, even if their own job is unrelated — the
-match reason calls this out explicitly (e.g. "Jordan doesn't work at
-Google but has a relationship there.").
+At signup, members list places they have a **solid personal
+relationship** — not necessarily their own employer (e.g. "Google" because
+a close friend works there, or "DC policy circles"). **Signup requires at
+least 2** (enforced client- and server-side); the point of a referral
+network is the warm intros members can actually make, and a member with
+zero relationships listed can't make any. On the profile-edit page,
+adding more later is optional. A LinkedIn URL is also optional. When a
+request names a company or industry, a member with a matching
+relationship is usually the single best match for a warm intro, even if
+their own job is unrelated — the match reason calls this out explicitly
+(e.g. "Jordan doesn't work at Google but has a relationship there.").
 
 ### Side hustles count too
 

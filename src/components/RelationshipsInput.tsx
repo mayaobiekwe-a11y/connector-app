@@ -11,9 +11,13 @@ export interface RelationshipRow {
 export default function RelationshipsInput({
   rows,
   onChange,
+  minRequired = 0,
 }: {
   rows: RelationshipRow[];
   onChange: (rows: RelationshipRow[]) => void;
+  // > 0 marks this as required (e.g. at signup) instead of optional, and
+  // shows a live count toward the minimum.
+  minRequired?: number;
 }) {
   function addRow() {
     onChange([...rows, { label: "", notes: "" }]);
@@ -25,10 +29,22 @@ export default function RelationshipsInput({
     onChange(rows.filter((_, i) => i !== idx));
   }
 
+  const filledCount = rows.filter((r) => r.label.trim()).length;
+  const met = filledCount >= minRequired;
+
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <label className="label mb-0">Where do you have solid relationships? (optional)</label>
+        <label className="label mb-0">
+          Where do you have solid relationships?{" "}
+          {minRequired > 0 ? (
+            <span className={met ? "text-green-600" : "text-amber-600"}>
+              ({filledCount}/{minRequired} required)
+            </span>
+          ) : (
+            "(optional)"
+          )}
+        </label>
         <button type="button" onClick={addRow} className="btn-secondary text-xs">
           + Add
         </button>
@@ -36,6 +52,8 @@ export default function RelationshipsInput({
       <p className="text-xs text-gray-500 mb-2">
         Not just where you work — anywhere you know people well enough to make a warm intro
         (a company, a team, a circle like "DC policy folks").
+        {minRequired > 0 &&
+          " This is what makes a real intro possible, so we ask for a couple to get started."}
       </p>
       {rows.length === 0 && <p className="text-sm text-gray-400 mb-2">None added yet.</p>}
       <div className="space-y-2">

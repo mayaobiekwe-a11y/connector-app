@@ -37,17 +37,27 @@ export default function SignupPage() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+
+    const filledRelationships = relationships
+      .filter((r) => r.label.trim())
+      .map((r) => ({ label: r.label.trim(), notes: r.notes.trim() || undefined }));
+
+    if (filledRelationships.length < 2) {
+      setError(
+        "Add at least 2 places you have a real relationship — that's what makes a warm intro possible."
+      );
+      return;
+    }
+
+    setLoading(true);
 
     const payload: Record<string, unknown> = {
       ...form,
       monthlyCapacity: form.monthlyCapacity ? Number(form.monthlyCapacity) : undefined,
       profileType,
       visibleInDirectory,
-      relationships: relationships
-        .filter((r) => r.label.trim())
-        .map((r) => ({ label: r.label.trim(), notes: r.notes.trim() || undefined })),
+      relationships: filledRelationships,
       sideHustles: sideHustles
         .filter((s) => s.name.trim())
         .map((s) => ({
@@ -221,7 +231,7 @@ export default function SignupPage() {
         </div>
 
         <div className="border-t border-gray-100 pt-4">
-          <RelationshipsInput rows={relationships} onChange={setRelationships} />
+          <RelationshipsInput rows={relationships} onChange={setRelationships} minRequired={2} />
         </div>
 
         <button type="submit" disabled={loading} className="btn-primary w-full">

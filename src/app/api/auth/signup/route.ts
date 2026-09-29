@@ -45,6 +45,17 @@ export async function POST(req: Request) {
   }
   const data = parsed.data;
 
+  const relationshipCount = (data.relationships ?? []).filter((r) => r.label.trim()).length;
+  if (relationshipCount < 2) {
+    return NextResponse.json(
+      {
+        error:
+          "Add at least 2 places you have a real relationship — that's what makes a warm intro possible.",
+      },
+      { status: 400 }
+    );
+  }
+
   const existing = await prisma.member.findUnique({ where: { email: data.email } });
   if (existing && !existing.passwordHash) {
     return NextResponse.json(
