@@ -58,13 +58,13 @@ export default async function HomePage() {
         <p className="text-gray-700">
           Everyone needs a Marie Obiekwe in their life. Mobi is a super connector, always
           looking for two people in her orbit who belong in the same room. She understands that
-          opportunities live in people, not systems.
+          opportunities live in people, not systems, and that one introduction can change the
+          course of your career, business, or academic aspirations.
         </p>
         <p className="mt-3 text-gray-700">
-          One introduction can change the course of your career, business or academic
-          aspirations. Mobi is here to help you find it. In return, we ask that you show up as
-          an active participant. That means being responsive. We only invite people who have
-          the capacity to engage and help.
+          Mobi is here to help you find it. In return, we ask that you show up as an active
+          participant. That means being responsive. We only invite people who have the capacity
+          to engage and help.
         </p>
       </div>
 
