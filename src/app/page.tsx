@@ -33,11 +33,9 @@ export default async function HomePage() {
           className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-brand-200 to-accent-200 opacity-40 blur-3xl"
         />
         <div className="relative max-w-2xl">
-          <span className="eyebrow">Mobi is the network</span>
+          <span className="eyebrow">Just ask Mobi</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
             Built to remember everyone.
-            <br />
-            Just ask Mobi.
           </h1>
           <p className="mt-4 text-lg text-gray-600">
             We aren't a web of random contacts. We are a direct line to the exact resource you
