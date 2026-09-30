@@ -23,7 +23,7 @@ const schema = z.object({
   visibleInDirectory: z.boolean().optional(),
   relationships: z
     .array(z.object({ label: z.string().min(1).max(120), notes: z.string().max(300).optional() }))
-    .max(20)
+    .max(60)
     .optional(),
   sideHustles: z
     .array(

@@ -54,7 +54,7 @@ export async function POST(req: Request) {
 
     try {
       const relationships = splitList(row.relationships)
-        .slice(0, 20)
+        .slice(0, 60)
         .map((label) => ({ label }));
       const sideHustles = splitList(row.sideHustles)
         .slice(0, 10)
