@@ -37,11 +37,7 @@ export default async function HomePage() {
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
             Built to remember everyone.
           </h1>
-          <p className="mt-4 text-lg text-gray-600">
-            We aren't a web of random contacts. We are a direct line to the exact resource you
-            need.
-          </p>
-          <div className="mt-8 flex gap-3">
+          <div className="mt-6 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
               Join the network
             </Link>
