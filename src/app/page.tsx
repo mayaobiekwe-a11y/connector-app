@@ -35,8 +35,12 @@ export default async function HomePage() {
         <div className="relative max-w-2xl">
           <span className="eyebrow">Just ask Mobi</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            Built to remember everyone.
+            Opportunities live in people, not systems.
           </h1>
+          <p className="mt-4 text-lg text-gray-600">
+            Mobi is your AI assistant, always looking for two people who belong in the same
+            room — here to help you find yours.
+          </p>
           <div className="mt-6 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
               Join the network
@@ -48,33 +52,16 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
-          <p className="text-xl font-semibold text-gray-900 leading-snug">
-            Opportunities live in people, not systems.
-          </p>
-          <p className="mt-3 text-gray-600">
-            Everyone needs a super connector in their life, someone always looking for two
-            people who belong in the same room, someone who knows one introduction can change
-            the course of your career, your business, or your next big idea.
-          </p>
-        </div>
-
-        <div className="rounded-2xl bg-white border border-gray-200 px-6 py-6 sm:px-8 sm:py-7">
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white text-sm font-bold">
-              M
-            </span>
-            <p className="font-semibold text-gray-900">Introducing Mobi</p>
-          </div>
-          <p className="mt-3 text-gray-600">
-            Your well-connected AI assistant, here to help you find your people.
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Responsive</span>
-            <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Engaged</span>
-            <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Ready to help</span>
-          </div>
+      <div className="mt-8 rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
+        <p className="text-gray-700">
+          One introduction can change the course of your career, your business, or your next
+          big idea, but only if the people around you actually show up for each other. That's
+          what we ask of everyone here:
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Responsive</span>
+          <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Engaged</span>
+          <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Ready to help</span>
         </div>
       </div>
 
