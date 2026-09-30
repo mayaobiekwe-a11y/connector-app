@@ -2,6 +2,7 @@ import { prisma } from "./db";
 import { parseAskRequest, rankMatches, type CandidateMember } from "./claude";
 import type { HelpCategory, CompensationType } from "./enums";
 import { sendNewMatchEmail } from "./email";
+import { getPointsForMembers } from "./credit";
 
 const MATCH_LIMIT = 5;
 
@@ -39,6 +40,8 @@ export async function createRequestWithMatches(requesterId: string, communityId:
   const overCapacity = new Set(await getMembersOverCapacity(candidateMembers));
   const eligibleMembers = candidateMembers.filter((m) => !overCapacity.has(m.id));
 
+  const trackRecordPoints = await getPointsForMembers(eligibleMembers.map((m) => m.id));
+
   const candidates: CandidateMember[] = eligibleMembers.map((m) => ({
     id: m.id,
     name: m.name,
@@ -55,6 +58,7 @@ export async function createRequestWithMatches(requesterId: string, communityId:
     })),
     relationships: m.relationships.map((r) => ({ label: r.label, notes: r.notes })),
     sideHustles: m.sideHustles.map((s) => ({ name: s.name, description: s.description })),
+    trackRecordPoints: trackRecordPoints[m.id] ?? 0,
   }));
 
   const { matches } = await rankMatches(rawText, parsed, candidates, MATCH_LIMIT);

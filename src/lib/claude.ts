@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { REQUEST_INTENTS, type HelpCategory, type CompensationType, type RequestIntent } from "./enums";
+import { badgeForPoints } from "./credit";
 
 const MODEL = "claude-sonnet-5";
 
@@ -203,6 +204,13 @@ export interface CandidateMember {
   // Businesses/projects this member is building outside their day job. For
   // requests about that space, this can matter more than their actual job.
   sideHustles: { name: string; description: string | null }[];
+  // Reputation points earned for actually following through in the past
+  // (responding to requests, completing positively-reviewed intros) — see
+  // src/lib/credit.ts. Distinguishes someone who's genuinely active and
+  // willing to make introductions from someone who's just listed a lot of
+  // relationships but never engages. 0 for members with no track record yet
+  // (including everyone brand new), which should never count against them.
+  trackRecordPoints: number;
 }
 
 export interface RankedMatch {
@@ -267,6 +275,7 @@ export async function rankMatches(
     offers: c.offerings.map((o) => ({ category: o.category, compensation: o.compensation, notes: o.notes })),
     relationships: c.relationships.map((r) => ({ where: r.label, notes: r.notes })),
     sideHustles: c.sideHustles.map((s) => ({ name: s.name, description: s.description })),
+    trackRecord: badgeForPoints(c.trackRecordPoints).label,
   }));
 
   try {
@@ -278,7 +287,7 @@ export async function rankMatches(
       messages: [
         {
           role: "user",
-          content: `A member submitted this request to a trusted professional referral network:\n\nRequest: "${rawText}"\nParsed intent: ${parsed.intent}\nParsed industry: ${parsed.industry ?? "unspecified"}\nParsed function: ${parsed.function ?? "unspecified"}\nParsed company: ${parsed.company ?? "unspecified"}\n\nHere is the member directory (excluding the requester) as JSON:\n${JSON.stringify(directory, null, 2)}\n\nSelect and rank the top ${limit} members who could best help with this request, considering their industry, title, company, bio, and what they've offered to help with.\n\nEach member's "relationships" list is where they have a solid personal connection — not necessarily their own employer (e.g. a member at a nonprofit might list "Google" because a close friend works there). If the request names a specific company or industry, a member with a matching relationship is usually the single best match, even if their own job is unrelated — call this out explicitly in the reason (e.g. "Dana doesn't work at Acme but has a close contact there.").\n\nA member's "sideHustles" are businesses or projects they run outside their day job — their day job may just pay the bills while the side hustle is their actual area of expertise or passion. For a request in that space, treat a matching side hustle as at least as strong a signal as their job title (e.g. someone with a day job in accounting but a side hustle as a wedding photographer is a great match for a photography request).\n\nIf the parsed intent is JOB_OPENING or HIRING_GIG_WORK, the requester is distributing an opportunity, not asking for help — prioritize members flagged openToNewRoles (for JOB_OPENING) or openToGigWork (for HIRING_GIG_WORK) who also fit the industry/function, and phrase the reason as why they'd be interested (e.g. "Sasha is open to new product roles and has relevant experience."). If the intent is SEEKING_GIG_WORK, the requester wants freelance/contract work for themselves — prioritize members who could plausibly hire them or know of paid opportunities (founders, managers, people with relevant relationships), not members who also just want gig work.\n\nOnly include genuinely plausible matches.`,
+          content: `A member submitted this request to a trusted professional referral network:\n\nRequest: "${rawText}"\nParsed intent: ${parsed.intent}\nParsed industry: ${parsed.industry ?? "unspecified"}\nParsed function: ${parsed.function ?? "unspecified"}\nParsed company: ${parsed.company ?? "unspecified"}\n\nHere is the member directory (excluding the requester) as JSON:\n${JSON.stringify(directory, null, 2)}\n\nSelect and rank the top ${limit} members who could best help with this request, considering their industry, title, company, bio, and what they've offered to help with.\n\nEach member's "relationships" list is where they have a solid personal connection — not necessarily their own employer (e.g. a member at a nonprofit might list "Google" because a close friend works there). If the request names a specific company or industry, a member with a matching relationship is usually the single best match, even if their own job is unrelated — call this out explicitly in the reason (e.g. "Dana doesn't work at Acme but has a close contact there.").\n\nA member's "sideHustles" are businesses or projects they run outside their day job — their day job may just pay the bills while the side hustle is their actual area of expertise or passion. For a request in that space, treat a matching side hustle as at least as strong a signal as their job title (e.g. someone with a day job in accounting but a side hustle as a wedding photographer is a great match for a photography request).\n\nIf the parsed intent is JOB_OPENING or HIRING_GIG_WORK, the requester is distributing an opportunity, not asking for help — prioritize members flagged openToNewRoles (for JOB_OPENING) or openToGigWork (for HIRING_GIG_WORK) who also fit the industry/function, and phrase the reason as why they'd be interested (e.g. "Sasha is open to new product roles and has relevant experience."). If the intent is SEEKING_GIG_WORK, the requester wants freelance/contract work for themselves — prioritize members who could plausibly hire them or know of paid opportunities (founders, managers, people with relevant relationships), not members who also just want gig work.\n\nEach member's "trackRecord" reflects their history of actually following through in this network — responding to past requests and completing positively-reviewed intros — not just what they've listed on their profile. "Newcomer" means no history yet (new members haven't had a chance and shouldn't be held back for it), but among members who are otherwise similarly good fits, prefer the one with a stronger track record ("Active Helper", "Trusted Connector", "Super Connector", "Highly Connected") — someone who reliably shows up and makes the intro, not just someone who happens to have the relationship listed. A strong track record can tip a close call, but should never override a genuinely better topical fit.\n\nOnly include genuinely plausible matches.`,
         },
       ],
     });
@@ -403,6 +412,18 @@ function heuristicRank(
       // relevance signal — it shouldn't by itself make someone a "match".
       score += reasons.length > 0 ? 0.1 : 0.03;
       reasons.push(`has offered to help with ${c.offerings.length > 1 ? "several things" : "this"}`);
+    }
+
+    // Reward an actual track record of following through, not just a
+    // profile that lists the right relationship — someone who's proven
+    // responsive and helpful should outrank an equally "relevant" member
+    // who's never engaged. Same tiebreaker pattern as offerings above: a
+    // much smaller nudge when there's no topical signal at all, so pure
+    // reputation can't manufacture an irrelevant match.
+    const tier = badgeForPoints(c.trackRecordPoints);
+    if (tier.key !== "NEWCOMER") {
+      score += reasons.length > 0 ? Math.min(0.15, c.trackRecordPoints / 300) : Math.min(0.05, c.trackRecordPoints / 1000);
+      reasons.push(`is a ${tier.label} with a track record of following through`);
     }
 
     score = Math.min(1, score);
