@@ -1,11 +1,13 @@
 import Link from "next/link";
 import Avatar from "./Avatar";
+import { badgeColorClasses } from "@/lib/badgeColors";
 
 export interface TopConnector {
   id: string;
   name: string;
   avatarUrl: string | null;
   badgeLabel: string;
+  badgeKey: string;
 }
 
 // Surfaces the community's most engaged members by reputation points (see
@@ -29,7 +31,7 @@ export default function TopConnectors({ members }: { members: TopConnector[] }) 
             <Avatar name={m.name} avatarUrl={m.avatarUrl} size={32} />
             <div className="min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">{m.name}</p>
-              <p className="text-xs text-brand-700">{m.badgeLabel}</p>
+              <span className={`badge ${badgeColorClasses(m.badgeKey)} text-[10px]`}>{m.badgeLabel}</span>
             </div>
           </Link>
         ))}

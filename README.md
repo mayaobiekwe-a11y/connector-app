@@ -20,7 +20,12 @@ interactions build a visible reputation over time.
 - **Resend** — sends email notifications for new matches, thread messages,
   accepted/declined requests, and reviews. Optional: without a key, emails
   are silently skipped and everything still works via in-app notifications.
-- **Tailwind CSS** — mobile-responsive UI.
+- **Tailwind CSS** — mobile-responsive UI. Brand palette is violet (`brand`,
+  primary), terracotta (`accent`, opportunity/highlight callouts), and gold
+  (`gold`, the top reputation tier) — defined in `tailwind.config.ts`. The
+  logo (`src/components/Logo.tsx`, three overlapping circles in those same
+  colors) is also exported standalone at `public/logo.svg` (full wordmark)
+  and `public/logo-mark.svg` (icon only) for use outside the app.
 
 ## Core loop
 
@@ -54,8 +59,11 @@ interactions build a visible reputation over time.
    nav bar. That track record now also feeds back into step 2: matching
    treats it as a tiebreaker, so someone who's proven they actually follow
    through outranks an equally "relevant" member who's never engaged — a
-   listed relationship alone isn't enough. Separately, it also earns **ask
-   credits** — see below.
+   listed relationship alone isn't enough. The top two tiers also get their
+   own badge color (`badgeColorClasses` in `src/lib/badgeColors.ts`) —
+   terracotta for Super Connector, gold for Highly Connected — so reaching
+   them visibly stands out instead of every tier sharing the same purple
+   pill. Separately, it also earns **ask credits** — see below.
 
 ### Ask credits: asking isn't free
 

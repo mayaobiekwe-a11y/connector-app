@@ -2,8 +2,10 @@ import Link from "next/link";
 import { getCurrentMember } from "@/lib/session";
 import { badgeForPoints } from "@/lib/credit";
 import { getMemberPoints } from "@/lib/credit";
+import { badgeColorClasses } from "@/lib/badgeColors";
 import LogoutButton from "./LogoutButton";
 import Avatar from "./Avatar";
+import Logo from "./Logo";
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -26,9 +28,7 @@ export default async function Navbar() {
       <div className="mx-auto max-w-5xl px-4 sm:px-6">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-semibold text-gray-900 text-lg">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-white text-xs font-bold">
-              M
-            </span>
+            <Logo size={28} />
             Mobi
           </Link>
           {member ? (
@@ -44,7 +44,7 @@ export default async function Navbar() {
                 <Avatar name={member.name} avatarUrl={member.avatarUrl} size={28} />
                 <span className="hidden sm:inline">{member.name}</span>
                 {badge && (
-                  <span className="badge bg-brand-50 text-brand-700 border border-brand-100">
+                  <span className={`badge ${badgeColorClasses(badge.key)}`}>
                     {badge.label}
                   </span>
                 )}

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import Avatar from "./Avatar";
 import { PROFILE_TYPE_LABELS } from "@/lib/labels";
+import { badgeColorClasses } from "@/lib/badgeColors";
 
 export interface DirectoryMember {
   id: string;
@@ -15,6 +16,7 @@ export interface DirectoryMember {
   avatarUrl: string | null;
   profileType: string;
   badgeLabel: string;
+  badgeKey: string;
   relationships: string[];
   sideHustleNames: string[];
   claimed: boolean;
@@ -73,7 +75,7 @@ export default function DirectoryList({ members }: { members: DirectoryMember[] 
                   {m.sideHustleNames.length > 0 && (
                     <p className="text-xs text-gray-500">🚀 {m.sideHustleNames.join(", ")}</p>
                   )}
-                  <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs mt-1 inline-block">
+                  <span className={`badge ${badgeColorClasses(m.badgeKey)} text-xs mt-1 inline-block`}>
                     {m.badgeLabel}
                   </span>
                 </div>

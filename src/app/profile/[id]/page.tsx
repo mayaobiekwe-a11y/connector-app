@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getCurrentMember } from "@/lib/session";
 import { prisma } from "@/lib/db";
 import { getMemberPoints, badgeForPoints, nextBadge } from "@/lib/credit";
+import { badgeColorClasses } from "@/lib/badgeColors";
 import { HELP_CATEGORY_LABELS, COMPENSATION_LABELS, OUTCOME_LABELS, PROFILE_TYPE_LABELS } from "@/lib/labels";
 import StarRatingDisplay from "@/components/StarRatingDisplay";
 import Avatar from "@/components/Avatar";
@@ -133,7 +134,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
       <div className="card p-5">
         <div className="flex items-center justify-between">
           <div>
-            <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-sm">{badge.label}</span>
+            <span className={`badge ${badgeColorClasses(badge.key)} text-sm`}>{badge.label}</span>
             <p className="text-sm text-gray-500 mt-2">{points} points</p>
           </div>
           {upcoming && (

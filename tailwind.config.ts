@@ -31,6 +31,20 @@ const config: Config = {
           600: "#d94f0a",
           700: "#b23c0b",
         },
+        // Warm gold — the third tone in the brand's jewel-tone palette
+        // (violet / terracotta / gold). Used sparingly for the highest
+        // reputation tier and the logo mark, so it reads as earned rather
+        // than decorative.
+        gold: {
+          50: "#fefbea",
+          100: "#fdf4c6",
+          200: "#fce588",
+          300: "#fad141",
+          400: "#f5ba1d",
+          500: "#d99a0b",
+          600: "#b57a08",
+          700: "#92600a",
+        },
       },
       fontFamily: {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],

@@ -20,31 +20,39 @@ export default async function DirectoryPage() {
 
   const points = await getPointsForMembers(members.map((m) => m.id));
 
-  const directoryMembers: DirectoryMember[] = members.map((m) => ({
-    id: m.id,
-    name: firstNameOnly(m.name),
-    title: m.title,
-    company: m.company,
-    industry: m.industry,
-    bio: m.bio,
-    avatarUrl: m.avatarUrl,
-    profileType: m.profileType,
-    badgeLabel: badgeForPoints(points[m.id] ?? 0).label,
-    relationships: m.relationships.map((r) => r.label),
-    sideHustleNames: m.sideHustles.map((s) => s.name),
-    claimed: Boolean(m.claimedAt) || Boolean(m.passwordHash),
-  }));
+  const directoryMembers: DirectoryMember[] = members.map((m) => {
+    const tier = badgeForPoints(points[m.id] ?? 0);
+    return {
+      id: m.id,
+      name: firstNameOnly(m.name),
+      title: m.title,
+      company: m.company,
+      industry: m.industry,
+      bio: m.bio,
+      avatarUrl: m.avatarUrl,
+      profileType: m.profileType,
+      badgeLabel: tier.label,
+      badgeKey: tier.key,
+      relationships: m.relationships.map((r) => r.label),
+      sideHustleNames: m.sideHustles.map((s) => s.name),
+      claimed: Boolean(m.claimedAt) || Boolean(m.passwordHash),
+    };
+  });
 
   const topConnectors: TopConnector[] = [...members]
     .filter((m) => (points[m.id] ?? 0) > 0)
     .sort((a, b) => (points[b.id] ?? 0) - (points[a.id] ?? 0))
     .slice(0, TOP_CONNECTORS_LIMIT)
-    .map((m) => ({
-      id: m.id,
-      name: firstNameOnly(m.name),
-      avatarUrl: m.avatarUrl,
-      badgeLabel: badgeForPoints(points[m.id] ?? 0).label,
-    }));
+    .map((m) => {
+      const tier = badgeForPoints(points[m.id] ?? 0);
+      return {
+        id: m.id,
+        name: firstNameOnly(m.name),
+        avatarUrl: m.avatarUrl,
+        badgeLabel: tier.label,
+        badgeKey: tier.key,
+      };
+    });
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
