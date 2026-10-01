@@ -69,6 +69,10 @@ model Member {
   // Off by default it'd defeat the point of joining, so it defaults to true;
   // members can opt out for privacy.
   visibleInDirectory Boolean @default(true)
+  // What kinds of support this member is hoping to find here (see
+  // NEED_CATEGORIES in src/lib/enums.ts) — a simple multi-select captured
+  // at signup and editable later, not tied to any one request.
+  needCategories String[] @default([])
 
   createdAt DateTime @default(now())
 

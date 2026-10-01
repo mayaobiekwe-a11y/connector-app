@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RelationshipsInput, { type RelationshipRow } from "@/components/RelationshipsInput";
 import SideHustlesInput, { type SideHustleRow } from "@/components/SideHustlesInput";
+import NeedCategoriesInput from "@/components/NeedCategoriesInput";
 import { PROFILE_TYPE_LABELS } from "@/lib/labels";
-import type { ProfileType } from "@/lib/enums";
+import type { ProfileType, NeedCategory } from "@/lib/enums";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -28,6 +29,7 @@ export default function SignupPage() {
   const [visibleInDirectory, setVisibleInDirectory] = useState(true);
   const [relationships, setRelationships] = useState<RelationshipRow[]>([]);
   const [sideHustles, setSideHustles] = useState<SideHustleRow[]>([]);
+  const [needCategories, setNeedCategories] = useState<NeedCategory[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -57,6 +59,7 @@ export default function SignupPage() {
       monthlyCapacity: form.monthlyCapacity ? Number(form.monthlyCapacity) : undefined,
       profileType,
       visibleInDirectory,
+      needCategories,
       relationships: filledRelationships,
       sideHustles: sideHustles
         .filter((s) => s.name.trim())
@@ -232,6 +235,10 @@ export default function SignupPage() {
 
         <div className="border-t border-gray-100 pt-4">
           <RelationshipsInput rows={relationships} onChange={setRelationships} minRequired={2} />
+        </div>
+
+        <div className="border-t border-gray-100 pt-4">
+          <NeedCategoriesInput selected={needCategories} onChange={setNeedCategories} />
         </div>
 
         <button type="submit" disabled={loading} className="btn-primary w-full">

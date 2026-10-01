@@ -9,6 +9,17 @@ export const HELP_CATEGORY_LABELS: Record<string, string> = {
   PAID_CONSULTING: "Paid Consulting",
 };
 
+export const NEED_CATEGORY_LABELS: Record<string, string> = {
+  MENTAL_HEALTH: "Mental health recommendations",
+  HEALTHCARE: "Healthcare recommendations",
+  CAREER_SERVICES: "Career services",
+  GENERAL_NETWORKING: "General networking",
+  LEGAL: "Legal recommendations",
+  FINANCIAL_PLANNING: "Financial planning",
+  BUSINESS_ENTREPRENEURSHIP: "Business & entrepreneurship support",
+  MENTORSHIP: "Mentorship",
+};
+
 export const COMPENSATION_LABELS: Record<string, string> = {
   FREE: "Free",
   BARTER: "Barter",

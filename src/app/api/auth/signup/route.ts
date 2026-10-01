@@ -3,7 +3,7 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/session";
-import { PROFILE_TYPES } from "@/lib/enums";
+import { PROFILE_TYPES, NEED_CATEGORIES } from "@/lib/enums";
 import { awardAskCredits } from "@/lib/askCredits";
 import { getDefaultCommunityId } from "@/lib/community";
 
@@ -21,6 +21,7 @@ const schema = z.object({
   profileType: z.enum(PROFILE_TYPES).optional(),
   monthlyCapacity: z.number().int().min(0).max(1000).optional(),
   visibleInDirectory: z.boolean().optional(),
+  needCategories: z.array(z.enum(NEED_CATEGORIES)).max(NEED_CATEGORIES.length).optional(),
   relationships: z
     .array(z.object({ label: z.string().min(1).max(120), notes: z.string().max(300).optional() }))
     .max(60)
@@ -88,6 +89,7 @@ export async function POST(req: Request) {
       subscriptionStatus: profileType === "SERVICE_PROVIDER" ? "ACTIVE" : "NONE",
       monthlyCapacity: data.monthlyCapacity,
       visibleInDirectory: data.visibleInDirectory ?? true,
+      needCategories: data.needCategories ?? [],
       communityId,
       relationships: data.relationships?.length
         ? { create: data.relationships.filter((r) => r.label.trim()) }

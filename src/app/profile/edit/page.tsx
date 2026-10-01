@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentMember } from "@/lib/session";
 import ProfileEditForm from "@/components/ProfileEditForm";
-import type { HelpCategory, CompensationType, ProfileType } from "@/lib/enums";
+import type { HelpCategory, CompensationType, ProfileType, NeedCategory } from "@/lib/enums";
 
 export default async function ProfileEditPage({
   searchParams,
@@ -37,6 +37,7 @@ export default async function ProfileEditPage({
           subscriptionStatus: member.subscriptionStatus,
           monthlyCapacity: member.monthlyCapacity != null ? String(member.monthlyCapacity) : "",
           visibleInDirectory: member.visibleInDirectory,
+          needCategories: member.needCategories as NeedCategory[],
         }}
         offerings={member.offerings.map((o) => ({
           category: o.category as HelpCategory,

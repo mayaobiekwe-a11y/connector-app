@@ -2,10 +2,11 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { HELP_CATEGORIES, COMPENSATION_TYPES, type HelpCategory, type CompensationType, type ProfileType } from "@/lib/enums";
+import { HELP_CATEGORIES, COMPENSATION_TYPES, type HelpCategory, type CompensationType, type ProfileType, type NeedCategory } from "@/lib/enums";
 import { HELP_CATEGORY_LABELS, COMPENSATION_LABELS, PROFILE_TYPE_LABELS } from "@/lib/labels";
 import RelationshipsInput, { type RelationshipRow } from "./RelationshipsInput";
 import SideHustlesInput, { type SideHustleRow } from "./SideHustlesInput";
+import NeedCategoriesInput from "./NeedCategoriesInput";
 
 interface OfferingRow {
   category: HelpCategory;
@@ -29,6 +30,7 @@ interface MemberFields {
   subscriptionStatus: string;
   monthlyCapacity: string;
   visibleInDirectory: boolean;
+  needCategories: NeedCategory[];
 }
 
 export default function ProfileEditForm({
@@ -89,6 +91,7 @@ export default function ProfileEditForm({
           profileType: form.profileType,
           monthlyCapacity: form.monthlyCapacity ? Number(form.monthlyCapacity) : null,
           visibleInDirectory: form.visibleInDirectory,
+          needCategories: form.needCategories,
         }),
       }),
       fetch("/api/members/me/offerings", {
@@ -267,6 +270,13 @@ export default function ProfileEditForm({
 
       <div className="card p-5">
         <RelationshipsInput rows={relRows} onChange={setRelRows} />
+      </div>
+
+      <div className="card p-5">
+        <NeedCategoriesInput
+          selected={form.needCategories}
+          onChange={(categories) => update("needCategories", categories)}
+        />
       </div>
 
       <div className="card p-5">

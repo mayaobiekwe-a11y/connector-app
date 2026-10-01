@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getCurrentMember } from "@/lib/session";
-import { PROFILE_TYPES } from "@/lib/enums";
+import { PROFILE_TYPES, NEED_CATEGORIES } from "@/lib/enums";
 
 const schema = z.object({
   name: z.string().min(1).max(100).optional(),
@@ -18,6 +18,7 @@ const schema = z.object({
   profileType: z.enum(PROFILE_TYPES).optional(),
   monthlyCapacity: z.number().int().min(0).max(1000).optional().nullable(),
   visibleInDirectory: z.boolean().optional(),
+  needCategories: z.array(z.enum(NEED_CATEGORIES)).max(NEED_CATEGORIES.length).optional(),
 });
 
 export async function PATCH(req: Request) {

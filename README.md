@@ -84,6 +84,19 @@ relationship is usually the single best match for a warm intro, even if
 their own job is unrelated — the match reason calls this out explicitly
 (e.g. "Jordan doesn't work at Google but has a relationship there.").
 
+### What are you hoping to find here?
+
+At signup (and editable later), members check off what kind of support
+they're hoping to find — mental health recommendations, healthcare
+recommendations, career services, general networking, legal
+recommendations, financial planning, business/entrepreneurship support,
+mentorship (`NEED_CATEGORIES` in `src/lib/enums.ts`). It's a simple
+multi-select, optional, not tied to any one request — more "what brought
+you here" than an intake form. It's private: it's not shown on the public
+profile or directory, only to the member themself and (via the database)
+admins — the point for now is just capturing it, not acting on it
+automatically.
+
 ### Side hustles count too
 
 A member's day job might just pay the bills — their side hustle or passion

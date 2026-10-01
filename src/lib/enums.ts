@@ -12,6 +12,22 @@ export const HELP_CATEGORIES = [
 ] as const;
 export type HelpCategory = (typeof HELP_CATEGORIES)[number];
 
+// What a member might come to the network looking for, captured at signup
+// (and editable later) as a simple multi-select — not tied to any one
+// request. Broad on purpose, so it reads as "what kind of support are you
+// hoping to find here" rather than a formal intake form.
+export const NEED_CATEGORIES = [
+  "MENTAL_HEALTH",
+  "HEALTHCARE",
+  "CAREER_SERVICES",
+  "GENERAL_NETWORKING",
+  "LEGAL",
+  "FINANCIAL_PLANNING",
+  "BUSINESS_ENTREPRENEURSHIP",
+  "MENTORSHIP",
+] as const;
+export type NeedCategory = (typeof NEED_CATEGORIES)[number];
+
 export const COMPENSATION_TYPES = ["FREE", "BARTER", "TIP", "PAID"] as const;
 export type CompensationType = (typeof COMPENSATION_TYPES)[number];
 
@@ -84,5 +100,6 @@ function isOneOf<T extends readonly string[]>(values: T, x: unknown): x is T[num
 }
 
 export const isHelpCategory = (x: unknown): x is HelpCategory => isOneOf(HELP_CATEGORIES, x);
+export const isNeedCategory = (x: unknown): x is NeedCategory => isOneOf(NEED_CATEGORIES, x);
 export const isCompensationType = (x: unknown): x is CompensationType => isOneOf(COMPENSATION_TYPES, x);
 export const isRequestIntent = (x: unknown): x is RequestIntent => isOneOf(REQUEST_INTENTS, x);
