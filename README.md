@@ -51,7 +51,11 @@ interactions build a visible reputation over time.
 5. **Earn credit** — responding and being positively reviewed earns
    reputation points; crossing point thresholds unlocks a visible badge
    tier (e.g. "Trusted Connector") shown on a member's profile and in the
-   nav bar. Separately, it also earns **ask credits** — see below.
+   nav bar. That track record now also feeds back into step 2: matching
+   treats it as a tiebreaker, so someone who's proven they actually follow
+   through outranks an equally "relevant" member who's never engaged — a
+   listed relationship alone isn't enough. Separately, it also earns **ask
+   credits** — see below.
 
 ### Ask credits: asking isn't free
 
@@ -103,8 +107,11 @@ visible tag on their profile and in the directory.
 
 `/directory` lists every member in your community (name, photo, blurb,
 side hustles, relationships, badge), with a client-side search box —
-this is "profiles show in the group," made literal. Two things members
-control from their profile:
+this is "profiles show in the group," made literal. A **Top connectors**
+strip at the top of the page surfaces the five members with the most
+reputation points, so showing up and following through is visibly
+rewarded, not just something that happens quietly in the background. Two
+things members control from their profile:
 - **Visible in directory** — off by default it'd defeat the point of
   joining, so it's on by default; members can opt out to stop appearing in
   the directory or the AI matching pool entirely, without deleting their
@@ -154,6 +161,18 @@ Admins can bulk-load that data from `/admin/import`:
    notification email points to the claim link instead of the request —
    so getting matched to something relevant becomes the reason they
    actually join.
+
+### Quick-add at networking events (QR code)
+
+For the moment someone's talking to you in person rather than filling out
+a spreadsheet: `/admin/qr` shows a QR code pointing at `/join`, a public,
+no-login page that just asks for a name, email, and an optional "where did
+we meet" note. Unlike `/admin/import`, these don't show up in the
+directory right away — they land in **`/admin/leads`** first
+(`visibleInDirectory: false`) so an admin can approve real leads or
+dismiss junk before anyone sees them. Approving a lead flips
+`visibleInDirectory` to `true`, which also makes it eligible for the next
+"Send claim invites" batch on the import page.
 
 ## Data model
 
@@ -276,6 +295,9 @@ src/app/profile/edit       Edit profile, offerings, relationships, side hustles,
 src/app/directory          Browsable member directory with search
 src/app/admin              Admin view of all requests, AI parsing, match status (AI-matched vs. volunteered)
 src/app/admin/import       Bulk CSV import + claim-invite sending for pre-loading an existing community
+src/app/admin/qr           QR code for /join, for adding people on the spot at networking events
+src/app/admin/leads        Review queue for quick-add leads before they hit the directory
+src/app/join               Public, no-login quick-add form the QR code points to
 src/app/claim/[token]      Where an imported member sets a password and activates their profile
 ```
 

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getCurrentMember } from "@/lib/session";
 import { prisma } from "@/lib/db";
 import ImportForm from "@/components/ImportForm";
@@ -11,11 +12,19 @@ export default async function AdminImportPage() {
     return <p className="text-sm text-gray-500">This page is only available to community admins.</p>;
   }
 
-  const [claimed, unclaimed, invited] = await Promise.all([
+  // "Unclaimed" is scoped to visibleInDirectory: true so it reads as
+  // "imported and waiting to claim" rather than counting unreviewed
+  // quick-add leads sitting in /admin/leads alongside it.
+  const [claimed, unclaimed, invited, pendingLeads] = await Promise.all([
     prisma.member.count({ where: { communityId: member.communityId, claimedAt: { not: null } } }),
-    prisma.member.count({ where: { communityId: member.communityId, claimedAt: null } }),
+    prisma.member.count({
+      where: { communityId: member.communityId, claimedAt: null, visibleInDirectory: true },
+    }),
     prisma.member.count({
       where: { communityId: member.communityId, claimedAt: null, inviteSentAt: { not: null } },
+    }),
+    prisma.member.count({
+      where: { communityId: member.communityId, claimedAt: null, passwordHash: null, visibleInDirectory: false },
     }),
   ]);
 
@@ -44,6 +53,16 @@ export default async function AdminImportPage() {
           <p className="text-xs text-gray-500">Invite already sent</p>
         </div>
       </div>
+
+      {pendingLeads > 0 && (
+        <p className="text-sm text-gray-600">
+          {pendingLeads} new lead{pendingLeads === 1 ? "" : "s"} waiting on review at{" "}
+          <Link href="/admin/leads" className="text-brand-600 underline">
+            Leads
+          </Link>
+          .
+        </p>
+      )}
 
       <div className="card p-5">
         <h2 className="font-semibold text-gray-900 mb-1">1. Import a CSV</h2>

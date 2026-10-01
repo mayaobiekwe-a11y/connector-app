@@ -3,7 +3,10 @@ import { getCurrentMember } from "@/lib/session";
 import { prisma } from "@/lib/db";
 import { getPointsForMembers, badgeForPoints } from "@/lib/credit";
 import DirectoryList, { type DirectoryMember } from "@/components/DirectoryList";
+import TopConnectors, { type TopConnector } from "@/components/TopConnectors";
 import { firstNameOnly } from "@/lib/displayName";
+
+const TOP_CONNECTORS_LIMIT = 5;
 
 export default async function DirectoryPage() {
   const member = await getCurrentMember();
@@ -32,8 +35,19 @@ export default async function DirectoryPage() {
     claimed: Boolean(m.claimedAt) || Boolean(m.passwordHash),
   }));
 
+  const topConnectors: TopConnector[] = [...members]
+    .filter((m) => (points[m.id] ?? 0) > 0)
+    .sort((a, b) => (points[b.id] ?? 0) - (points[a.id] ?? 0))
+    .slice(0, TOP_CONNECTORS_LIMIT)
+    .map((m) => ({
+      id: m.id,
+      name: firstNameOnly(m.name),
+      avatarUrl: m.avatarUrl,
+      badgeLabel: badgeForPoints(points[m.id] ?? 0).label,
+    }));
+
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
+    <div className="max-w-4xl mx-auto space-y-6">
       <div>
         <h1 className="text-xl font-semibold">{member.community.name} directory</h1>
         <p className="text-sm text-gray-500">
@@ -41,6 +55,7 @@ export default async function DirectoryPage() {
           community.
         </p>
       </div>
+      {topConnectors.length > 0 && <TopConnectors members={topConnectors} />}
       <DirectoryList members={directoryMembers} />
     </div>
   );

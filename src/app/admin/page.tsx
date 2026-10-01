@@ -29,9 +29,17 @@ export default async function AdminPage() {
           <h1 className="text-xl font-semibold">Admin — {member.community.name}</h1>
           <p className="text-sm text-gray-500">All requests, how the AI parsed them, and match status.</p>
         </div>
-        <Link href="/admin/import" className="btn-secondary shrink-0">
-          Import members
-        </Link>
+        <div className="flex gap-2 shrink-0">
+          <Link href="/admin/leads" className="btn-secondary">
+            Leads
+          </Link>
+          <Link href="/admin/qr" className="btn-secondary">
+            Quick add (QR)
+          </Link>
+          <Link href="/admin/import" className="btn-secondary">
+            Import members
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-3">

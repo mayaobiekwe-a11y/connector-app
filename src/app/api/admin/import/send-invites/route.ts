@@ -5,7 +5,10 @@ import { sendClaimInviteEmail } from "@/lib/email";
 
 // Emails a claim link to every imported member who hasn't been invited yet.
 // Separate from the import step itself so an admin can review what got
-// imported before blasting real people's inboxes.
+// imported before blasting real people's inboxes. visibleInDirectory: true
+// also excludes quick-add leads (see /api/public/quick-join) that haven't
+// been approved yet at /admin/leads — approving one flips it to true, which
+// is what makes it eligible for the next invite batch here.
 export async function POST() {
   const admin = await getCurrentMember();
   if (!admin || !admin.isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -16,6 +19,7 @@ export async function POST() {
       claimedAt: null,
       inviteSentAt: null,
       claimToken: { not: null },
+      visibleInDirectory: true,
     },
   });
 
