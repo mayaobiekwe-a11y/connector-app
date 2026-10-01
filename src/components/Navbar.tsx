@@ -36,6 +36,7 @@ export default async function Navbar() {
               <NavLink href="/dashboard">Dashboard</NavLink>
               <NavLink href="/feed">Feed</NavLink>
               <NavLink href="/directory">Directory</NavLink>
+              <NavLink href="/resources">Resources</NavLink>
               {member.isAdmin && <NavLink href="/admin">Admin</NavLink>}
               <Link
                 href={`/profile/${member.id}`}

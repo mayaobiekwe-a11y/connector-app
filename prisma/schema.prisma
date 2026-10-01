@@ -26,8 +26,9 @@ model Community {
   description String?
   createdAt   DateTime @default(now())
 
-  members  Member[]
-  requests Request[]
+  members   Member[]
+  requests  Request[]
+  resources Resource[]
 }
 
 // profileType: GENERAL | SERVICE_PROVIDER
@@ -274,4 +275,25 @@ model AskCreditEntry {
   createdAt DateTime @default(now())
 
   @@index([memberId])
+}
+
+// Admin-curated external resources (orgs, hotlines, services) — e.g. a
+// mental health crisis line, RAINN for sexual assault support, the EEOC for
+// workplace harassment. Not member-to-member help; these exist because some
+// needs shouldn't wait on a warm intro. categories uses NEED_CATEGORIES in
+// src/lib/enums.ts, same list as Member.needCategories, and a resource can
+// apply to more than one (e.g. a hotline covering both mental health and
+// sexual assault).
+model Resource {
+  id          String   @id @default(cuid())
+  communityId String
+  community   Community @relation(fields: [communityId], references: [id])
+  name        String
+  description String?
+  url         String?
+  phone       String?
+  categories  String[] @default([])
+  createdAt   DateTime @default(now())
+
+  @@index([communityId])
 }

@@ -18,6 +18,8 @@ export const NEED_CATEGORY_LABELS: Record<string, string> = {
   FINANCIAL_PLANNING: "Financial planning",
   BUSINESS_ENTREPRENEURSHIP: "Business & entrepreneurship support",
   MENTORSHIP: "Mentorship",
+  SEXUAL_ASSAULT_SUPPORT: "Sexual assault support",
+  WORKPLACE_HARASSMENT: "Workplace harassment support",
 };
 
 export const COMPENSATION_LABELS: Record<string, string> = {

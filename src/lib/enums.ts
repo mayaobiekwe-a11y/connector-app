@@ -15,7 +15,10 @@ export type HelpCategory = (typeof HELP_CATEGORIES)[number];
 // What a member might come to the network looking for, captured at signup
 // (and editable later) as a simple multi-select — not tied to any one
 // request. Broad on purpose, so it reads as "what kind of support are you
-// hoping to find here" rather than a formal intake form.
+// hoping to find here" rather than a formal intake form. Also doubles as
+// the tagging taxonomy for curated external Resources (see Resource model
+// and /resources) — one list, so "I need mental health support" at signup
+// and "mental health resources" on the resources page mean the same thing.
 export const NEED_CATEGORIES = [
   "MENTAL_HEALTH",
   "HEALTHCARE",
@@ -25,6 +28,8 @@ export const NEED_CATEGORIES = [
   "FINANCIAL_PLANNING",
   "BUSINESS_ENTREPRENEURSHIP",
   "MENTORSHIP",
+  "SEXUAL_ASSAULT_SUPPORT",
+  "WORKPLACE_HARASSMENT",
 ] as const;
 export type NeedCategory = (typeof NEED_CATEGORIES)[number];
 

@@ -98,12 +98,22 @@ At signup (and editable later), members check off what kind of support
 they're hoping to find — mental health recommendations, healthcare
 recommendations, career services, general networking, legal
 recommendations, financial planning, business/entrepreneurship support,
-mentorship (`NEED_CATEGORIES` in `src/lib/enums.ts`). It's a simple
-multi-select, optional, not tied to any one request — more "what brought
-you here" than an intake form. It's private: it's not shown on the public
-profile or directory, only to the member themself and (via the database)
-admins — the point for now is just capturing it, not acting on it
-automatically.
+mentorship, sexual assault support, workplace harassment support
+(`NEED_CATEGORIES` in `src/lib/enums.ts`). It's a simple multi-select,
+optional, not tied to any one request — more "what brought you here" than
+an intake form. It's private: it's not shown on the public profile or
+directory, only to the member themself and (via the database) admins —
+the point for now is just capturing it, not acting on it automatically.
+
+### Resources: orgs and hotlines that shouldn't wait on a warm intro
+
+Some needs are urgent enough that routing them through "ask Mobi, wait to
+get matched" is the wrong model entirely. `/admin/resources` lets an admin
+curate a flat list of external orgs/hotlines (name, optional link, optional
+phone, one or more categories from the same `NEED_CATEGORIES` list above —
+e.g. a hotline can be tagged both Mental Health and Sexual Assault Support).
+Every member sees them at `/resources`, grouped by category, with direct
+`tel:`/external links — no request, no match, no waiting.
 
 ### Side hustles count too
 
@@ -318,6 +328,8 @@ src/app/admin              Admin view of all requests, AI parsing, match status 
 src/app/admin/import       Bulk CSV import + claim-invite sending for pre-loading an existing community
 src/app/admin/qr           QR code for /join, for adding people on the spot at networking events
 src/app/admin/leads        Review queue for quick-add leads before they hit the directory
+src/app/admin/resources    Add/remove curated external orgs and hotlines
+src/app/resources          Member-facing list of those resources, grouped by category
 src/app/join               Public, no-login quick-add form the QR code points to
 src/app/claim/[token]      Where an imported member sets a password and activates their profile
 ```
