@@ -35,11 +35,11 @@ export default async function HomePage() {
         <div className="relative max-w-2xl">
           <span className="eyebrow">Just ask Mobi</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            Opportunities live in people, not systems.
+            The right person for what you need is already in this network.
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Mobi is your AI assistant, always looking for two people who belong in the same
-            room — here to help you find yours.
+            Mobi is an AI assistant that reads your ask and connects you with whoever's best
+            positioned to help — a warm intro, not a cold email.
           </p>
           <div className="mt-6 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
