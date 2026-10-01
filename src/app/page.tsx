@@ -65,7 +65,8 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="mt-14 grid gap-5 sm:grid-cols-2">
+      <h2 className="mt-14 text-sm font-semibold text-gray-900">Here's how it works:</h2>
+      <div className="mt-4 grid gap-5 sm:grid-cols-2">
         {STEPS.map((step, i) => (
           <div key={step.title} className="card p-5">
             <div className="flex items-center gap-3">
