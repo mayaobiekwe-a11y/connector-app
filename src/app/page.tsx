@@ -39,7 +39,7 @@ export default async function HomePage() {
           </h1>
           <p className="mt-4 text-lg text-gray-600">
             Mobi is an AI assistant that reads your ask and connects you with whoever's best
-            positioned to help — a warm intro, not a cold email.
+            positioned to help.
           </p>
           <div className="mt-6 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
@@ -54,8 +54,8 @@ export default async function HomePage() {
 
       <div className="mt-8 rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
         <p className="text-gray-700">
-          Did you know up to 80% of open positions are filled through personal referrals
-          rather than public listings?
+          <span className="font-semibold text-gray-900">Up to 80% of open positions</span> are
+          filled through personal referrals rather than public listings.
         </p>
         <p className="mt-3 text-gray-700">
           With AI now screening and filtering candidates, you need community more than ever.
