@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import RelationshipsInput, { type RelationshipRow } from "@/components/RelationshipsInput";
 import SideHustlesInput, { type SideHustleRow } from "@/components/SideHustlesInput";
@@ -11,6 +11,8 @@ import type { ProfileType, NeedCategory } from "@/lib/enums";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const ref = searchParams.get("ref");
 
   const [form, setForm] = useState({
     name: "",
@@ -60,6 +62,7 @@ export default function SignupPage() {
       profileType,
       visibleInDirectory,
       needCategories,
+      ref: ref || undefined,
       relationships: filledRelationships,
       sideHustles: sideHustles
         .filter((s) => s.name.trim())

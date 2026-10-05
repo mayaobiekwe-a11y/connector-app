@@ -4,6 +4,7 @@ import { getCurrentMember } from "@/lib/session";
 import { awardCredit } from "@/lib/credit";
 import { awardAskCredits } from "@/lib/askCredits";
 import { sendMatchRespondedEmail } from "@/lib/email";
+import { maybeCreateReferralReward } from "@/lib/referrals";
 
 // Lets any community member volunteer to help with a request straight from
 // the public feed, rather than waiting to be AI-matched. Since volunteering
@@ -51,6 +52,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
 
   await awardCredit(member.id, "RESPONDED_TO_REQUEST", match.id);
   await awardAskCredits(member.id, "RESPONDED_TO_REQUEST", match.id);
+  await maybeCreateReferralReward(member.id);
 
   if (request.status === "OPEN" || request.status === "MATCHED") {
     await prisma.request.update({ where: { id: request.id }, data: { status: "IN_PROGRESS" } });

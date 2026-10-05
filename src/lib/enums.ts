@@ -100,6 +100,12 @@ export const ASK_CREDIT_REASONS = [
 ] as const;
 export type AskCreditReason = (typeof ASK_CREDIT_REASONS)[number];
 
+// Activation referral program (see src/lib/referrals.ts). PENDING means the
+// invitee has activated and a reward is owed; REWARDED means an admin has
+// actually sent it (manually — no real payment processing here).
+export const REFERRAL_REWARD_STATUSES = ["PENDING", "REWARDED"] as const;
+export type ReferralRewardStatus = (typeof REFERRAL_REWARD_STATUSES)[number];
+
 function isOneOf<T extends readonly string[]>(values: T, x: unknown): x is T[number] {
   return typeof x === "string" && (values as readonly string[]).includes(x);
 }

@@ -74,6 +74,12 @@ model Member {
   // NEED_CATEGORIES in src/lib/enums.ts) — a simple multi-select captured
   // at signup and editable later, not tied to any one request.
   needCategories String[] @default([])
+  // Set at signup from a ?ref=<memberId> link (see /signup and
+  // src/lib/referrals.ts) when this member was invited by an existing one.
+  // Drives the activation referral reward below.
+  referredByMemberId String?
+  referredBy          Member?  @relation("MemberReferrals", fields: [referredByMemberId], references: [id], onDelete: SetNull)
+  referrals           Member[] @relation("MemberReferrals")
 
   createdAt DateTime @default(now())
 
@@ -91,8 +97,11 @@ model Member {
   reviewsReceived Review[]      @relation("ReviewsReceived")
   creditEntries   CreditEntry[]
   askCreditEntries AskCreditEntry[]
+  referralRewardsEarned ReferralReward[] @relation("ReferralRewardsEarned")
+  referralRewardsFrom   ReferralReward[] @relation("ReferralRewardsFrom")
 
   @@index([communityId])
+  @@index([referredByMemberId])
 }
 
 // What a member is willing to help with, and on what terms.
@@ -296,4 +305,30 @@ model Resource {
   createdAt   DateTime @default(now())
 
   @@index([communityId])
+}
+
+// Activation referral program: a member invites someone who isn't on Mobi
+// yet via their personal link (/signup?ref=<memberId>, see
+// src/lib/referrals.ts). A row here is created automatically the moment the
+// invitee activates — posts their first ask, accepts their first match, or
+// volunteers for one — whichever happens first (see maybeCreateReferralReward,
+// called from the requests/respond/volunteer routes). Capped per referrer
+// so it can't turn into spam-inviting. Nothing here processes a real
+// payment: an admin reviews it at /admin/referrals and marks it rewarded
+// once they've actually sent the $10-15 gift card (or granted a free month
+// of a future premium tier) outside the app.
+// status: PENDING | REWARDED
+model ReferralReward {
+  id         String    @id @default(cuid())
+  referrerId String
+  referrer   Member    @relation("ReferralRewardsEarned", fields: [referrerId], references: [id])
+  refereeId  String
+  referee    Member    @relation("ReferralRewardsFrom", fields: [refereeId], references: [id])
+  status     String    @default("PENDING")
+  note       String? // what was actually given, filled in when marked rewarded
+  createdAt  DateTime  @default(now())
+  rewardedAt DateTime?
+
+  @@unique([referrerId, refereeId])
+  @@index([referrerId])
 }

@@ -63,13 +63,16 @@ export default async function HomePage() {
           your career or entrepreneurial path, and reduces how exposed you are when the market
           shifts.
         </p>
-        <p className="mt-6 text-2xl font-bold text-gray-900">Let Mobi help you find your people.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Responsive</span>
           <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Engaged</span>
           <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Ready to help</span>
         </div>
       </div>
+
+      <p className="mt-10 text-center text-2xl font-bold text-gray-900">
+        Let Mobi help you find your people.
+      </p>
 
       <h2 className="mt-14 text-sm font-semibold text-gray-900">Here's how it works:</h2>
       <div className="mt-4 grid gap-5 sm:grid-cols-2">

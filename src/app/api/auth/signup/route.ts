@@ -22,6 +22,10 @@ const schema = z.object({
   monthlyCapacity: z.number().int().min(0).max(1000).optional(),
   visibleInDirectory: z.boolean().optional(),
   needCategories: z.array(z.enum(NEED_CATEGORIES)).max(NEED_CATEGORIES.length).optional(),
+  // Referring member's id, from a ?ref=<memberId> link (see
+  // src/lib/referrals.ts). Invalid/stale ids are silently ignored rather
+  // than blocking signup.
+  ref: z.string().max(60).optional(),
   relationships: z
     .array(z.object({ label: z.string().min(1).max(120), notes: z.string().max(300).optional() }))
     .max(60)
@@ -71,6 +75,12 @@ export async function POST(req: Request) {
   const communityId = await getDefaultCommunityId();
   const passwordHash = await bcrypt.hash(data.password, 10);
   const profileType = data.profileType ?? "GENERAL";
+
+  let referredByMemberId: string | undefined;
+  if (data.ref) {
+    const referrer = await prisma.member.findUnique({ where: { id: data.ref }, select: { id: true } });
+    if (referrer) referredByMemberId = referrer.id;
+  }
   const member = await prisma.member.create({
     data: {
       email: data.email,
@@ -90,6 +100,7 @@ export async function POST(req: Request) {
       monthlyCapacity: data.monthlyCapacity,
       visibleInDirectory: data.visibleInDirectory ?? true,
       needCategories: data.needCategories ?? [],
+      referredByMemberId,
       communityId,
       relationships: data.relationships?.length
         ? { create: data.relationships.filter((r) => r.label.trim()) }

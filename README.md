@@ -205,6 +205,25 @@ dismiss junk before anyone sees them. Approving a lead flips
 `visibleInDirectory` to `true`, which also makes it eligible for the next
 "Send claim invites" batch on the import page.
 
+### Activation referral program
+
+Every member's dashboard shows a personal invite link
+(`/signup?ref=<memberId>`, in `src/components/InviteCard.tsx`). When
+someone signs up through it and *activates* — posts their first ask,
+accepts their first match, or volunteers for one, whichever happens first
+— a `ReferralReward` row is created automatically for the person who
+invited them (`maybeCreateReferralReward` in `src/lib/referrals.ts`,
+called from the requests/respond/volunteer routes; idempotent, so it's
+safe to call from all three). Capped at `MAX_REWARDS_PER_REFERRER` (5) per
+referrer so it can't turn into spam-inviting — past the cap, the referral
+link still attributes the signup, it just stops generating reward rows.
+
+Nothing here processes a real payment, same pattern as `subscriptionStatus`
+elsewhere in this schema: an admin reviews pending rewards at
+`/admin/referrals`, actually sends the $10-15 gift card (or grants a free
+month of a future premium tier) outside the app, and marks it rewarded
+with an optional note on what was sent.
+
 ## Data model
 
 See `prisma/schema.prisma`. Everything is scoped under a `Community`, but the
@@ -329,6 +348,8 @@ src/app/admin/import       Bulk CSV import + claim-invite sending for pre-loadin
 src/app/admin/qr           QR code for /join, for adding people on the spot at networking events
 src/app/admin/leads        Review queue for quick-add leads before they hit the directory
 src/app/admin/resources    Add/remove curated external orgs and hotlines
+src/app/admin/referrals    Review and mark activation-referral rewards fulfilled
+src/lib/referrals.ts       Referral attribution + reward trigger (maybeCreateReferralReward)
 src/app/resources          Member-facing list of those resources, grouped by category
 src/app/join               Public, no-login quick-add form the QR code points to
 src/app/claim/[token]      Where an imported member sets a password and activates their profile

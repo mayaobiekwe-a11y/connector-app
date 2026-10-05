@@ -30,6 +30,9 @@ export default async function AdminPage() {
           <p className="text-sm text-gray-500">All requests, how the AI parsed them, and match status.</p>
         </div>
         <div className="flex gap-2 shrink-0">
+          <Link href="/admin/referrals" className="btn-secondary">
+            Referrals
+          </Link>
           <Link href="/admin/resources" className="btn-secondary">
             Resources
           </Link>

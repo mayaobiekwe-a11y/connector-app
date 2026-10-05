@@ -5,6 +5,7 @@ import { getCurrentMember } from "@/lib/session";
 import { awardCredit } from "@/lib/credit";
 import { awardAskCredits } from "@/lib/askCredits";
 import { sendMatchRespondedEmail } from "@/lib/email";
+import { maybeCreateReferralReward } from "@/lib/referrals";
 
 const schema = z.object({ action: z.enum(["accept", "decline"]) });
 
@@ -43,6 +44,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       create: { matchId: match.id },
     });
     await prisma.request.update({ where: { id: match.requestId }, data: { status: "IN_PROGRESS" } });
+    await maybeCreateReferralReward(member.id);
   }
 
   await sendMatchRespondedEmail(

@@ -5,9 +5,11 @@ import { prisma } from "@/lib/db";
 import AskBar from "@/components/AskBar";
 import StatusPill from "@/components/StatusPill";
 import MatchRespondButtons from "@/components/MatchRespondButtons";
+import InviteCard from "@/components/InviteCard";
 import { REQUEST_STATUS_LABELS, MATCH_STATUS_LABELS, INTENT_LABELS } from "@/lib/labels";
 import { isOpportunityIntent } from "@/lib/enums";
 import { ensureMonthlyRefresh, getAskCreditBalance } from "@/lib/askCredits";
+import { MAX_REWARDS_PER_REFERRER } from "@/lib/referrals";
 import { firstNameOnly } from "@/lib/displayName";
 
 export default async function DashboardPage() {
@@ -29,6 +31,14 @@ export default async function DashboardPage() {
     }),
     getAskCreditBalance(member.id),
   ]);
+
+  const referralCounts = await prisma.referralReward.groupBy({
+    by: ["status"],
+    where: { referrerId: member.id },
+    _count: { _all: true },
+  });
+  const pendingReferrals = referralCounts.find((r) => r.status === "PENDING")?._count._all ?? 0;
+  const rewardedReferrals = referralCounts.find((r) => r.status === "REWARDED")?._count._all ?? 0;
 
   return (
     <div className="space-y-10">
@@ -58,6 +68,13 @@ export default async function DashboardPage() {
           — anyone can jump in, not just who Mobi matches you to.
         </p>
       </div>
+
+      <InviteCard
+        memberId={member.id}
+        pendingCount={pendingReferrals}
+        rewardedCount={rewardedReferrals}
+        capReached={pendingReferrals + rewardedReferrals >= MAX_REWARDS_PER_REFERRER}
+      />
 
       <section>
         <h2 className="text-lg font-semibold text-gray-900 mb-3">

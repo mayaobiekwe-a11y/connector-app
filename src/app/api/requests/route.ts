@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getCurrentMember } from "@/lib/session";
 import { createRequestWithMatches } from "@/lib/matching";
 import { ensureMonthlyRefresh, getAskCreditBalance, awardAskCredits, ASK_COST } from "@/lib/askCredits";
+import { maybeCreateReferralReward } from "@/lib/referrals";
 
 const schema = z.object({
   text: z.string().min(5, "Tell us a bit more about what you need").max(2000),
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
 
   const request = await createRequestWithMatches(member.id, member.communityId, parsed.data.text);
   await awardAskCredits(member.id, "ASK_SPENT", request.id);
+  await maybeCreateReferralReward(member.id);
 
   return NextResponse.json({ request });
 }
