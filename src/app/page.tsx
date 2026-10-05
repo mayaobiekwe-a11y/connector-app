@@ -35,17 +35,11 @@ export default async function HomePage() {
         <div className="relative max-w-2xl">
           <span className="eyebrow">Just ask Mobi</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            Did you know up to 80% of open positions are filled through personal referrals
-            rather than public listings?
+            The right person for what you need is already in this network.
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            With AI now screening and filtering candidates, you need community more than ever.
-            An engaged network of colleagues across industries and sectors builds resilience in
-            your career or entrepreneurial path, and reduces how exposed you are when the market
-            shifts.
-          </p>
-          <p className="mt-4 text-lg font-medium text-gray-900">
-            Let Mobi help you find your people.
+            Mobi is an AI assistant that reads your ask and connects you with whoever's best
+            positioned to help — a warm intro, not a cold email.
           </p>
           <div className="mt-6 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
@@ -60,15 +54,16 @@ export default async function HomePage() {
 
       <div className="mt-8 rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
         <p className="text-gray-700">
-          One introduction can change the course of your career, your business, or your next
-          big idea, but only if the people around you actually show up for each other. That's
-          what we ask of everyone here:
+          Did you know up to 80% of open positions are filled through personal referrals
+          rather than public listings?
         </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Responsive</span>
-          <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Engaged</span>
-          <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Ready to help</span>
-        </div>
+        <p className="mt-3 text-gray-700">
+          With AI now screening and filtering candidates, you need community more than ever.
+          An engaged network of colleagues across industries and sectors builds resilience in
+          your career or entrepreneurial path, and reduces how exposed you are when the market
+          shifts.
+        </p>
+        <p className="mt-3 font-medium text-gray-900">Let Mobi help you find your people.</p>
       </div>
 
       <h2 className="mt-14 text-sm font-semibold text-gray-900">Here's how it works:</h2>
