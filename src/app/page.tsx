@@ -64,6 +64,12 @@ export default async function HomePage() {
           shifts.
         </p>
         <p className="mt-3 font-medium text-gray-900">Let Mobi help you find your people.</p>
+        <p className="mt-4 text-gray-700">It works best when everyone here shows up for each other:</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Responsive</span>
+          <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Engaged</span>
+          <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Ready to help</span>
+        </div>
       </div>
 
       <h2 className="mt-14 text-sm font-semibold text-gray-900">Here's how it works:</h2>
