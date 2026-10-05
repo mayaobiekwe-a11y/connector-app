@@ -35,11 +35,17 @@ export default async function HomePage() {
         <div className="relative max-w-2xl">
           <span className="eyebrow">Just ask Mobi</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            The right person for what you need is already in this network.
+            Did you know up to 80% of open positions are filled through personal referrals
+            rather than public listings?
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Mobi is an AI assistant that reads your ask and connects you with whoever's best
-            positioned to help — a warm intro, not a cold email.
+            With AI now screening and filtering candidates, you need community more than ever.
+            An engaged network of colleagues across industries and sectors builds resilience in
+            your career or entrepreneurial path, and reduces how exposed you are when the market
+            shifts.
+          </p>
+          <p className="mt-4 text-lg font-medium text-gray-900">
+            Let Mobi help you find your people.
           </p>
           <div className="mt-6 flex gap-3">
             <Link href="/signup" className="btn-primary text-base px-6 py-3">
