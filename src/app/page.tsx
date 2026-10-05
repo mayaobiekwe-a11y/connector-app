@@ -58,10 +58,9 @@ export default async function HomePage() {
           filled through personal referrals rather than public listings.
         </p>
         <p className="mt-3 text-gray-700">
-          With AI now screening and filtering candidates, you need community more than ever.
-          An engaged network of colleagues across industries and sectors builds resilience in
-          your career or entrepreneurial path, and reduces how exposed you are when the market
-          shifts.
+          With AI now screening and filtering candidates, you need community now, more than
+          ever. Building your network across industries and sectors promotes resilience and
+          stability in your career, and reduces impact and exposure when the market shifts.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
           <span className="badge bg-brand-50 text-brand-700 border border-brand-100 text-xs">Responsive</span>
