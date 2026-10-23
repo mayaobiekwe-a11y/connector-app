@@ -7,7 +7,8 @@ html, body {
 }
 
 body {
-  @apply bg-stone-50 text-gray-900 font-sans antialiased;
+  @apply text-gray-900 font-sans antialiased;
+  background-color: #faf6ef;
 }
 
 h1, h2, h3 {
@@ -20,8 +21,9 @@ h1, h2, h3 {
       transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white shadow-sm shadow-brand-600/20
-      hover:bg-brand-700 hover:shadow-md hover:shadow-brand-600/25 active:bg-brand-800;
+    @apply btn text-white shadow-sm shadow-brand-700/25
+      hover:shadow-md hover:shadow-brand-700/30 active:opacity-90;
+    background-image: linear-gradient(135deg, theme("colors.brand.700"), theme("colors.accent.500"));
   }
   .btn-secondary {
     @apply btn bg-white text-gray-700 border border-gray-200 shadow-sm

@@ -36,7 +36,9 @@ export default async function HomePage() {
         <h1 className="mt-3 text-4xl sm:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
           What do you need
           <br />
-          <span className="text-brand-600">right now?</span>
+          <span className="bg-gradient-to-r from-brand-700 to-accent-500 bg-clip-text text-transparent">
+            right now?
+          </span>
         </h1>
         <p className="mt-5 text-lg text-gray-600 max-w-xl mx-auto">
           Type it below. Mobi will tell you what it hears, then find who in the network can

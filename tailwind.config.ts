@@ -5,19 +5,20 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Warm violet — distinct from generic SaaS blue, still reads as
-        // trustworthy/professional. Used for primary actions and identity.
+        // Deep plum — richer and more deliberate than the earlier bright
+        // "SaaS violet," closer to the muted, premium purples on sites
+        // like originality.ai. Used for primary actions and identity.
         brand: {
-          50: "#f6f4fe",
-          100: "#ede8fd",
-          200: "#dcd3fb",
-          300: "#c1b0f7",
-          400: "#a084f0",
-          500: "#8259e8",
-          600: "#6d3fd6",
-          700: "#5c32b8",
-          800: "#4b2a95",
-          900: "#3e2578",
+          50: "#f8f3fa",
+          100: "#efe5f4",
+          200: "#ddcde9",
+          300: "#bc9fd0",
+          400: "#9870b3",
+          500: "#704694",
+          600: "#4f2d6e",
+          700: "#3c2353",
+          800: "#2d1a3d",
+          900: "#1f1229",
         },
         // Warm terracotta accent for highlights that need to stand apart
         // from the primary action color (opportunity posts, callouts).
