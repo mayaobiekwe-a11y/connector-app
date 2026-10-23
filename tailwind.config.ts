@@ -50,6 +50,20 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
       },
+      keyframes: {
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(14px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        breathe: {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.06)" },
+        },
+      },
+      animation: {
+        "fade-up": "fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both",
+        breathe: "breathe 4s ease-in-out infinite",
+      },
     },
   },
   plugins: [],

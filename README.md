@@ -20,12 +20,16 @@ interactions build a visible reputation over time.
 - **Resend** — sends email notifications for new matches, thread messages,
   accepted/declined requests, and reviews. Optional: without a key, emails
   are silently skipped and everything still works via in-app notifications.
-- **Tailwind CSS** — mobile-responsive UI. Brand palette is violet (`brand`,
-  primary), terracotta (`accent`, opportunity/highlight callouts), and gold
-  (`gold`, the top reputation tier) — defined in `tailwind.config.ts`. The
-  logo (`src/components/Logo.tsx`, three overlapping circles in those same
+- **Tailwind CSS** — mobile-responsive UI. Brand palette is deep plum
+  (`brand`, primary), terracotta (`accent`, opportunity/highlight callouts
+  and, as a gradient with `brand`, primary CTAs), and gold (`gold`, the top
+  reputation tier) — defined in `tailwind.config.ts`. The logo
+  (`src/components/Logo.tsx`, three overlapping circles in those same
   colors) is also exported standalone at `public/logo.svg` (full wordmark)
-  and `public/logo-mark.svg` (icon only) for use outside the app.
+  and `public/logo-mark.svg` (icon only) for use outside the app. Two
+  custom animations (`animate-fade-up`, `animate-breathe`) give the
+  homepage hero a staggered entrance and the logo a gentle idle pulse;
+  buttons get a subtle hover/active scale site-wide via `.btn`.
 
 ## Core loop
 
@@ -366,6 +370,7 @@ src/app/resources          Member-facing list of those resources, grouped by cat
 src/app/join               Public, no-login quick-add form the QR code points to
 src/app/claim/[token]      Where an imported member sets a password and activates their profile
 src/components/HomeAskBar.tsx  The homepage's interactive, unauthenticated "what do you need" box
+src/components/FeatureShowcase.tsx  Homepage feature section built from real product screenshots (public/screenshots/)
 ```
 
 ## Notes / known limitations (prototype scope)
