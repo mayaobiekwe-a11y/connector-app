@@ -19,11 +19,11 @@ const STEP_COPY: Record<Step, { title: string; subtitle: string }> = {
   work: { title: "Tell us about your work", subtitle: "Members can find and recognize you by this." },
   needs: {
     title: "What are you hoping to find here?",
-    subtitle: "Pick as many as apply — this just helps us point you in the right direction.",
+    subtitle: "Pick as many as apply. This just helps us point you in the right direction.",
   },
   relationships: {
     title: "Where do you have real relationships?",
-    subtitle: "At least 2 — that's what makes a warm intro possible.",
+    subtitle: "At least 2, that's what makes a warm intro possible.",
   },
   finish: { title: "Almost there", subtitle: "A few optional details, then you're in." },
 };
@@ -76,7 +76,7 @@ export default function SignupPage() {
     if (step === "relationships") {
       const filled = relationships.filter((r) => r.label.trim());
       if (filled.length < 2) {
-        return "Add at least 2 places you have a real relationship — that's what makes a warm intro possible.";
+        return "Add at least 2 places you have a real relationship, that's what makes a warm intro possible.";
       }
     }
     return null;
@@ -264,7 +264,7 @@ export default function SignupPage() {
                 </div>
                 {profileType === "SERVICE_PROVIDER" && (
                   <p className="text-xs text-gray-500 mt-3">
-                    This prototype doesn't process real payments — your Service Provider profile
+                    This prototype doesn't process real payments. Your Service Provider profile
                     activates immediately and can be managed from your profile later.
                   </p>
                 )}
@@ -340,7 +340,7 @@ export default function SignupPage() {
                       className="input"
                       type="number"
                       min={0}
-                      placeholder="e.g. 3 — how many requests you can take on per month"
+                      placeholder="e.g. 3, how many requests you can take on per month"
                       value={form.monthlyCapacity}
                       onChange={(e) => update("monthlyCapacity", e.target.value)}
                     />
@@ -360,7 +360,7 @@ export default function SignupPage() {
                   <span>
                     Show my profile in the member directory and in AI matching.
                     <span className="block text-xs text-gray-400">
-                      You can turn this off anytime — nobody will be able to find or match with you.
+                      You can turn this off anytime, nobody will be able to find or match with you.
                     </span>
                   </span>
                 </label>

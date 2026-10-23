@@ -51,7 +51,7 @@ export async function sendNewMatchEmail(
        <p>Mobi matched you to a request from someone in the network:</p>
        <p style="font-style: italic; border-left: 3px solid #ddd6fe; padding-left: 12px;">"${requestText}"</p>
        <p>${reason}</p>
-       ${unclaimed ? `<p>You're not on Mobi yet — claim your account to respond.</p>` : ""}`,
+       ${unclaimed ? `<p>You're not on Mobi yet. Claim your account to respond.</p>` : ""}`,
       unclaimed ? `${APP_URL}/claim/${claimToken}` : `${APP_URL}/requests/${requestId}`,
       unclaimed ? "Claim your account" : "View request"
     )
@@ -61,7 +61,7 @@ export async function sendNewMatchEmail(
 export async function sendClaimInviteEmail(to: string, memberName: string, claimToken: string) {
   await send(
     to,
-    "You're already on Mobi — claim your account",
+    "You're already on Mobi, claim your account",
     layout(
       `<p>Hi ${firstName(memberName)},</p>
        <p>Your profile is already set up on Mobi, the network built to remember everyone
@@ -158,7 +158,7 @@ export async function sendWeeklyDigestEmail(to: string, memberName: string, stat
     lines.push(
       `<p><strong>${stats.newRequestsCount}</strong> new ask${
         stats.newRequestsCount === 1 ? "" : "s"
-      } went out in the network this week — someone in there might be exactly who you're looking for too.</p>`
+      } went out in the network this week. Someone in there might be exactly who you're looking for too.</p>`
     );
   }
   if (stats.newMembersCount > 0) {

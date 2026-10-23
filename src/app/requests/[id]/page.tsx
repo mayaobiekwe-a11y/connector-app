@@ -70,20 +70,20 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
           <div>
             <dt className="text-gray-400">Intent</dt>
             <dd className="text-gray-700">
-              {request.parsedIntent ? INTENT_LABELS[request.parsedIntent] ?? request.parsedIntent : "—"}
+              {request.parsedIntent ? INTENT_LABELS[request.parsedIntent] ?? request.parsedIntent : "None"}
             </dd>
           </div>
           <div>
             <dt className="text-gray-400">Industry</dt>
-            <dd className="text-gray-700">{request.parsedIndustry ?? "—"}</dd>
+            <dd className="text-gray-700">{request.parsedIndustry ?? "None"}</dd>
           </div>
           <div>
             <dt className="text-gray-400">Function</dt>
-            <dd className="text-gray-700">{request.parsedFunction ?? "—"}</dd>
+            <dd className="text-gray-700">{request.parsedFunction ?? "None"}</dd>
           </div>
           <div>
             <dt className="text-gray-400">Company</dt>
-            <dd className="text-gray-700">{request.parsedCompany ?? "—"}</dd>
+            <dd className="text-gray-700">{request.parsedCompany ?? "None"}</dd>
           </div>
         </dl>
       </div>

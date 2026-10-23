@@ -26,7 +26,7 @@ export default async function AdminPage() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Admin — {member.community.name}</h1>
+          <h1 className="text-xl font-semibold">Admin: {member.community.name}</h1>
           <p className="text-sm text-gray-500">All requests, how the AI parsed them, and match status.</p>
         </div>
         <div className="flex gap-2 shrink-0">
@@ -81,16 +81,16 @@ export default async function AdminPage() {
 
             <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs text-gray-500">
               <p>
-                Intent: <span className="text-gray-700">{r.parsedIntent ? INTENT_LABELS[r.parsedIntent] ?? r.parsedIntent : "—"}</span>
+                Intent: <span className="text-gray-700">{r.parsedIntent ? INTENT_LABELS[r.parsedIntent] ?? r.parsedIntent : "None"}</span>
               </p>
               <p>
-                Industry: <span className="text-gray-700">{r.parsedIndustry ?? "—"}</span>
+                Industry: <span className="text-gray-700">{r.parsedIndustry ?? "None"}</span>
               </p>
               <p>
-                Function: <span className="text-gray-700">{r.parsedFunction ?? "—"}</span>
+                Function: <span className="text-gray-700">{r.parsedFunction ?? "None"}</span>
               </p>
               <p>
-                Company: <span className="text-gray-700">{r.parsedCompany ?? "—"}</span>
+                Company: <span className="text-gray-700">{r.parsedCompany ?? "None"}</span>
               </p>
             </div>
             {r.parseError && (
@@ -105,7 +105,7 @@ export default async function AdminPage() {
                 <div className="flex flex-wrap gap-2">
                   {r.matches.map((m) => (
                     <span key={m.id} className="text-xs bg-gray-50 border border-gray-200 rounded-full px-2 py-1">
-                      {m.source === "VOLUNTEER" ? "🙋" : `#${m.rank}`} {m.member.name} —{" "}
+                      {m.source === "VOLUNTEER" ? "🙋" : `#${m.rank}`} {m.member.name}:{" "}
                       {MATCH_STATUS_LABELS[m.status] ?? m.status}
                       {m.source === "AI_MATCH" && ` (${Math.round(m.score * 100)}%)`}
                     </span>

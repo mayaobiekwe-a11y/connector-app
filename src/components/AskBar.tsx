@@ -7,7 +7,7 @@ const EXAMPLES = [
   "Who in this group has a connection at a healthcare startup in DC?",
   "I need someone who's worked in public policy to review my resume.",
   "Looking for an ongoing mentor in product management.",
-  "We're hiring a product designer — know anyone great, or interested yourself?",
+  "We're hiring a product designer, know anyone great or interested yourself?",
   "I'm looking for freelance/contract work this month, ideally in design.",
 ];
 
@@ -47,7 +47,7 @@ export default function AskBar({ credits }: { credits: number }) {
           <a href="/feed" className="text-brand-700 font-medium hover:underline">
             community feed
           </a>{" "}
-          or help someone who's already asked — that earns you more. You'll also get a small
+          or help someone who's already asked, that earns you more. You'll also get a small
           refresh next month.
         </p>
       ) : (

@@ -21,7 +21,7 @@ export default async function AdminQrPage() {
         <h1 className="text-xl font-semibold">Quick add</h1>
         <p className="mt-1 text-sm text-gray-500">
           Pull this up when you're networking. Anyone who scans it can leave their name and email on
-          the spot — no app, no login. They'll show up in Leads for you to review before they're added
+          the spot, no app, no login. They'll show up in Leads for you to review before they're added
           to the directory.
         </p>
       </div>

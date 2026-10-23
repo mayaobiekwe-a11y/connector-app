@@ -19,7 +19,7 @@ export default function InviteCard({
     <div className="card p-4 sm:p-5">
       <h2 className="font-semibold text-gray-900">Invite someone to Mobi</h2>
       <p className="text-sm text-gray-500 mt-1">
-        When they join and post their first ask (or accept their first match), you get a reward —
+        When they join and post their first ask (or accept their first match), you get a reward:
         a $10-15 gift card, or a free month of a future premium tier.
       </p>
       <div className="mt-3 flex items-center gap-2">
@@ -37,7 +37,7 @@ export default function InviteCard({
       )}
       {capReached && (
         <p className="text-xs text-gray-400 mt-2">
-          You've reached the referral reward cap for now — keep sharing, just no more rewards until
+          You've reached the referral reward cap for now. Keep sharing, just no more rewards until
           it resets.
         </p>
       )}

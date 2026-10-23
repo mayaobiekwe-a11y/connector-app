@@ -10,7 +10,7 @@ const FEATURES = [
   },
   {
     title: "Mobi finds the right person",
-    body: "Your ask gets read, not just matched on keywords — Mobi considers who's actually in the network and why they're a fit, then tells you.",
+    body: "Your ask gets read, not just matched on keywords. Mobi considers who's actually in the network and why they're a fit, then tells you.",
     image: "/screenshots/match.png",
     width: 740,
     height: 525,
@@ -24,7 +24,7 @@ const FEATURES = [
   },
   {
     title: "Build a real track record",
-    body: "Showing up and following through earns reputation that compounds — the more you help, the more Mobi prioritizes you for what's next.",
+    body: "Showing up and following through earns reputation that compounds. The more you help, the more Mobi prioritizes you for what's next.",
     image: "/screenshots/trust.png",
     width: 740,
     height: 455,

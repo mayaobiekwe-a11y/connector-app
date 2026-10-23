@@ -50,7 +50,7 @@ export default function RelationshipsInput({
         </button>
       </div>
       <p className="text-xs text-gray-500 mb-2">
-        Not just where you work — anywhere you know people well enough to make a warm intro
+        Not just where you work, anywhere you know people well enough to make a warm intro
         (a company, a team, a circle like "DC policy folks").
         {minRequired > 0 &&
           " This is what makes a real intro possible, so we ask for a couple to get started."}

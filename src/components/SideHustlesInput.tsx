@@ -37,7 +37,7 @@ export default function SideHustlesInput({
         </button>
       </div>
       <p className="text-xs text-gray-500 mb-2">
-        A business, project, or craft you're building outside your day job — if that's what you'd
+        A business, project, or craft you're building outside your day job. If that's what you'd
         rather be known for, put it here.
       </p>
       {rows.length === 0 && <p className="text-sm text-gray-400 mb-2">None added yet.</p>}
@@ -64,7 +64,7 @@ export default function SideHustlesInput({
             <input
               className="input"
               type="url"
-              placeholder="Link (optional) — website, Instagram, Etsy shop..."
+              placeholder="Link (optional): website, Instagram, Etsy shop..."
               value={row.url}
               onChange={(e) => updateRow(idx, { url: e.target.value })}
             />

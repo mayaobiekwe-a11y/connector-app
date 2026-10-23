@@ -25,8 +25,8 @@ export default async function HomePage() {
           </span>
         </h1>
         <p className="mt-5 text-lg text-gray-600 max-w-xl mx-auto animate-fade-up [animation-delay:300ms]">
-          Type it below. Mobi will tell you what it hears, then find who in the network can
-          actually help once you're in.
+          Describe it below. Mobi will reach into the network to find the best people and
+          resources which fit your needs.
         </p>
         <div className="mt-8 max-w-2xl mx-auto text-left animate-fade-up [animation-delay:400ms]">
           <HomeAskBar />

@@ -230,7 +230,7 @@ export default function ProfileEditForm({
         {form.profileType === "SERVICE_PROVIDER" && (
           <p className="text-xs text-gray-500">
             Subscription status: <span className="font-medium">{form.subscriptionStatus}</span> (no real
-            billing in this prototype — this updates automatically when you switch profile type).
+            billing in this prototype; this updates automatically when you switch profile type).
           </p>
         )}
         <div>
@@ -239,7 +239,7 @@ export default function ProfileEditForm({
             className="input"
             type="number"
             min={0}
-            placeholder="e.g. 3 — how many requests you can take on per month"
+            placeholder="e.g. 3, how many requests you can take on per month"
             value={form.monthlyCapacity}
             onChange={(e) => update("monthlyCapacity", e.target.value)}
           />

@@ -23,7 +23,7 @@ export default function NeedCategoriesInput({
   selected,
   onChange,
   title = "What are you hoping to find here?",
-  subtitle = "Pick as many as apply — this just helps us point you in the right direction.",
+  subtitle = "Pick as many as apply. This just helps us point you in the right direction.",
 }: {
   selected: NeedCategory[];
   onChange: (categories: NeedCategory[]) => void;

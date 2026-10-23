@@ -67,7 +67,7 @@ export default function LoginPage() {
         </Link>
       </p>
       <p className="text-xs text-gray-400 mt-6">
-        Demo accounts: jordan@example.com, priya@example.com, marcus@example.com... — password{" "}
+        Demo accounts: jordan@example.com, priya@example.com, marcus@example.com... password{" "}
         <code>password123</code>
       </p>
     </div>

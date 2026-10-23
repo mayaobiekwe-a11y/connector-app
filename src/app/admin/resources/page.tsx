@@ -30,7 +30,7 @@ export default async function AdminResourcesPage() {
       <div>
         <h1 className="text-xl font-semibold">Resources</h1>
         <p className="text-sm text-gray-500">
-          Orgs and hotlines members can reach directly — mental health, sexual assault, workplace
+          Orgs and hotlines members can reach directly: mental health, sexual assault, workplace
           harassment, and anything else that shouldn't wait on a warm intro. Shown to every member
           at <code className="text-xs">/resources</code>, grouped by category.
         </p>

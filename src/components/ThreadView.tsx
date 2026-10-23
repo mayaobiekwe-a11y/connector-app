@@ -47,7 +47,7 @@ export default function ThreadView({
   return (
     <div className="border border-gray-200 rounded-lg mt-3">
       <div className="max-h-72 overflow-y-auto p-3 space-y-2 bg-gray-50 rounded-t-lg">
-        {messages.length === 0 && <p className="text-sm text-gray-400">No messages yet — say hello!</p>}
+        {messages.length === 0 && <p className="text-sm text-gray-400">No messages yet. Say hello!</p>}
         {messages.map((m) => {
           const mine = m.senderId === currentMemberId;
           return (

@@ -77,7 +77,7 @@ export default async function AdminImportPage() {
         <h2 className="font-semibold text-gray-900 mb-1">2. Send claim invites</h2>
         <p className="text-sm text-gray-500 mb-4">
           Emails everyone who's been imported but not yet invited, with a link to set a password
-          and claim their account. Safe to click more than once — it only emails people who
+          and claim their account. Safe to click more than once, it only emails people who
           haven't already gotten an invite.
         </p>
         <SendInvitesButton />

@@ -146,7 +146,7 @@ export default function ImportForm() {
 
     if (rows.length === 0) {
       setSubmitting(false);
-      setError("No rows have both a name and an email mapped — check your column mapping.");
+      setError("No rows have both a name and an email mapped. Check your column mapping.");
       return;
     }
 
@@ -198,7 +198,7 @@ export default function ImportForm() {
                     })
                   }
                 >
-                  <option value="">— none —</option>
+                  <option value="">(none)</option>
                   {headers.map((h, i) => (
                     <option key={i} value={i}>
                       {h || `Column ${i + 1}`}
@@ -230,7 +230,7 @@ export default function ImportForm() {
                       <tr key={i} className="border-t border-gray-100">
                         {FIELDS.map((f) => (
                           <td key={f.key} className="pr-4 py-1 text-gray-700 max-w-[160px] truncate">
-                            {mappedValue(row, f.key) || "—"}
+                            {mappedValue(row, f.key) || "None"}
                           </td>
                         ))}
                       </tr>

@@ -35,7 +35,7 @@ export default function QuickJoinForm() {
       <div className="card p-6 text-center">
         <p className="text-lg font-semibold text-gray-900">You're in, {name.split(" ")[0] || "friend"}!</p>
         <p className="mt-2 text-sm text-gray-600">
-          Keep an eye on your email — we'll send you an invite to set up your profile soon.
+          Keep an eye on your email. We'll send you an invite to set up your profile soon.
         </p>
       </div>
     );

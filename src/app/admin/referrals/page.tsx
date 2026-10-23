@@ -39,7 +39,7 @@ export default async function AdminReferralsPage() {
           A member earns a reward (a $10-15 gift card, or a free month of a future premium tier)
           when someone they invited signs up and posts their first ask or accepts their first
           match. Capped at {MAX_REWARDS_PER_REFERRER} per person so it can't turn into
-          spam-inviting. Nothing here sends a real payment — mark one rewarded once you've
+          spam-inviting. Nothing here sends a real payment. Mark one rewarded once you've
           actually sent it.
           {pendingCount > 0 && (
             <span className="block mt-1 font-medium text-amber-700">

@@ -92,7 +92,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
                 ) : (
                   <span className="font-medium text-gray-800">{s.name}</span>
                 )}
-                {s.description && <span className="text-gray-500"> — {s.description}</span>}
+                {s.description && <span className="text-gray-500">: {s.description}</span>}
               </p>
             ))}
           </div>
@@ -150,7 +150,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
           </div>
           <div className="rounded-lg bg-gray-50 p-3 text-center">
             <p className="text-xl font-semibold text-gray-900">
-              {reviewsReceived.some((r) => r.rating) ? avgRating.toFixed(1) : "—"}
+              {reviewsReceived.some((r) => r.rating) ? avgRating.toFixed(1) : "None"}
             </p>
             <p className="text-gray-500">Avg. rating</p>
           </div>
@@ -201,7 +201,7 @@ export default async function ProfilePage({ params }: { params: { id: string } }
               <li key={r.id} className="text-sm border-b border-gray-100 pb-3 last:border-0">
                 <div className="flex items-center justify-between">
                   <p className="text-gray-700">
-                    {OUTCOME_LABELS[r.outcome] ?? r.outcome} — for {firstNameOnly(r.reviewer.name)}
+                    {OUTCOME_LABELS[r.outcome] ?? r.outcome}, for {firstNameOnly(r.reviewer.name)}
                   </p>
                   {r.rating && <StarRatingDisplay rating={r.rating} />}
                 </div>

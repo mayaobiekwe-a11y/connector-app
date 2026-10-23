@@ -55,7 +55,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         error:
-          "Add at least 2 places you have a real relationship — that's what makes a warm intro possible.",
+          "Add at least 2 places you have a real relationship, that's what makes a warm intro possible.",
       },
       { status: 400 }
     );
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
   const existing = await prisma.member.findUnique({ where: { email: data.email } });
   if (existing && !existing.passwordHash) {
     return NextResponse.json(
-      { error: "We already have a profile for this email — check your inbox for a Mobi invite to claim it." },
+      { error: "We already have a profile for this email. Check your inbox for a Mobi invite to claim it." },
       { status: 409 }
     );
   }

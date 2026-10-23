@@ -65,7 +65,7 @@ export default async function DashboardPage() {
           <Link href="/feed" className="text-brand-700 font-medium hover:underline">
             community feed
           </Link>{" "}
-          — anyone can jump in, not just who Mobi matches you to.
+          too, so anyone can jump in, not just who Mobi matches you to.
         </p>
       </div>
 
@@ -135,7 +135,7 @@ export default async function DashboardPage() {
         </h2>
         {myRequests.length === 0 ? (
           <div className="rounded-2xl border-2 border-dashed border-gray-200 p-6 text-center text-sm text-gray-500">
-            You haven't asked for anything yet — try the box above.
+            You haven't asked for anything yet. Try the box above.
           </div>
         ) : (
           <div className="space-y-3">

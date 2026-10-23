@@ -72,7 +72,7 @@ export default function ReferralRewardsList({ rewards: initial }: { rewards: Ref
             <div className="mt-3 flex flex-col sm:flex-row gap-2">
               <input
                 className="input text-sm flex-1"
-                placeholder="What you sent (optional) — e.g. $15 Amazon gift card"
+                placeholder="What you sent (optional), e.g. $15 Amazon gift card"
                 value={noteDrafts[r.id] ?? ""}
                 onChange={(e) => setNoteDrafts((prev) => ({ ...prev, [r.id]: e.target.value }))}
               />
