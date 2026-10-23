@@ -34,7 +34,7 @@ const FEATURES = [
 export default function FeatureShowcase() {
   return (
     <div className="mt-20 space-y-16">
-      <h2 className="text-center text-3xl font-bold text-gray-900">What it actually looks like</h2>
+      <h2 className="text-center text-3xl font-semibold text-brand-700">What it actually looks like</h2>
       {FEATURES.map((f, i) => (
         <div
           key={f.title}
@@ -52,7 +52,7 @@ export default function FeatureShowcase() {
             </div>
           </div>
           <div className="flex-1 w-full max-w-md md:max-w-none">
-            <h3 className="text-2xl font-bold text-gray-900">{f.title}</h3>
+            <h3 className="text-2xl font-semibold text-brand-700">{f.title}</h3>
             <p className="mt-3 text-gray-600 text-lg">{f.body}</p>
           </div>
         </div>

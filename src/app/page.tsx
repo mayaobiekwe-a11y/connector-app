@@ -49,10 +49,6 @@ export default async function HomePage() {
         </p>
       </div>
 
-      <p className="mt-10 text-center text-2xl font-bold text-gray-900">
-        Let Mobi help you find your people.
-      </p>
-
       <FeatureShowcase />
     </div>
   );
