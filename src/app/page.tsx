@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentMember } from "@/lib/session";
+import HomeAskBar from "@/components/HomeAskBar";
 
 const STEPS = [
   {
@@ -35,19 +35,14 @@ export default async function HomePage() {
         <div className="relative max-w-2xl">
           <span className="eyebrow">Just ask Mobi</span>
           <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            The right person for what you need is already in this network.
+            What do you need right now?
           </h1>
           <p className="mt-4 text-lg text-gray-600">
-            Mobi is an AI assistant that reads your ask and connects you with whoever's best
-            positioned to help.
+            Type it below. Mobi will tell you what it hears, then find who in the network can
+            actually help once you're in.
           </p>
-          <div className="mt-6 flex gap-3">
-            <Link href="/signup" className="btn-primary text-base px-6 py-3">
-              Join the network
-            </Link>
-            <Link href="/login" className="btn-secondary text-base px-6 py-3">
-              Log in
-            </Link>
+          <div className="mt-6">
+            <HomeAskBar />
           </div>
         </div>
       </div>

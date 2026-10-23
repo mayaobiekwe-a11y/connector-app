@@ -29,6 +29,18 @@ interactions build a visible reputation over time.
 
 ## Core loop
 
+0. **Try it before you join** — the homepage (`src/app/page.tsx`,
+   `src/components/HomeAskBar.tsx`) isn't a static pitch, it's the same ask
+   box as the dashboard, open to anyone. A visitor types what they need and
+   it's parsed for real (`/api/public/ask-preview`, unauthenticated) —
+   Mobi shows back what it understood, but deliberately stops there: that
+   endpoint never touches the member directory, so an anonymous visitor
+   never sees who's actually in the network. Getting an answer to "who can
+   help" requires an account. The ask itself isn't lost to that wall,
+   though — it's held in `sessionStorage` and auto-submitted for real the
+   moment signup finishes (`PENDING_ASK_KEY` in `HomeAskBar.tsx`, read in
+   `src/app/signup/page.tsx`), landing the new member straight on their
+   results page instead of a blank "finish your profile" screen.
 1. **Ask** — a member types a request in plain language on their dashboard.
    This covers requests for help (intros, resume review, mentorship, etc.)
    as well as two opportunity-style asks: looking for or hiring for gig/
@@ -353,6 +365,7 @@ src/lib/referrals.ts       Referral attribution + reward trigger (maybeCreateRef
 src/app/resources          Member-facing list of those resources, grouped by category
 src/app/join               Public, no-login quick-add form the QR code points to
 src/app/claim/[token]      Where an imported member sets a password and activates their profile
+src/components/HomeAskBar.tsx  The homepage's interactive, unauthenticated "what do you need" box
 ```
 
 ## Notes / known limitations (prototype scope)

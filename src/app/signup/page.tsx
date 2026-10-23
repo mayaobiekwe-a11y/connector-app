@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import RelationshipsInput, { type RelationshipRow } from "@/components/RelationshipsInput";
 import SideHustlesInput, { type SideHustleRow } from "@/components/SideHustlesInput";
 import NeedCategoriesInput from "@/components/NeedCategoriesInput";
+import { PENDING_ASK_KEY } from "@/components/HomeAskBar";
 import { PROFILE_TYPE_LABELS } from "@/lib/labels";
 import type { ProfileType, NeedCategory } from "@/lib/enums";
 
@@ -13,6 +14,11 @@ export default function SignupPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const ref = searchParams.get("ref");
+  const [pendingAsk, setPendingAsk] = useState<string | null>(null);
+
+  useEffect(() => {
+    setPendingAsk(sessionStorage.getItem(PENDING_ASK_KEY));
+  }, []);
 
   const [form, setForm] = useState({
     name: "",
@@ -78,12 +84,33 @@ export default function SignupPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    setLoading(false);
     if (!res.ok) {
+      setLoading(false);
       const data = await res.json().catch(() => ({}));
       setError(typeof data.error === "string" ? data.error : "Something went wrong");
       return;
     }
+
+    // If they typed an ask on the homepage before signing up, fire it for
+    // real now that they have an account, and take them straight to the
+    // results instead of the usual "finish your profile" welcome screen.
+    if (pendingAsk) {
+      sessionStorage.removeItem(PENDING_ASK_KEY);
+      const askRes = await fetch("/api/requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: pendingAsk }),
+      });
+      const askData = await askRes.json().catch(() => ({}));
+      setLoading(false);
+      if (askRes.ok && askData.request?.id) {
+        router.push(`/requests/${askData.request.id}?welcome=1`);
+        router.refresh();
+        return;
+      }
+    }
+
+    setLoading(false);
     router.push("/profile/edit?welcome=1");
     router.refresh();
   }
@@ -94,6 +121,11 @@ export default function SignupPage() {
       <p className="text-sm text-gray-500 mb-6">
         Ask for what you need, offer what you know — every member here can see and reach you.
       </p>
+      {pendingAsk && (
+        <div className="rounded-xl bg-brand-50 border border-brand-100 px-4 py-3 mb-6 text-sm text-brand-800">
+          Finish setting up and Mobi will go find who can help with: <em>"{pendingAsk}"</em>
+        </div>
+      )}
       <form onSubmit={onSubmit} className="card p-5 space-y-4">
         {error && <p className="text-sm text-red-600">{error}</p>}
 
