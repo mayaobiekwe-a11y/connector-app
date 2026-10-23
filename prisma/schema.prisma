@@ -80,6 +80,10 @@ model Member {
   referredByMemberId String?
   referredBy          Member?  @relation("MemberReferrals", fields: [referredByMemberId], references: [id], onDelete: SetNull)
   referrals           Member[] @relation("MemberReferrals")
+  // Opt-out of the weekly "what's happening on Mobi" roundup email (see
+  // /api/cron/weekly-digest). Everyone starts in; this is separate from
+  // the per-event emails (new match, message, etc.), which always send.
+  digestOptOut Boolean @default(false)
 
   createdAt DateTime @default(now())
 

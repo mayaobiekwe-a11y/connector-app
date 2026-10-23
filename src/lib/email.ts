@@ -128,3 +128,56 @@ export async function sendReviewReceivedEmail(
     )
   );
 }
+
+export interface WeeklyDigestStats {
+  newRequestsCount: number;
+  newMembersCount: number;
+  pendingMatchesCount: number;
+}
+
+function weeklyDigestSubject(stats: WeeklyDigestStats): string {
+  if (stats.pendingMatchesCount > 0) {
+    return `You have ${stats.pendingMatchesCount} request${stats.pendingMatchesCount === 1 ? "" : "s"} waiting on you`;
+  }
+  if (stats.newRequestsCount > 0) {
+    return `${stats.newRequestsCount} new ask${stats.newRequestsCount === 1 ? "" : "s"} posted on Mobi this week`;
+  }
+  return "Your weekly Mobi roundup";
+}
+
+export async function sendWeeklyDigestEmail(to: string, memberName: string, stats: WeeklyDigestStats) {
+  const lines: string[] = [];
+  if (stats.pendingMatchesCount > 0) {
+    lines.push(
+      `<p><strong>${stats.pendingMatchesCount} request${
+        stats.pendingMatchesCount === 1 ? " is" : "s are"
+      } still waiting on your response.</strong> A quick accept or decline keeps the network moving.</p>`
+    );
+  }
+  if (stats.newRequestsCount > 0) {
+    lines.push(
+      `<p><strong>${stats.newRequestsCount}</strong> new ask${
+        stats.newRequestsCount === 1 ? "" : "s"
+      } went out in the network this week — someone in there might be exactly who you're looking for too.</p>`
+    );
+  }
+  if (stats.newMembersCount > 0) {
+    lines.push(
+      `<p><strong>${stats.newMembersCount}</strong> new member${
+        stats.newMembersCount === 1 ? "" : "s"
+      } joined this week.</p>`
+    );
+  }
+
+  await send(
+    to,
+    weeklyDigestSubject(stats),
+    layout(
+      `<p>Hi ${firstName(memberName)},</p>
+       ${lines.join("\n       ")}
+       <p>Take a look and see who you can connect with.</p>`,
+      `${APP_URL}/dashboard`,
+      "Open Mobi"
+    )
+  );
+}
