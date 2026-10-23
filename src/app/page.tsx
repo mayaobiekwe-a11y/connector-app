@@ -33,15 +33,19 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="mt-16 rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
-        <p className="text-gray-700">
-          <span className="font-semibold text-gray-900">Up to 80% of open positions</span> are
-          filled through personal referrals rather than public listings.
-        </p>
-        <p className="mt-3 text-gray-700">
-          With AI now screening and filtering candidates, you need community now, more than
-          ever. Building your network across industries and sectors promotes resilience and
-          stability in your career, and reduces impact and exposure when the market shifts.
+      <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 text-center sm:text-left">
+        <div>
+          <p className="text-5xl font-bold bg-gradient-to-r from-brand-700 to-accent-500 bg-clip-text text-transparent">
+            80%
+          </p>
+          <p className="mt-1 text-sm text-gray-500 max-w-[15rem] mx-auto sm:mx-0">
+            of open positions are filled through personal referrals, not public listings.
+          </p>
+        </div>
+        <div className="hidden sm:block h-14 w-px bg-gray-200" />
+        <p className="text-gray-700 max-w-xs">
+          AI is screening more candidates than ever. A real network is what still gets you
+          through.
         </p>
       </div>
 
