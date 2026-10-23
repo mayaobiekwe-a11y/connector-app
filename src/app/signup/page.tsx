@@ -10,6 +10,24 @@ import { PENDING_ASK_KEY } from "@/components/HomeAskBar";
 import { PROFILE_TYPE_LABELS } from "@/lib/labels";
 import type { ProfileType, NeedCategory } from "@/lib/enums";
 
+const STEPS = ["account", "profileType", "work", "needs", "relationships", "finish"] as const;
+type Step = (typeof STEPS)[number];
+
+const STEP_COPY: Record<Step, { title: string; subtitle: string }> = {
+  account: { title: "Let's get you set up", subtitle: "Just the basics to create your account." },
+  profileType: { title: "What brings you to Mobi?", subtitle: "This helps us tailor your profile." },
+  work: { title: "Tell us about your work", subtitle: "Members can find and recognize you by this." },
+  needs: {
+    title: "What are you hoping to find here?",
+    subtitle: "Pick as many as apply — this just helps us point you in the right direction.",
+  },
+  relationships: {
+    title: "Where do you have real relationships?",
+    subtitle: "At least 2 — that's what makes a warm intro possible.",
+  },
+  finish: { title: "Almost there", subtitle: "A few optional details, then you're in." },
+};
+
 export default function SignupPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,6 +37,10 @@ export default function SignupPage() {
   useEffect(() => {
     setPendingAsk(sessionStorage.getItem(PENDING_ASK_KEY));
   }, []);
+
+  const [stepIndex, setStepIndex] = useState(0);
+  const [stepError, setStepError] = useState<string | null>(null);
+  const step = STEPS[stepIndex];
 
   const [form, setForm] = useState({
     name: "",
@@ -45,20 +67,54 @@ export default function SignupPage() {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
+  function validateStep(): string | null {
+    if (step === "account") {
+      if (!form.name.trim()) return "Enter your name.";
+      if (!form.email.trim()) return "Enter your email.";
+      if (form.password.length < 6) return "Password must be at least 6 characters.";
+    }
+    if (step === "relationships") {
+      const filled = relationships.filter((r) => r.label.trim());
+      if (filled.length < 2) {
+        return "Add at least 2 places you have a real relationship — that's what makes a warm intro possible.";
+      }
+    }
+    return null;
+  }
+
+  function goNext() {
+    const err = validateStep();
+    if (err) {
+      setStepError(err);
+      return;
+    }
+    setStepError(null);
+    setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
+  }
+
+  function goBack() {
+    setStepError(null);
+    setStepIndex((i) => Math.max(i - 1, 0));
+  }
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
+
+    if (step !== "finish") {
+      goNext();
+      return;
+    }
+
     setError(null);
+    const err = validateStep();
+    if (err) {
+      setStepError(err);
+      return;
+    }
 
     const filledRelationships = relationships
       .filter((r) => r.label.trim())
       .map((r) => ({ label: r.label.trim(), notes: r.notes.trim() || undefined }));
-
-    if (filledRelationships.length < 2) {
-      setError(
-        "Add at least 2 places you have a real relationship — that's what makes a warm intro possible."
-      );
-      return;
-    }
 
     setLoading(true);
 
@@ -115,177 +171,222 @@ export default function SignupPage() {
     router.refresh();
   }
 
+  const copy = STEP_COPY[step];
+
   return (
-    <div className="max-w-lg mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-1">Join the network</h1>
-      <p className="text-sm text-gray-500 mb-6">
-        Ask for what you need, offer what you know — every member here can see and reach you.
-      </p>
-      {pendingAsk && (
-        <div className="rounded-xl bg-brand-50 border border-brand-100 px-4 py-3 mb-6 text-sm text-brand-800">
-          Finish setting up and Mobi will go find who can help with: <em>"{pendingAsk}"</em>
+    <div
+      className="rounded-3xl p-4 sm:p-10"
+      style={{ background: "linear-gradient(180deg, #1f1229 0%, #2d1a3d 100%)" }}
+    >
+      <div className="max-w-md mx-auto">
+        <div className="flex gap-1.5 pt-2 pb-8">
+          {STEPS.map((s, i) => (
+            <div
+              key={s}
+              className={`h-1 flex-1 rounded-full transition-colors ${
+                i <= stepIndex ? "bg-white" : "bg-white/20"
+              }`}
+            />
+          ))}
         </div>
-      )}
-      <form onSubmit={onSubmit} className="card p-5 space-y-4">
-        {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <div>
-          <label className="label">Profile type</label>
-          <div className="flex gap-2">
-            {(Object.keys(PROFILE_TYPE_LABELS) as ProfileType[]).map((pt) => (
-              <button
-                type="button"
-                key={pt}
-                onClick={() => setProfileType(pt)}
-                className={`flex-1 text-sm rounded-lg border px-3 py-2 text-left ${
-                  profileType === pt
-                    ? "bg-brand-600 text-white border-brand-600"
-                    : "bg-white text-gray-700 border-gray-300"
-                }`}
-              >
-                {PROFILE_TYPE_LABELS[pt]}
-                {pt === "SERVICE_PROVIDER" && (
-                  <span className={`block text-xs ${profileType === pt ? "text-brand-100" : "text-gray-400"}`}>
-                    Paid subscription
-                  </span>
+        {pendingAsk && stepIndex === 0 && (
+          <div className="rounded-xl bg-white/10 border border-white/20 px-4 py-3 mb-6 text-sm text-white">
+            Finish setting up and Mobi will go find who can help with: <em>"{pendingAsk}"</em>
+          </div>
+        )}
+
+        <form onSubmit={onSubmit}>
+          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl">
+            <h1 className="text-2xl font-bold text-gray-900">{copy.title}</h1>
+            <p className="text-sm text-gray-500 mt-1 mb-6">{copy.subtitle}</p>
+
+            {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
+            {stepError && <p className="text-sm text-red-600 mb-4">{stepError}</p>}
+
+            {step === "account" && (
+              <div className="space-y-4">
+                <div>
+                  <label className="label">Full name</label>
+                  <input className="input" value={form.name} onChange={(e) => update("name", e.target.value)} />
+                </div>
+                <div>
+                  <label className="label">Email</label>
+                  <input
+                    className="input"
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => update("email", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="label">Password</label>
+                  <input
+                    className="input"
+                    type="password"
+                    minLength={6}
+                    value={form.password}
+                    onChange={(e) => update("password", e.target.value)}
+                  />
+                </div>
+              </div>
+            )}
+
+            {step === "profileType" && (
+              <div>
+                <div className="grid grid-cols-2 gap-3">
+                  {(Object.keys(PROFILE_TYPE_LABELS) as ProfileType[]).map((pt) => {
+                    const isSelected = profileType === pt;
+                    return (
+                      <button
+                        type="button"
+                        key={pt}
+                        onClick={() => setProfileType(pt)}
+                        className={`relative text-left rounded-xl border-2 p-4 transition-colors ${
+                          isSelected ? "border-brand-600 bg-brand-50" : "border-gray-200 bg-white hover:border-gray-300"
+                        }`}
+                      >
+                        <span
+                          className={`absolute top-3 right-3 h-4 w-4 rounded-full border-2 flex items-center justify-center text-[10px] text-white ${
+                            isSelected ? "bg-brand-600 border-brand-600" : "border-gray-300"
+                          }`}
+                        >
+                          {isSelected && "✓"}
+                        </span>
+                        <span className="text-xl leading-none">{pt === "SERVICE_PROVIDER" ? "💼" : "🤝"}</span>
+                        <p className="mt-2 text-sm font-medium text-gray-900 pr-4">{PROFILE_TYPE_LABELS[pt]}</p>
+                        {pt === "SERVICE_PROVIDER" && (
+                          <p className="mt-1 text-xs text-gray-400">Paid subscription</p>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                {profileType === "SERVICE_PROVIDER" && (
+                  <p className="text-xs text-gray-500 mt-3">
+                    This prototype doesn't process real payments — your Service Provider profile
+                    activates immediately and can be managed from your profile later.
+                  </p>
                 )}
+              </div>
+            )}
+
+            {step === "work" && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Current title</label>
+                  <input className="input" value={form.title} onChange={(e) => update("title", e.target.value)} />
+                </div>
+                <div>
+                  <label className="label">Company</label>
+                  <input className="input" value={form.company} onChange={(e) => update("company", e.target.value)} />
+                </div>
+                <div>
+                  <label className="label">Industry</label>
+                  <input className="input" value={form.industry} onChange={(e) => update("industry", e.target.value)} />
+                </div>
+                <div>
+                  <label className="label">Location</label>
+                  <input className="input" value={form.location} onChange={(e) => update("location", e.target.value)} />
+                </div>
+                <div className="col-span-2">
+                  <label className="label">Short bio (optional)</label>
+                  <textarea
+                    className="input"
+                    rows={3}
+                    value={form.bio}
+                    onChange={(e) => update("bio", e.target.value)}
+                    placeholder="What you've worked on, what you know well..."
+                  />
+                </div>
+              </div>
+            )}
+
+            {step === "needs" && (
+              <NeedCategoriesInput selected={needCategories} onChange={setNeedCategories} title="" subtitle="" />
+            )}
+
+            {step === "relationships" && (
+              <RelationshipsInput rows={relationships} onChange={setRelationships} minRequired={2} />
+            )}
+
+            {step === "finish" && (
+              <div className="space-y-4">
+                <SideHustlesInput rows={sideHustles} onChange={setSideHustles} />
+                <div className="border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="label">LinkedIn (optional)</label>
+                    <input
+                      className="input"
+                      type="url"
+                      placeholder="https://linkedin.com/in/you"
+                      value={form.linkedinUrl}
+                      onChange={(e) => update("linkedinUrl", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="label">Photo URL (optional)</label>
+                    <input
+                      className="input"
+                      type="url"
+                      placeholder="https://..."
+                      value={form.avatarUrl}
+                      onChange={(e) => update("avatarUrl", e.target.value)}
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="label">Monthly capacity (optional)</label>
+                    <input
+                      className="input"
+                      type="number"
+                      min={0}
+                      placeholder="e.g. 3 — how many requests you can take on per month"
+                      value={form.monthlyCapacity}
+                      onChange={(e) => update("monthlyCapacity", e.target.value)}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Leave blank for no limit. This keeps you from getting overloaded once people
+                      start relying on you.
+                    </p>
+                  </div>
+                </div>
+                <label className="flex items-start gap-2 text-sm text-gray-700 border-t border-gray-100 pt-4">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5"
+                    checked={visibleInDirectory}
+                    onChange={(e) => setVisibleInDirectory(e.target.checked)}
+                  />
+                  <span>
+                    Show my profile in the member directory and in AI matching.
+                    <span className="block text-xs text-gray-400">
+                      You can turn this off anytime — nobody will be able to find or match with you.
+                    </span>
+                  </span>
+                </label>
+              </div>
+            )}
+
+            <div className="mt-8 flex gap-3">
+              {stepIndex > 0 && (
+                <button type="button" onClick={goBack} className="btn-secondary flex-1">
+                  Back
+                </button>
+              )}
+              <button type="submit" disabled={loading} className="btn-primary flex-1">
+                {step === "finish" ? (loading ? "Creating account..." : "Create account") : "Next"}
               </button>
-            ))}
+            </div>
           </div>
-          {profileType === "SERVICE_PROVIDER" && (
-            <p className="text-xs text-gray-500 mt-1">
-              This prototype doesn't process real payments — your Service Provider profile
-              activates immediately and can be managed from your profile later.
-            </p>
-          )}
-        </div>
+        </form>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="col-span-2">
-            <label className="label">Full name</label>
-            <input className="input" required value={form.name} onChange={(e) => update("name", e.target.value)} />
-          </div>
-          <div className="col-span-2">
-            <label className="label">Email</label>
-            <input
-              className="input"
-              type="email"
-              required
-              value={form.email}
-              onChange={(e) => update("email", e.target.value)}
-            />
-          </div>
-          <div className="col-span-2">
-            <label className="label">Password</label>
-            <input
-              className="input"
-              type="password"
-              required
-              minLength={6}
-              value={form.password}
-              onChange={(e) => update("password", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="label">Current title</label>
-            <input className="input" value={form.title} onChange={(e) => update("title", e.target.value)} />
-          </div>
-          <div>
-            <label className="label">Company</label>
-            <input className="input" value={form.company} onChange={(e) => update("company", e.target.value)} />
-          </div>
-          <div>
-            <label className="label">Industry</label>
-            <input className="input" value={form.industry} onChange={(e) => update("industry", e.target.value)} />
-          </div>
-          <div>
-            <label className="label">Location</label>
-            <input className="input" value={form.location} onChange={(e) => update("location", e.target.value)} />
-          </div>
-          <div className="col-span-2">
-            <label className="label">Short bio</label>
-            <textarea
-              className="input"
-              rows={3}
-              value={form.bio}
-              onChange={(e) => update("bio", e.target.value)}
-              placeholder="What you've worked on, what you know well..."
-            />
-          </div>
-          <div>
-            <label className="label">LinkedIn (optional)</label>
-            <input
-              className="input"
-              type="url"
-              placeholder="https://linkedin.com/in/you"
-              value={form.linkedinUrl}
-              onChange={(e) => update("linkedinUrl", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="label">Photo URL (optional)</label>
-            <input
-              className="input"
-              type="url"
-              placeholder="https://..."
-              value={form.avatarUrl}
-              onChange={(e) => update("avatarUrl", e.target.value)}
-            />
-          </div>
-          <div className="col-span-2">
-            <label className="label">Monthly capacity (optional)</label>
-            <input
-              className="input"
-              type="number"
-              min={0}
-              placeholder="e.g. 3 — how many requests you can take on per month"
-              value={form.monthlyCapacity}
-              onChange={(e) => update("monthlyCapacity", e.target.value)}
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Leave blank for no limit. This keeps you from getting overloaded once people start
-              relying on you.
-            </p>
-          </div>
-        </div>
-
-        <label className="flex items-start gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            className="mt-0.5"
-            checked={visibleInDirectory}
-            onChange={(e) => setVisibleInDirectory(e.target.checked)}
-          />
-          <span>
-            Show my profile in the member directory and in AI matching.
-            <span className="block text-xs text-gray-400">
-              You can turn this off anytime — nobody will be able to find or match with you.
-            </span>
-          </span>
-        </label>
-
-        <div className="border-t border-gray-100 pt-4">
-          <SideHustlesInput rows={sideHustles} onChange={setSideHustles} />
-        </div>
-
-        <div className="border-t border-gray-100 pt-4">
-          <RelationshipsInput rows={relationships} onChange={setRelationships} minRequired={2} />
-        </div>
-
-        <div className="border-t border-gray-100 pt-4">
-          <NeedCategoriesInput selected={needCategories} onChange={setNeedCategories} />
-        </div>
-
-        <button type="submit" disabled={loading} className="btn-primary w-full">
-          {loading ? "Creating account..." : "Create account"}
-        </button>
-      </form>
-      <p className="text-sm text-gray-500 mt-4">
-        Already have an account?{" "}
-        <Link href="/login" className="text-brand-700 font-medium">
-          Log in
-        </Link>
-      </p>
+        <p className="text-sm text-white/70 mt-6 text-center">
+          Already have an account?{" "}
+          <Link href="/login" className="text-white font-medium underline">
+            Log in
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

@@ -45,6 +45,12 @@ interactions build a visible reputation over time.
    moment signup finishes (`PENDING_ASK_KEY` in `HomeAskBar.tsx`, read in
    `src/app/signup/page.tsx`), landing the new member straight on their
    results page instead of a blank "finish your profile" screen.
+   Signup itself (`src/app/signup/page.tsx`) is a 6-step wizard — one
+   focused question per screen (account, profile type, work, what you're
+   hoping to find, relationships, finishing touches) on a dark card with a
+   progress bar, rather than one long form — with card-style pickers for
+   profile type and "what are you hoping to find here" instead of plain
+   checkboxes/radio buttons.
 1. **Ask** — a member types a request in plain language on their dashboard.
    This covers requests for help (intros, resume review, mentorship, etc.)
    as well as two opportunity-style asks: looking for or hiring for gig/
