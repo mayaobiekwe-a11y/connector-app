@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentMember } from "@/lib/session";
 import HomeAskBar from "@/components/HomeAskBar";
+import Logo from "@/components/Logo";
 
 const STEPS = [
   {
@@ -26,28 +27,27 @@ export default async function HomePage() {
   if (member) redirect("/dashboard");
 
   return (
-    <div className="py-6 sm:py-10">
-      <div className="relative overflow-hidden rounded-3xl border border-gray-200/80 bg-white px-6 py-12 sm:px-12 sm:py-16">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-brand-200 to-accent-200 opacity-40 blur-3xl"
-        />
-        <div className="relative max-w-2xl">
-          <span className="eyebrow">Just ask Mobi</span>
-          <h1 className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">
-            What do you need right now?
-          </h1>
-          <p className="mt-4 text-lg text-gray-600">
-            Type it below. Mobi will tell you what it hears, then find who in the network can
-            actually help once you're in.
-          </p>
-          <div className="mt-6">
-            <HomeAskBar />
-          </div>
+    <div className="py-10 sm:py-20">
+      <div className="text-center">
+        <div className="flex justify-center mb-6">
+          <Logo size={56} />
+        </div>
+        <span className="eyebrow">Just ask Mobi</span>
+        <h1 className="mt-3 text-4xl sm:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
+          What do you need
+          <br />
+          <span className="text-brand-600">right now?</span>
+        </h1>
+        <p className="mt-5 text-lg text-gray-600 max-w-xl mx-auto">
+          Type it below. Mobi will tell you what it hears, then find who in the network can
+          actually help once you're in.
+        </p>
+        <div className="mt-8 max-w-2xl mx-auto text-left">
+          <HomeAskBar />
         </div>
       </div>
 
-      <div className="mt-8 rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
+      <div className="mt-16 rounded-2xl bg-brand-50/60 border border-brand-100 px-6 py-6 sm:px-8 sm:py-7">
         <p className="text-gray-700">
           <span className="font-semibold text-gray-900">Up to 80% of open positions</span> are
           filled through personal referrals rather than public listings.
