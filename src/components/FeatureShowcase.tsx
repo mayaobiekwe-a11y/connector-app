@@ -3,7 +3,7 @@ import Image from "next/image";
 const FEATURES = [
   {
     title: "Ask like you'd text a friend",
-    body: "No forms, no filters, no keyword search. Type what you need in plain language and Mobi takes it from there.",
+    body: "No forms, no filters, no keyword search. Say what you actually need, an intro, 15 minutes, a second pair of eyes, and Mobi takes it from there.",
     image: "/screenshots/ask.png",
     width: 1100,
     height: 315,

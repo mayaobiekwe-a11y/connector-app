@@ -74,6 +74,10 @@ export default function AskBar({ credits }: { credits: number }) {
             </button>
           </form>
           {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
+          <p className="mt-3 text-xs text-gray-500">
+            Be specific about what you want, an intro, 15 minutes, a second pair of eyes, and
+            give it a few days to land with the right person.
+          </p>
           <div className="mt-4 flex flex-wrap gap-2">
             {EXAMPLES.map((ex) => (
               <button
