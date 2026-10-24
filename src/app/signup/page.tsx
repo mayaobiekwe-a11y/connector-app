@@ -4,28 +4,26 @@ import { useState, FormEvent, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import RelationshipsInput, { type RelationshipRow } from "@/components/RelationshipsInput";
-import SideHustlesInput, { type SideHustleRow } from "@/components/SideHustlesInput";
-import NeedCategoriesInput from "@/components/NeedCategoriesInput";
 import { PENDING_ASK_KEY } from "@/components/HomeAskBar";
 import { PROFILE_TYPE_LABELS } from "@/lib/labels";
-import type { ProfileType, NeedCategory } from "@/lib/enums";
+import type { ProfileType } from "@/lib/enums";
 
-const STEPS = ["account", "profileType", "work", "needs", "relationships", "finish"] as const;
+// Kept short on purpose: only the account basics and the relationships
+// gate (the warm-intro quality bar) are required to create an account.
+// Everything else, title/industry/location/bio, needs, side hustles,
+// LinkedIn, photo, capacity, is optional and collected later via the
+// "finish your profile" checklist on the dashboard (see
+// OnboardingChecklist) and /profile/edit, instead of blocking signup.
+const STEPS = ["account", "relationships", "finish"] as const;
 type Step = (typeof STEPS)[number];
 
 const STEP_COPY: Record<Step, { title: string; subtitle: string }> = {
-  account: { title: "Let's get you set up", subtitle: "Just the basics to create your account." },
-  profileType: { title: "What brings you to Mobi?", subtitle: "This helps us tailor your profile." },
-  work: { title: "Tell us about your work", subtitle: "Members can find and recognize you by this." },
-  needs: {
-    title: "What are you hoping to find here?",
-    subtitle: "Pick as many as apply. This just helps us point you in the right direction.",
-  },
+  account: { title: "Let's get you set up", subtitle: "Just the basics, you can fill in the rest later." },
   relationships: {
     title: "Where do you have real relationships?",
     subtitle: "At least 2, that's what makes a warm intro possible.",
   },
-  finish: { title: "Almost there", subtitle: "A few optional details, then you're in." },
+  finish: { title: "Almost there", subtitle: "What brings you to Mobi, and who can see your profile." },
 };
 
 export default function SignupPage() {
@@ -46,20 +44,11 @@ export default function SignupPage() {
     name: "",
     email: "",
     password: "",
-    title: "",
     company: "",
-    industry: "",
-    location: "",
-    bio: "",
-    linkedinUrl: "",
-    avatarUrl: "",
-    monthlyCapacity: "",
   });
   const [profileType, setProfileType] = useState<ProfileType>("GENERAL");
   const [visibleInDirectory, setVisibleInDirectory] = useState(true);
   const [relationships, setRelationships] = useState<RelationshipRow[]>([]);
-  const [sideHustles, setSideHustles] = useState<SideHustleRow[]>([]);
-  const [needCategories, setNeedCategories] = useState<NeedCategory[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -89,6 +78,11 @@ export default function SignupPage() {
       return;
     }
     setStepError(null);
+    // Reflect their company back as a relationship suggestion, since they
+    // just told us, no reason to make them retype it.
+    if (step === "account" && relationships.length === 0 && form.company.trim()) {
+      setRelationships([{ label: form.company.trim(), notes: "" }]);
+    }
     setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
   }
 
@@ -119,20 +113,14 @@ export default function SignupPage() {
     setLoading(true);
 
     const payload: Record<string, unknown> = {
-      ...form,
-      monthlyCapacity: form.monthlyCapacity ? Number(form.monthlyCapacity) : undefined,
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      company: form.company.trim() || undefined,
       profileType,
       visibleInDirectory,
-      needCategories,
       ref: ref || undefined,
       relationships: filledRelationships,
-      sideHustles: sideHustles
-        .filter((s) => s.name.trim())
-        .map((s) => ({
-          name: s.name.trim(),
-          description: s.description.trim() || undefined,
-          url: s.url.trim() || undefined,
-        })),
     };
 
     const res = await fetch("/api/auth/signup", {
@@ -229,127 +217,72 @@ export default function SignupPage() {
                     onChange={(e) => update("password", e.target.value)}
                   />
                 </div>
-              </div>
-            )}
-
-            {step === "profileType" && (
-              <div>
-                <div className="grid grid-cols-2 gap-3">
-                  {(Object.keys(PROFILE_TYPE_LABELS) as ProfileType[]).map((pt) => {
-                    const isSelected = profileType === pt;
-                    return (
-                      <button
-                        type="button"
-                        key={pt}
-                        onClick={() => setProfileType(pt)}
-                        className={`relative text-left rounded-xl border-2 p-4 transition-colors ${
-                          isSelected ? "border-brand-600 bg-brand-50" : "border-gray-200 bg-white hover:border-gray-300"
-                        }`}
-                      >
-                        <span
-                          className={`absolute top-3 right-3 h-4 w-4 rounded-full border-2 flex items-center justify-center text-[10px] text-white ${
-                            isSelected ? "bg-brand-600 border-brand-600" : "border-gray-300"
-                          }`}
-                        >
-                          {isSelected && "✓"}
-                        </span>
-                        <span className="text-xl leading-none">{pt === "SERVICE_PROVIDER" ? "💼" : "🤝"}</span>
-                        <p className="mt-2 text-sm font-medium text-gray-900 pr-4">{PROFILE_TYPE_LABELS[pt]}</p>
-                        {pt === "SERVICE_PROVIDER" && (
-                          <p className="mt-1 text-xs text-gray-400">Paid subscription</p>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-                {profileType === "SERVICE_PROVIDER" && (
-                  <p className="text-xs text-gray-500 mt-3">
-                    This prototype doesn't process real payments. Your Service Provider profile
-                    activates immediately and can be managed from your profile later.
-                  </p>
-                )}
-              </div>
-            )}
-
-            {step === "work" && (
-              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="label">Current title</label>
-                  <input className="input" value={form.title} onChange={(e) => update("title", e.target.value)} />
-                </div>
-                <div>
-                  <label className="label">Company</label>
-                  <input className="input" value={form.company} onChange={(e) => update("company", e.target.value)} />
-                </div>
-                <div>
-                  <label className="label">Industry</label>
-                  <input className="input" value={form.industry} onChange={(e) => update("industry", e.target.value)} />
-                </div>
-                <div>
-                  <label className="label">Location</label>
-                  <input className="input" value={form.location} onChange={(e) => update("location", e.target.value)} />
-                </div>
-                <div className="col-span-2">
-                  <label className="label">Short bio (optional)</label>
-                  <textarea
+                  <label className="label">Company (optional)</label>
+                  <input
                     className="input"
-                    rows={3}
-                    value={form.bio}
-                    onChange={(e) => update("bio", e.target.value)}
-                    placeholder="What you've worked on, what you know well..."
+                    placeholder="e.g. Google"
+                    value={form.company}
+                    onChange={(e) => update("company", e.target.value)}
                   />
+                  <p className="text-xs text-gray-400 mt-1">
+                    We'll suggest it as a relationship on the next step, one less thing to type.
+                  </p>
                 </div>
               </div>
-            )}
-
-            {step === "needs" && (
-              <NeedCategoriesInput selected={needCategories} onChange={setNeedCategories} title="" subtitle="" />
             )}
 
             {step === "relationships" && (
-              <RelationshipsInput rows={relationships} onChange={setRelationships} minRequired={2} />
+              <div>
+                {form.company.trim() && (
+                  <p className="text-xs text-gray-500 mb-2">
+                    We added {form.company.trim()} since that's where you work, edit or add more below.
+                  </p>
+                )}
+                <RelationshipsInput rows={relationships} onChange={setRelationships} minRequired={2} />
+              </div>
             )}
 
             {step === "finish" && (
-              <div className="space-y-4">
-                <SideHustlesInput rows={sideHustles} onChange={setSideHustles} />
-                <div className="border-t border-gray-100 pt-4 grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="label">LinkedIn (optional)</label>
-                    <input
-                      className="input"
-                      type="url"
-                      placeholder="https://linkedin.com/in/you"
-                      value={form.linkedinUrl}
-                      onChange={(e) => update("linkedinUrl", e.target.value)}
-                    />
+              <div className="space-y-5">
+                <div>
+                  <label className="label mb-2 block">What brings you to Mobi?</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {(Object.keys(PROFILE_TYPE_LABELS) as ProfileType[]).map((pt) => {
+                      const isSelected = profileType === pt;
+                      return (
+                        <button
+                          type="button"
+                          key={pt}
+                          onClick={() => setProfileType(pt)}
+                          className={`relative text-left rounded-xl border-2 p-4 transition-colors ${
+                            isSelected ? "border-brand-600 bg-brand-50" : "border-gray-200 bg-white hover:border-gray-300"
+                          }`}
+                        >
+                          <span
+                            className={`absolute top-3 right-3 h-4 w-4 rounded-full border-2 flex items-center justify-center text-[10px] text-white ${
+                              isSelected ? "bg-brand-600 border-brand-600" : "border-gray-300"
+                            }`}
+                          >
+                            {isSelected && "✓"}
+                          </span>
+                          <span className="text-xl leading-none">{pt === "SERVICE_PROVIDER" ? "💼" : "🤝"}</span>
+                          <p className="mt-2 text-sm font-medium text-gray-900 pr-4">{PROFILE_TYPE_LABELS[pt]}</p>
+                          {pt === "SERVICE_PROVIDER" && (
+                            <p className="mt-1 text-xs text-gray-400">Paid subscription</p>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
-                  <div>
-                    <label className="label">Photo URL (optional)</label>
-                    <input
-                      className="input"
-                      type="url"
-                      placeholder="https://..."
-                      value={form.avatarUrl}
-                      onChange={(e) => update("avatarUrl", e.target.value)}
-                    />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="label">Monthly capacity (optional)</label>
-                    <input
-                      className="input"
-                      type="number"
-                      min={0}
-                      placeholder="e.g. 3, how many requests you can take on per month"
-                      value={form.monthlyCapacity}
-                      onChange={(e) => update("monthlyCapacity", e.target.value)}
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Leave blank for no limit. This keeps you from getting overloaded once people
-                      start relying on you.
+                  {profileType === "SERVICE_PROVIDER" && (
+                    <p className="text-xs text-gray-500 mt-3">
+                      This prototype doesn't process real payments. Your Service Provider profile
+                      activates immediately and can be managed from your profile later.
                     </p>
-                  </div>
+                  )}
                 </div>
+
                 <label className="flex items-start gap-2 text-sm text-gray-700 border-t border-gray-100 pt-4">
                   <input
                     type="checkbox"
@@ -364,6 +297,11 @@ export default function SignupPage() {
                     </span>
                   </span>
                 </label>
+
+                <p className="text-xs text-gray-400 border-t border-gray-100 pt-4">
+                  Title, industry, what you're hoping to find, and everything else can be added
+                  anytime from your dashboard, no need to fill it all in now.
+                </p>
               </div>
             )}
 

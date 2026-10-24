@@ -6,6 +6,7 @@ import AskBar from "@/components/AskBar";
 import StatusPill from "@/components/StatusPill";
 import MatchRespondButtons from "@/components/MatchRespondButtons";
 import InviteCard from "@/components/InviteCard";
+import OnboardingChecklist from "@/components/OnboardingChecklist";
 import { REQUEST_STATUS_LABELS, MATCH_STATUS_LABELS, INTENT_LABELS } from "@/lib/labels";
 import { isOpportunityIntent } from "@/lib/enums";
 import { ensureMonthlyRefresh, getAskCreditBalance } from "@/lib/askCredits";
@@ -68,6 +69,18 @@ export default async function DashboardPage() {
           too, so anyone can jump in, not just who Mobi matches you to.
         </p>
       </div>
+
+      <OnboardingChecklist
+        member={{
+          title: member.title,
+          industry: member.industry,
+          location: member.location,
+          bio: member.bio,
+          needCategories: member.needCategories,
+          linkedinUrl: member.linkedinUrl,
+          avatarUrl: member.avatarUrl,
+        }}
+      />
 
       <InviteCard
         memberId={member.id}
