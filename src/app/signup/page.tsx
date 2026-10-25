@@ -300,7 +300,8 @@ export default function SignupPage() {
 
                 <p className="text-xs text-gray-400 border-t border-gray-100 pt-4">
                   Title, industry, what you're hoping to find, and everything else can be added
-                  anytime from your dashboard, no need to fill it all in now.
+                  anytime from your dashboard, no need to fill it all in now, and the more Mobi
+                  knows, the better it connects you.
                 </p>
               </div>
             )}

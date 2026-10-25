@@ -42,6 +42,10 @@ export default function OnboardingChecklist({
           {doneCount}/{items.length}
         </span>
       </div>
+      <p className="text-xs text-gray-500 mb-3">
+        Mobi only connects as well as it knows you, the more you share, the better your
+        matches.
+      </p>
       <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden mb-3">
         <div
           className="h-full bg-gradient-to-r from-brand-700 to-accent-500 rounded-full"
