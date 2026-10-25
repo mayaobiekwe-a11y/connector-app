@@ -225,9 +225,7 @@ export default function SignupPage() {
                     value={form.company}
                     onChange={(e) => update("company", e.target.value)}
                   />
-                  <p className="text-xs text-gray-400 mt-1">
-                    We'll suggest it as a relationship on the next step, one less thing to type.
-                  </p>
+                  <p className="text-xs text-gray-400 mt-1">We'll suggest it as a relationship next.</p>
                 </div>
               </div>
             )}
@@ -236,7 +234,7 @@ export default function SignupPage() {
               <div>
                 {form.company.trim() && (
                   <p className="text-xs text-gray-500 mb-2">
-                    We added {form.company.trim()} since that's where you work, edit or add more below.
+                    Added {form.company.trim()}, edit or add more below.
                   </p>
                 )}
                 <RelationshipsInput rows={relationships} onChange={setRelationships} minRequired={2} />
@@ -299,9 +297,8 @@ export default function SignupPage() {
                 </label>
 
                 <p className="text-xs text-gray-400 border-t border-gray-100 pt-4">
-                  Title, industry, what you're hoping to find, and everything else can be added
-                  anytime from your dashboard, no need to fill it all in now, and the more Mobi
-                  knows, the better it connects you.
+                  Add the rest anytime from your dashboard, the more Mobi knows, the better it
+                  connects you.
                 </p>
               </div>
             )}
