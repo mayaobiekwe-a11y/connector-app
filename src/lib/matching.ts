@@ -23,6 +23,7 @@ export async function createRequestWithMatches(requesterId: string, communityId:
       parsedFunction: parsed.function,
       parsedIntent: parsed.intent,
       parsedSummary: parsed.summary,
+      parsedNeedCategories: parsed.needCategories,
       parsedRaw: raw,
       parseError: usedFallback ? error ?? "used heuristic fallback (no API key)" : null,
     },

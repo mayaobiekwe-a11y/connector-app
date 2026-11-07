@@ -175,6 +175,11 @@ model Request {
   parsedFunction String?
   parsedIntent   String?
   parsedSummary  String? // short natural-language paraphrase for admin/UI
+  // Which NEED_CATEGORIES (src/lib/enums.ts) this ask touches on, so matching
+  // Resource rows can be surfaced alongside the AI-matched people, not
+  // instead of them (e.g. a job-search ask also gets the real career
+  // resources, a mental-health-coded ask also gets that hotline).
+  parsedNeedCategories String[] @default([])
   parsedRaw      String? // full JSON response from the LLM, for the admin view
   parseError     String? // set if parsing failed and heuristic fallback was used
 

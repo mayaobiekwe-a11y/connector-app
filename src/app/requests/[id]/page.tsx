@@ -36,6 +36,14 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
   });
   if (!request) notFound();
 
+  const resources =
+    request.parsedNeedCategories.length > 0
+      ? await prisma.resource.findMany({
+          where: { communityId: request.communityId, categories: { hasSome: request.parsedNeedCategories } },
+          orderBy: { name: "asc" },
+        })
+      : [];
+
   const isRequester = request.requesterId === member.id;
   const myMatch = request.matches.find((m) => m.memberId === member.id);
   const canView = isRequester || !!myMatch || member.isAdmin;
@@ -87,6 +95,34 @@ export default async function RequestDetailPage({ params }: { params: { id: stri
           </div>
         </dl>
       </div>
+
+      {isRequester && resources.length > 0 && (
+        <div>
+          <h2 className="font-semibold text-gray-900 mb-3">
+            Resources that might help, no ask required
+          </h2>
+          <div className="space-y-3">
+            {resources.map((r) => (
+              <div key={r.id} className="card p-4">
+                <p className="font-medium text-gray-900">{r.name}</p>
+                {r.description && <p className="text-sm text-gray-600 mt-1">{r.description}</p>}
+                <div className="flex flex-wrap gap-3 mt-2 text-sm">
+                  {r.url && (
+                    <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-brand-700 underline">
+                      Visit site
+                    </a>
+                  )}
+                  {r.phone && (
+                    <a href={`tel:${r.phone.replace(/[^\d+]/g, "")}`} className="text-brand-700 underline">
+                      {r.phone}
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <h2 className="font-semibold text-gray-900 mb-3">

@@ -1,10 +1,18 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { REQUEST_INTENTS, type HelpCategory, type CompensationType, type RequestIntent } from "./enums";
+import {
+  REQUEST_INTENTS,
+  NEED_CATEGORIES,
+  type HelpCategory,
+  type CompensationType,
+  type RequestIntent,
+  type NeedCategory,
+} from "./enums";
 import { badgeForPoints } from "./credit";
 
 const MODEL = "claude-sonnet-5";
 
 const INTENT_VALUES: RequestIntent[] = [...REQUEST_INTENTS];
+const NEED_CATEGORY_VALUES: NeedCategory[] = [...NEED_CATEGORIES];
 
 function getClient(): Anthropic | null {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -18,6 +26,10 @@ export interface ParsedRequest {
   function: string | null;
   intent: RequestIntent;
   summary: string;
+  // Which NEED_CATEGORIES this ask touches on (see Resource in
+  // schema.prisma) — lets the UI surface real curated resources
+  // alongside the AI-matched people, not instead of them.
+  needCategories: NeedCategory[];
 }
 
 export interface ParseResult {
@@ -69,6 +81,12 @@ export async function parseAskRequest(rawText: string): Promise<ParseResult> {
           type: "string",
           description: "A short, one-sentence plain-language paraphrase of the request.",
         },
+        needCategories: {
+          type: "array",
+          items: { type: "string", enum: NEED_CATEGORY_VALUES },
+          description:
+            "Any of these categories the request touches on, so real curated resources (not just people) can be surfaced alongside the match, e.g. a job-search ask gets CAREER_SERVICES, a request that reads as a mental-health or safety concern gets MENTAL_HEALTH/SEXUAL_ASSAULT_SUPPORT/WORKPLACE_HARASSMENT as applicable. Empty array if none clearly apply.",
+        },
       },
       required: ["intent", "summary"],
     },
@@ -98,12 +116,19 @@ export async function parseAskRequest(rawText: string): Promise<ParseResult> {
       ? (input.intent as RequestIntent)
       : "GENERAL_NETWORKING";
 
+    const needCategories = Array.isArray(input.needCategories)
+      ? (input.needCategories as string[]).filter((c): c is NeedCategory =>
+          NEED_CATEGORY_VALUES.includes(c as NeedCategory)
+        )
+      : [];
+
     const parsed: ParsedRequest = {
       company: (input.company as string) || null,
       industry: (input.industry as string) || null,
       function: (input.function as string) || null,
       intent,
       summary: (input.summary as string) || rawText.slice(0, 140),
+      needCategories,
     };
 
     return { parsed, raw: JSON.stringify(input), usedFallback: false };
@@ -169,7 +194,39 @@ function heuristicParse(rawText: string): ParsedRequest {
     function: fn,
     intent,
     summary: rawText.length > 140 ? rawText.slice(0, 137) + "..." : rawText,
+    needCategories: heuristicNeedCategories(text, intent),
   };
+}
+
+// Same deterministic-fallback spirit as the rest of heuristicParse: simple
+// keyword rules so resource-surfacing still works without an API key.
+function heuristicNeedCategories(lowerText: string, intent: RequestIntent): NeedCategory[] {
+  const categories = new Set<NeedCategory>();
+
+  const categoryRules: Array<[NeedCategory, string[]]> = [
+    ["MENTAL_HEALTH", ["mental health", "therapy", "therapist", "anxiety", "depression", "burnout", "counseling"]],
+    ["HEALTHCARE", ["health insurance", "healthcare", "medical bills", "doctor", "medicaid", "medicare"]],
+    ["LEGAL", ["lawyer", "attorney", "legal advice", "lawsuit", "sue ", "eviction"]],
+    ["FINANCIAL_PLANNING", ["debt", "loan", "financial advisor", "budgeting", "unemployment benefits"]],
+    ["BUSINESS_ENTREPRENEURSHIP", ["start a business", "startup", "entrepreneur", "small business"]],
+    ["WORKPLACE_HARASSMENT", ["harassment", "hostile work environment", "discriminated", "discrimination"]],
+    ["SEXUAL_ASSAULT_SUPPORT", ["assault", "abuse", "survivor"]],
+  ];
+  for (const [category, keywords] of categoryRules) {
+    if (keywords.some((k) => lowerText.includes(k))) categories.add(category);
+  }
+
+  const careerIntents: RequestIntent[] = [
+    "SPECIFIC_ROLE",
+    "EXPLORING_PIVOT",
+    "SEEKING_GIG_WORK",
+    "HIRING_GIG_WORK",
+    "JOB_OPENING",
+  ];
+  if (careerIntents.includes(intent)) categories.add("CAREER_SERVICES");
+  if (intent === "ONGOING_MENTOR") categories.add("MENTORSHIP");
+
+  return Array.from(categories);
 }
 
 // Naive proper-noun extraction for "at/with/from <Company>" phrasing. Good
