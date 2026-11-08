@@ -58,6 +58,18 @@ export async function sendNewMatchEmail(
   );
 }
 
+export async function sendNewSignupAdminEmail(to: string, newMemberName: string, newMemberEmail: string) {
+  await send(
+    to,
+    `New signup: ${newMemberName}`,
+    layout(
+      `<p>${newMemberName} (${newMemberEmail}) just joined Mobi.</p>`,
+      `${APP_URL}/admin`,
+      "View admin"
+    )
+  );
+}
+
 export async function sendPasswordResetEmail(to: string, memberName: string, resetToken: string) {
   await send(
     to,

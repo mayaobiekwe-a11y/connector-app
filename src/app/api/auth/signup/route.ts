@@ -6,6 +6,7 @@ import { getSession } from "@/lib/session";
 import { PROFILE_TYPES, NEED_CATEGORIES } from "@/lib/enums";
 import { awardAskCredits } from "@/lib/askCredits";
 import { getDefaultCommunityId } from "@/lib/community";
+import { sendNewSignupAdminEmail } from "@/lib/email";
 
 const schema = z.object({
   name: z.string().min(1).max(100),
@@ -116,6 +117,12 @@ export async function POST(req: Request) {
   });
 
   await awardAskCredits(member.id, "SIGNUP_BONUS");
+
+  const admins = await prisma.member.findMany({
+    where: { communityId, isAdmin: true },
+    select: { email: true },
+  });
+  await Promise.all(admins.map((a) => sendNewSignupAdminEmail(a.email, member.name, member.email)));
 
   const session = await getSession();
   session.memberId = member.id;
