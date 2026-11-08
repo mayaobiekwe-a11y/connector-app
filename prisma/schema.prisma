@@ -46,6 +46,10 @@ model Member {
   claimToken   String?  @unique
   claimedAt    DateTime?
   inviteSentAt DateTime?
+  // One-time token emailed on a "forgot password" request. Cleared once
+  // used or expired (resetTokenExpires), so it can't be replayed.
+  resetToken        String?   @unique
+  resetTokenExpires DateTime?
   name         String
   title        String? // current role, e.g. "Product Manager"
   company      String?

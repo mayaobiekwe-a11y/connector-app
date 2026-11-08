@@ -58,6 +58,21 @@ export async function sendNewMatchEmail(
   );
 }
 
+export async function sendPasswordResetEmail(to: string, memberName: string, resetToken: string) {
+  await send(
+    to,
+    "Reset your Mobi password",
+    layout(
+      `<p>Hi ${firstName(memberName)},</p>
+       <p>Someone asked to reset the password on this account. If that was you, pick a new one
+       below, this link works for the next hour.</p>
+       <p>If you didn't ask for this, you can ignore this email, nothing will change.</p>`,
+      `${APP_URL}/reset-password/${resetToken}`,
+      "Set a new password"
+    )
+  );
+}
+
 export async function sendClaimInviteEmail(to: string, memberName: string, claimToken: string) {
   await send(
     to,
