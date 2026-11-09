@@ -33,15 +33,9 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="mt-16 text-center max-w-xl mx-auto">
-        <p className="text-xl font-semibold text-brand-700">Mobi is your super connector.</p>
-        <p className="mt-3 text-gray-600">
-          The best connectors remember everyone, who they are, what they need, what they're
-          good at. Mobi works the same way: matching people by what they're looking for, what
-          they offer, and where real interests overlap. The more you tell it, the sharper it
-          gets.
-        </p>
-      </div>
+      <p className="mt-16 text-center text-xl font-semibold text-brand-700">
+        Mobi is your super connector.
+      </p>
 
       <FeatureShowcase />
     </div>

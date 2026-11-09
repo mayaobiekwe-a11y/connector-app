@@ -3,28 +3,28 @@ import Image from "next/image";
 const FEATURES = [
   {
     title: "Ask like you'd text a friend",
-    body: "No forms, no filters, no keyword search. Say what you actually need, an intro, 15 minutes, a second pair of eyes, and Mobi takes it from there.",
+    body: "Say what you actually need, an intro, 15 minutes, a second pair of eyes, and Mobi takes it from there.",
     image: "/screenshots/ask.png",
     width: 1100,
     height: 315,
   },
   {
     title: "Mobi finds the right person",
-    body: "Your ask gets read, not just matched on keywords. Mobi considers who's actually in the network and why they're a fit, then tells you.",
+    body: "Mobi reads your ask and tells you who's a fit and why, not just a keyword match.",
     image: "/screenshots/match.png",
     width: 740,
     height: 525,
   },
   {
     title: "Coordinate in a simple thread",
-    body: "Once someone's in, you talk it out right there on Mobi. No email back-and-forth, no losing the context of why you're even talking.",
+    body: "Once someone's in, you talk it out right there, no email back-and-forth.",
     image: "/screenshots/thread.png",
     width: 740,
     height: 665,
   },
   {
     title: "Build a real track record",
-    body: "Showing up and following through earns reputation that compounds. The more you help, the more Mobi prioritizes you for what's next.",
+    body: "Showing up and following through earns reputation that compounds.",
     image: "/screenshots/trust.png",
     width: 740,
     height: 455,
